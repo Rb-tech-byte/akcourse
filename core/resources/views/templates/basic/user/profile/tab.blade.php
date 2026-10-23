@@ -26,119 +26,21 @@
         <ul class="custom-tab style-two mb-0">
             @if ($isAuthUser && $user->username == $author->username)
                 <li class="custom-tab__item {{ menuActive('user.home') }}">
-                    <a href="{{ route('user.home') }}" class="custom-tab__link dashboard-style">@lang('Dashboard')</a>
+                    <a href="{{ route('user.home') }}" class="custom-tab__link dashboard-style"><i class="las la-graduation-cap me-1"></i>@lang('Student Portal')</a>
                 </li>
             @endif
 
-            @auth
-                @if ($isAuthUser && $user->username == $author->username)
-                    <li class="custom-tab__item {{ menuActive('user.profile.my') }}">
-                        <a href="{{ route('user.profile.my') }}" class="custom-tab__link">@lang('Profile')</a>
-                    </li>
-                @else
-                    <li class="custom-tab__item {{ menuActive('user.profile.my') }}">
-                        <a href="{{ route('user.profile', $author->username) }}"
-                            class="custom-tab__link">@lang('Profile')</a>
-                    </li>
-                @endif
-            @else
-                <li class="custom-tab__item {{ menuActive('user.profile') }}">
-                    <a href="{{ route('user.profile', $author->username) }}" class="custom-tab__link">@lang('Profile')</a>
-                </li>
-            @endauth
-
-            @if ($author->is_author)
-                <li class="custom-tab__item {{ menuActive('user.portfolio') }}">
-                    <a href="{{ route('user.portfolio', $author->username) }}"
-                        class="custom-tab__link">@lang('Portfolio')</a>
-                </li>
-                <li class="custom-tab__item {{ menuActive('user.followers') }}">
-                    <a href="{{ route('user.followers', $author->username) }}" class="custom-tab__link">
-                        @lang('Followers')
-                        @if ($author->followers->count() > 0)
-                            <span class="notification">{{ $author->followers->count() }}</span>
-                        @endif
-                    </a>
-                </li>
-            @endif
-
-            <li class="custom-tab__item {{ menuActive('user.following') }}">
-                <a href="{{ route('user.following', $author->username) }}" class="custom-tab__link">
-                    @lang('Following')
-                    @if ($author->follows->count() > 0)
-                        <span class="notification"> {{ @$author->follows->count() }} </span>
-                    @endif
-                </a>
+            <li class="custom-tab__item {{ menuActive('user.profile') }}">
+                <a href="{{ route('user.profile', $author->username) }}" class="custom-tab__link"><i class="las la-user me-1"></i>@lang('Profile Overview')</a>
             </li>
 
             @if ($isAuthUser && $user->username == $author->username)
-                <li class="custom-tab__item {{ menuActive('user.author.refunds') }}">
-                    <a href="{{ route('user.author.refunds') }}" class="custom-tab__link">
-                        @lang('Refunds')
-                        @if ($refundItemsCount > 0)
-                            <span class="notification">{{ $refundItemsCount }}</span>
-                        @endif
-                    </a>
+                <li class="custom-tab__item {{ menuActive('user.order.list') }}">
+                    <a href="{{ route('user.order.list') }}" class="custom-tab__link"><i class="las la-receipt me-1"></i>@lang('Orders')</a>
                 </li>
-            @endif
-
-            @if ($isAuthUser && $author->isAuthor() && $user->username == $author->username)
-                <li class="custom-tab__item {{ menuActive('user.author.hidden_items') }}">
-                    <a href="{{ route('user.author.hidden_items') }}" class="custom-tab__link">
-                        @lang('Hidden Items')
-                        @if ($hiddenItems > 0)
-                            <span class="notification">{{ $hiddenItems }}</span>
-                        @endif
-                    </a>
+                <li class="custom-tab__item {{ menuActive('user.profile.setting') }}">
+                    <a href="{{ route('user.profile.setting') }}" class="custom-tab__link"><i class="las la-cog me-1"></i>@lang('Settings')</a>
                 </li>
-                <li class="custom-tab__item {{ menuActive('user.author.earning') }}">
-                    <a href="{{ route('user.author.earning') }}" class="custom-tab__link">@lang('Earning')</a>
-                </li>
-                <li class="custom-tab__item {{ menuActive('user.author.sells') }}">
-                    <a href="{{ route('user.author.sells') }}" class="custom-tab__link">@lang('Sales')</a>
-                </li>
-                <li class="custom-tab__item {{ menuActive('user.author.comments.index') }}">
-                    <a href="{{ route('user.author.comments.index') }}" class="custom-tab__link">
-                        @lang('Comments')
-                        @if ($commentsCount > 0)
-                            <span class="notification">{{ $commentsCount }}</span>
-                        @endif
-                    </a>
-                </li>
-                <li class="custom-tab__item {{ menuActive('user.author.reviews.index') }}">
-                    <a href="{{ route('user.author.reviews.index') }}" class="custom-tab__link">
-                        @lang('Reviews')
-                        @if ($reivewCount > 0)
-                            <span class="notification">{{ $reivewCount }}</span>
-                        @endif
-                    </a>
-                </li>
-                <li class="custom-tab__item {{ menuActive('user.author.license.index') }}">
-                    <a href="{{ route('user.author.license.index') }}" class="custom-tab__link">@lang('Check licenses')</a>
-                </li>
-
-                @if (gs('referral'))
-                    <li class="custom-tab__item {{ menuActive('user.author.referral.index') }}">
-                        <a href="{{ route('user.author.referral.index') }}" class="custom-tab__link">
-                            @lang('Referral')
-                            @if ($referralCount > 0)
-                                <span class="notification">{{ $referralCount }}</span>
-                            @endif
-                        </a>
-                    </li>
-                @endif
-
-                @php
-                    $campaign = App\Models\Campaign::active()->latest()->first();
-                @endphp
-                @if ($campaign)
-                    <li class="custom-tab__item {{ menuActive('user.author.campaign.index') }}">
-                        <a href="{{ route('user.author.campaign.index') }}" class="custom-tab__link">
-                            @lang('Campaign')
-                            <span class="badge badge--base blinking">@lang('New')</span>
-                        </a>
-                    </li>
-                @endif
             @endif
         </ul>
     </div>

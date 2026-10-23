@@ -503,24 +503,21 @@ Student dashboard content:
 
 2. Summary cards
    - Courses owned
-   - Overall progress
-   - Available downloads
-   - Pending software licenses
+   - Download packages ready (.ZIP)
+   - Software licenses included
+   - Completed orders
 
-3. Continue Learning
-   - Current course
-   - Current lesson
-   - Progress percentage
-   - Continue button
+3. Purchased Courses & Digital Packages
+   - Course title and series
+   - Stage edition (e.g. Masterclass & Stems)
+   - Software license package included
+   - High-speed direct ZIP package download action
 
-4. My Courses
-   - Course title
-   - Stage
-   - Progress bar
-   - Status:
-     - Not started
-     - In progress
-     - Complete
+4. Offline Course Downloads
+   - Full masterclass offline video lessons (.mp4)
+   - Multitrack vocal stems & DAW mixing templates
+   - Practice presets & software package guides
+   - Total package size (GB) and download action
 
 5. Software Licenses
    - Software package
@@ -751,7 +748,6 @@ Authenticated student:
 - GET /api/me
 - GET /api/me/dashboard
 - GET /api/me/courses
-- PATCH /api/me/lessons/{lesson}/progress
 - GET /api/me/downloads
 - GET /api/me/licenses
 - GET /api/me/orders
@@ -814,7 +810,6 @@ Expected tables include:
 - payment_events
 - entitlements
 - enrollments
-- lesson_progress
 - download_assets
 - download_grants
 - download_events
@@ -972,7 +967,6 @@ Payments:
 Student:
 - User sees only their courses
 - User sees only their orders
-- Lesson progress updates
 - Downloads require entitlement
 - License statuses are accurate
 

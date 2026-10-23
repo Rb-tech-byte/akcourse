@@ -107,15 +107,6 @@ Route::middleware('auth')->name('user.')->group(function () {
                 Route::get('free-download', 'freeDownload')->name('free.download');
             });
 
-            // Product & Course Management
-            Route::controller('ProductController')->prefix('product')->name('product.')->group(function () {
-                Route::get('upload-category', 'selectCategory')->name('upload.category');
-                Route::get('upload', 'upload')->name('upload');
-                Route::post('save/{id?}', 'saveProduct')->name('save');
-                Route::get('edit/{slug}', 'edit')->name('edit');
-                Route::get('activities/{slug}', 'productActivities')->name('activities');
-                Route::post('reply-activity/{productId}', 'replyActivity')->name('reply.activity');
-            });
         });
 
         // Payment

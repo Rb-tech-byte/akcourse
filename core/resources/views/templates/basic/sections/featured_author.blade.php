@@ -21,8 +21,8 @@
                             <h4 class="feature-box__title">@lang('Featured Author')</h4>
                             <h6 class="feature-box__desc">{{ __(@$featuredAuthor->fullname) }}</h6>
                             <p class="feature-box__title">@lang('Member Since ' . showDateTime($featuredAuthor->created_at, 'F Y'))</p>
-                            <a href="{{ route('user.portfolio', $featuredAuthor->username) }}"
-                               class="btn btn-outline--base">@lang('View Portfolio')</a>
+                            <a href="{{ route('user.profile', $featuredAuthor->username) }}"
+                               class="btn btn-outline--base">@lang('View Profile')</a>
                             <img src="{{ frontendImage('featured_product', @$featureAuthorSection->data_values->top_image, '220x170') }}"
                                  alt="@lang('Featured Image')" class="feature-box__water-img one">
                             <img src="{{ frontendImage('featured_product', @$featureAuthorSection->data_values->bottom_image, '250x280') }}"
