@@ -90,7 +90,7 @@
                                         {{ @$product->product->demo_url }}
                                     </a>
                                 </li>
-                                @foreach ($product->product->attribute_info as $info)
+                                @foreach ($product->product->attribute_info ?? [] as $info)
                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
                                         <span class="fw-bold">{{ __($info->name) }}</span>
                                         @if (is_array($info->value))

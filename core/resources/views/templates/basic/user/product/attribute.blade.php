@@ -28,7 +28,7 @@
                     <span>{{ showDateTime($product->published_at, 'd M Y') }}</span>
                 </div>
             </li>
-            @foreach ($product->attribute_info as $info)
+            @foreach ($product->attribute_info ?? [] as $info)
                 <li class="product-info__item">
                     <span class="product-info__title">{{ __($info->name) }}</span>
 

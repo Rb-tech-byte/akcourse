@@ -1,14 +1,25 @@
 @extends('admin.layouts.app')
 @section('panel')
-    <div class="row">
+
+    @php
+        $previewSrc = $product->preview_image ? getImage(getFilePath('productPreview') . '/' . productFilePath($product, 'preview_image'), getFileSize('productPreview')) : ($product->thumbnail ? getImage(getFilePath('productThumbnail') . '/' . productFilePath($product, 'thumbnail'), getFileSize('productThumbnail')) : getImage(getFilePath('productPreview') . '/default.png'));
+    @endphp
+
+    <div class="row gy-4">
         <div class="col-lg-12">
-            <div class="row">
-                <div class="col-md-5 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="m-0">{{ __($product->title) }}</h5>
+            <div class="row gy-4">
+                <!-- Left Column: Visual Media & Audio Player -->
+                <div class="col-md-5">
+                    <div class="card border shadow-sm h-100">
+                        <div class="card-header bg-white py-2 px-3 border-bottom d-flex align-items-center justify-content-between">
+                            <h6 class="card-title m-0 fs-14 fw-bold text-dark">{{ __($product->title) }}</h6>
+                            <span class="badge {{ $product->product_type == 'bundle' ? 'bg-warning-subtle text-warning-emphasis border border-warning-subtle' : 'bg-primary-subtle text-primary border border-primary-subtle' }} rounded-pill px-2 py-1 fs-11">
+                                {{ $product->product_type == 'bundle' ? __('Complete Bundle') : __('Course') }}
+                            </span>
+                        </div>
+                        <div class="card-body p-3">
                             @if ($product->audio_temp_file && @$product->category->file_type == 'audio' && in_array('mp3', $product->category->preview_file_types ?? []))
-                                <div class="audio-player-wrapper">
+                                <div class="audio-player-wrapper border rounded-3 p-3 bg-light mb-3">
                                     <div class="d-flex align-items-center gap-1 audio-player-left">
                                         <button id="play-button" class="play-button">
                                             <i class="fas fa-play"></i>
@@ -25,58 +36,104 @@
                                     </div>
                                 </div>
                             @else
-                                <div class="image-upload mt-3">
-                                    <img src="{{ getImage(getFilePath('productPreview') . productFilePath($product, 'preview_image')) }}"
-                                         alt="@lang('Product Preview')" />
+                                <div class="image-upload rounded-3 overflow-hidden border bg-dark mb-3" style="max-height: 260px;">
+                                    <img src="{{ $previewSrc }}" alt="{{ $product->title }}" class="w-100 h-100 object-fit-cover" style="max-height: 260px;" />
                                 </div>
                             @endif
+
+                            <div class="p-3 bg-light rounded-3 border">
+                                <span class="fs-12 fw-bold text-dark d-block mb-1">
+                                    <i class="las la-bullseye text-warning me-1"></i> @lang('Learning Outcome')
+                                </span>
+                                <p class="text-muted fs-12 mb-0">
+                                    {{ $product->learning_outcome ?: __('Master professional vocal balance and acoustics in this complete studio training program.') }}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Right Column: Course Specifications & Details -->
                 <div class="col-md-7">
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('Category')</span>
-                                    <span>{{ __(@$product->category->name) }}</span>
+                    <div class="card border shadow-sm">
+                        <div class="card-header bg-white py-2 px-3 border-bottom d-flex align-items-center justify-content-between">
+                            <span class="fs-13 fw-bold text-dark">
+                                <i class="las la-info-circle text-primary me-1"></i> @lang('Course & Software Specifications')
+                            </span>
+                            <span class="font-monospace fs-11 text-muted">{{ $product->sku ?: 'NO-SKU' }}</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <ul class="list-group list-group-flush fs-13">
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                    <span class="fw-bold text-dark">@lang('Series / Category')</span>
+                                    <span class="badge bg-secondary-subtle text-secondary border px-2 py-1 rounded-pill">
+                                        {{ __(@$product->category->name ?: 'Unassigned') }}
+                                    </span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('Subcategory')</span>
-                                    <span>{{ __(@$product->subCategory->name) }}</span>
-                                </li>
-                                @if (!$product->is_free)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                        <span class="fw-bold">@lang('Price')(@lang('Regular License'))</span>
-                                        <span>{{ showAmount($product->price) }}</span>
-                                    </li>
-                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                        <span class="fw-bold">@lang('Price')(@lang('Commercial License'))</span>
-                                        <span>{{ showAmount($product->price_cl) }}</span>
-                                    </li>
-                                @else
-                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                        <span class="fw-bold">@lang('Price')</span>
-                                        <span class="badge badge--success">@lang('Free')</span>
+                                @if(@$product->subCategory && $product->subCategory->name)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                        <span class="fw-bold text-dark">@lang('Subcategory')</span>
+                                        <span class="text-muted">{{ __($product->subCategory->name) }}</span>
                                     </li>
                                 @endif
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('Status')</span>
-                                    <?php echo $product->statusBadge; ?>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                    <span class="fw-bold text-dark">@lang('Included Software')</span>
+                                    <span class="fw-semibold text-dark">
+                                        {{ $product->software_name ?: __('Studio Suite') }}
+                                        <span class="text-muted fs-11">({{ $product->software_edition ?: __('Studio License') }})</span>
+                                    </span>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('Demo')</span>
-                                    @if (@$product->category->file_type == 'audio')
-                                        <a href="{{ asset(getFilePath('previewFile')) . '/' . productFilePath($product, 'temp_audio_file') . '/' . $product->audio_temp_file }}" download="">@lang('Download Preview')</a>
-                                    @else
-                                        <a href="{{ $product->demo_url }}" target="_blank">
-                                            {{ @$product->demo_url }}
-                                        </a>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                    <span class="fw-bold text-dark">@lang('Stage / Level')</span>
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1 rounded-pill">
+                                        {{ $product->stage_label ?: __('Beginner') }} (Seq #{{ $product->sequence_no ?: 1 }})
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                    <span class="fw-bold text-dark">@lang('Curriculum Structure')</span>
+                                    <span class="text-dark fw-semibold">
+                                        {{ $product->lesson_count ?: 8 }} @lang('Lessons') &middot; {{ round(($product->video_duration_seconds ?: 7200) / 60) }} @lang('Min Duration')
+                                    </span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                    <span class="fw-bold text-dark">@lang('Accent Color')</span>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="rounded-circle border" style="width: 16px; height: 16px; background-color: {{ $product->accent_color ?: '#FBAF43' }}; display: inline-block;"></span>
+                                        <span class="font-monospace fs-11">{{ $product->accent_color ?: '#FBAF43' }}</span>
+                                    </div>
+                                </li>
+                                @if (!$product->is_free)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                        <span class="fw-bold text-dark">@lang('Package Price')</span>
+                                        <span class="fw-bold text-dark fs-14">{{ showAmount($product->price) }}</span>
+                                    </li>
+                                    @if($product->price_cl > 0)
+                                        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                            <span class="fw-bold text-dark">@lang('Commercial License Price')</span>
+                                            <span class="text-muted">{{ showAmount($product->price_cl) }}</span>
+                                        </li>
                                     @endif
+                                @else
+                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                        <span class="fw-bold text-dark">@lang('Price')</span>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">@lang('Free')</span>
+                                    </li>
+                                @endif
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                    <span class="fw-bold text-dark">@lang('Status')</span>
+                                    @php echo $product->statusBadge; @endphp
                                 </li>
-                                @foreach ($product->attribute_info as $info)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                        <span class="fw-bold">{{ __($info->name) }}</span>
+                                @if($product->demo_url)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                        <span class="fw-bold text-dark">@lang('Preview / Demo Video')</span>
+                                        <a href="{{ $product->demo_url }}" target="_blank" class="text-primary text-truncate" style="max-width: 250px;">
+                                            <i class="las la-external-link-alt me-1"></i> {{ $product->demo_url }}
+                                        </a>
+                                    </li>
+                                @endif
+                                @foreach ($product->attribute_info ?? [] as $info)
+                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                        <span class="fw-bold text-dark">{{ __($info->name) }}</span>
                                         @if (is_array($info->value))
                                             <div>
                                                 @foreach ($info->value as $val)
@@ -91,35 +148,19 @@
                                         @endif
                                     </li>
                                 @endforeach
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('Tags')</span>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                    <span class="fw-bold text-dark">@lang('Tags')</span>
                                     <div>
                                         @forelse ($product->tags ?? [] as $tag)
-                                            <span class="badge badge--primary mb-2">{{ __($tag) }}</span>
+                                            <span class="badge bg-secondary-subtle text-secondary border px-2 py-0 fs-11 mb-1">{{ __($tag) }}</span>
                                         @empty
-                                            <span class="text-secondary">@lang('No Tags')</span>
+                                            <span class="text-secondary fs-11">@lang('No Tags')</span>
                                         @endforelse
                                     </div>
                                 </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('Published Date')</span>
-                                    <div>
-                                        @if (!$product->status == Status::PRODUCT_APPROVED)
-                                            <span>{{ showDateTime($product->created_at) }}</span>
-                                        @else
-                                            <span>{{ showDateTime($product->published_at) }}</span>
-                                        @endif
-                                    </div>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('Last Update')</span>
-                                    <div>
-                                        @if ($product->last_updated == null)
-                                            <span class="text-secondary">@lang('Not updated yet')</span>
-                                        @else
-                                            <span>{{ showDateTime($product->last_updated) }}</span>
-                                        @endif
-                                    </div>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                    <span class="fw-bold text-dark">@lang('Published Date')</span>
+                                    <span class="text-muted">{{ showDateTime($product->published_at ?: $product->created_at, 'd M, Y - h:i A') }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -173,14 +214,13 @@
     </script>
 @endpush
 
-
 @push('style-lib')
-    <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/vendor/magnific-popup.css') }}">
+    <link rel="stylesheet" href="{{ asset(activeTemplate(true) . 'css/vendor/magnific-popup.css') }}">
 @endpush
 
 @push('script-lib')
     <script src="{{ asset('assets/global/js/wavesurfer.min.js') }}"></script>
-    <script src="{{ asset($activeTemplateTrue . 'js/vendor/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ asset(activeTemplate(true) . 'js/vendor/jquery.magnific-popup.min.js') }}"></script>
 @endpush
 
 @push('script')
@@ -204,7 +244,6 @@
                     wavesurfer.load(
                         '{{ asset(getFilePath('previewFile') . productFilePath($product, 'temp_audio_file') . $product->audio_temp_file) }}'
                     );
-
 
                     $('#play-button').on('click', function() {
                         if (wavesurfer.isPlaying()) {
@@ -265,28 +304,12 @@
                 }).magnificPopup('open');
             });
 
-        })
-        (jQuery);
+        })(jQuery);
     </script>
 @endpush
 
-
 @push('style')
     <style>
-        .audio-player-wrapper {
-            min-height: 163px !important;
-        }
-
-        .audio-card .product-card__thumb::before {
-            display: none;
-        }
-
-
-        .list-view .audio-player-wrapper {
-            min-height: 163px !important;
-            width: 306px;
-        }
-
         .audio-player-wrapper {
             min-height: 163px !important;
             display: flex;
@@ -323,33 +346,13 @@
         .audio-player-middle {
             width: 100%;
         }
-
-        .product-card.audio-card .product-card__thumb {
-            border: 1px solid hsl(var(--border-color) / 0.45);
-            border-bottom: none;
-            border-radius: 8px 8px 0px 0px;
-        }
-
-
-        .product-details__inner.audio-card .product-details__thumb {
-            background: #fff;
-            border-radius: 12px;
-        }
-
-        .product-details__inner.audio-card .audio-player-wrapper {
-            border: 1px solid hsl(var(--border-color));
-            border-radius: 12px 12px 0px 0px;
-            overflow: hidden;
-        }
-
-
-        .product-details__inner.audio-card .audio-player-wrapper.border-radius-add {
-            border-radius: 12px;
-        }
     </style>
 @endpush
 
 @push('breadcrumb-plugins')
+    <a href="{{ route('product.details', $product->slug) }}" target="_blank" class="btn btn-sm btn-outline--info">
+        <i class="las la-external-link-alt"></i> @lang('View Live')
+    </a>
     <a href="{{ route('admin.product.edit', $product->id) }}" class="btn btn-sm btn--primary">
         <i class="las la-pen"></i> @lang('Edit Course')
     </a>
