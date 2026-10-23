@@ -6,7 +6,7 @@
             <div class="row gy-4">
 
                 <div class="col-xxl-3 col-sm-6">
-                    <x-widget style="7" link="{{ route('admin.product.all', $user->id) }}" title="Products" icon="las la-box" value="{{ @$user->products_count }}" bg="3" type="2" />
+                    <x-widget style="7" link="{{ route('admin.product.all') }}" title="Products" icon="las la-box" value="{{ @$user->products_count }}" bg="3" type="2" />
                 </div>
 
                 <div class="col-xxl-3 col-sm-6">
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="col-xxl-3 col-sm-6">
-                    <x-widget style="7" link="{{ route('admin.withdraw.data.all', $user->id) }}" title="Withdrawals" icon="la la-bank" value="{{ showAmount($totalWithdrawals) }}" bg="6" type="2" />
+                    <x-widget style="7" link="{{ route('admin.report.transaction', $user->id) }}" title="Purchases" icon="las la-shopping-cart" value="{{ @$user->order_items_count ?: 0 }}" bg="6" type="2" />
                 </div>
 
                 <div class="col-xxl-3 col-sm-6">

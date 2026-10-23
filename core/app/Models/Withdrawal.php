@@ -10,17 +10,13 @@ use App\Traits\HasModelAttributes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
-#[Table('users', key: 'id')]
 #[Hidden(['withdraw_information'])]
 #[Casts(['withdraw_information' => 'object'])]
 class Withdrawal extends Model
 {
     use HasModelAttributes;
 
-    public function newQuery()
-    {
-        return parent::newQuery()->whereRaw('1 = 0');
-    }
+    protected $table = 'withdrawals';
 
     public function user()
     {
