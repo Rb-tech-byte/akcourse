@@ -49,6 +49,18 @@ class Category extends Model
         $query->active()->where('featured', Status::YES);
     }
 
+    public function slug(): Attribute
+    {
+        return new Attribute(
+            get: fn() => match ((int)$this->id) {
+                1 => 'vocal-mixing',
+                2 => 'audio-editing-software',
+                3 => 'beat-making',
+                default => \Illuminate\Support\Str::slug($this->name),
+            }
+        );
+    }
+
     public function statusBadge(): Attribute
     {
         return new Attribute(

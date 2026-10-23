@@ -137,78 +137,23 @@ class SiteController extends Controller
             $categories = Category::active()->orderBy('id', 'asc')->get();
 
             foreach ($categories as $cat) {
-                $seriesSlug = match ((int)$cat->id) {
-                    1 => 'vocal-mixing',
-                    2 => 'audio-editing-software',
-                    3 => 'beat-making',
-                    default => Str::slug($cat->name)
-                };
+                $seriesSlug = $cat->slug ?: Str::slug($cat->name);
 
-                // Dynamic CMS-managed courses from main DB
+                // Dynamic CMS-managed courses from main DB products table
                 $courses = Product::approved()
                     ->where('category_id', $cat->id)
-                    ->whereNotNull('sku')
-                    ->where('sku', '!=', '')
                     ->where(function ($q) {
                         $q->where('product_type', 'course')->orWhereNull('product_type');
                     })
                     ->orderBy('sequence_no', 'asc')
+                    ->orderBy('id', 'asc')
                     ->get();
 
-                // Dynamic CMS-managed bundle from main DB
+                // Dynamic CMS-managed bundle from main DB products table
                 $bundle = Product::approved()
                     ->where('category_id', $cat->id)
                     ->where('product_type', 'bundle')
                     ->first();
-
-                // Fallback to ak23 connection if main DB has no courses for this category
-                if ($courses->isEmpty()) {
-                    $akSeries = \Illuminate\Support\Facades\DB::connection('ak23')
-                        ->table('series')
-                        ->where('slug', $seriesSlug)
-                        ->first();
-
-                    if ($akSeries) {
-                        $rawCourses = \Illuminate\Support\Facades\DB::connection('ak23')->select('
-                            SELECT 
-                                c.sequence_no, 
-                                c.slug, 
-                                c.title, 
-                                c.short_name, 
-                                c.stage_label, 
-                                c.learning_outcome, 
-                                c.lesson_count, 
-                                c.video_duration_seconds, 
-                                c.accent_color, 
-                                sp.product_name as software_name, 
-                                sp.edition as software_edition, 
-                                p.sku, 
-                                p.price_minor, 
-                                p.currency, 
-                                BIN_TO_UUID(p.id, 1) as product_uuid 
-                            FROM courses c 
-                            JOIN course_software cs ON cs.course_id = c.id 
-                            JOIN software_packages sp ON sp.id = cs.software_package_id 
-                            LEFT JOIN products p ON p.course_id = c.id 
-                            WHERE c.series_id = ? 
-                            ORDER BY c.sequence_no ASC
-                        ', [$akSeries->id]);
-
-                        $courses = collect($rawCourses);
-
-                        $bundle = \Illuminate\Support\Facades\DB::connection('ak23')->selectOne('
-                            SELECT 
-                                p.sku, 
-                                p.name, 
-                                p.description, 
-                                p.price_minor, 
-                                p.currency, 
-                                BIN_TO_UUID(p.id, 1) as product_uuid 
-                            FROM products p 
-                            WHERE p.series_id = ? AND p.product_type = "bundle"
-                        ', [$akSeries->id]);
-                    }
-                }
 
                 $series = (object)[
                     'id'          => $cat->id,

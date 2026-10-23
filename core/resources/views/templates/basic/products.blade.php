@@ -3,16 +3,27 @@
 @section('content')
 
 <!-- =========================================================================
-     COMPACT CATALOG BAR & FILTERS (HERO SECTION EXCLUSIVE TO HOME PAGE)
+     COMPACT CATALOG BAR & FILTERS
      ========================================================================= -->
 <div class="ak23-catalog-top-bar">
     <div class="ak23-container">
-        <div class="ak23-catalog-bar-inner">
+        <div class="ak23-catalog-bar-inner d-flex flex-wrap align-items-center justify-content-between gap-3">
             <div class="ak23-catalog-bar-meta">
-                <span class="ak23-catalog-bar-tag">COURSES & SOFTWARE PACKAGES</span>
+                <span class="ak23-catalog-bar-tag">COURSES &amp; SOFTWARE PACKAGES</span>
                 <h1 class="ak23-catalog-bar-title">All Training Programs</h1>
             </div>
 
+            <!-- Series Quick Navigation Pills -->
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <a href="{{ route('products') }}" class="btn btn-sm ak23-filter-btn {{ !request('series') || request('series') === 'all' ? 'active' : '' }}" data-series="all">
+                    <span>All Programs ({{ collect($catalog)->sum(fn($i) => count($i['courses'])) }})</span>
+                </a>
+                @foreach($catalog as $cItem)
+                    <a href="{{ route('products', ['series' => $cItem['series']->slug]) }}" class="btn btn-sm ak23-filter-btn {{ request('series') === $cItem['series']->slug ? 'active' : '' }}" data-series="{{ $cItem['series']->slug }}">
+                        <span>{{ $cItem['series']->title }} ({{ count($cItem['courses']) }})</span>
+                    </a>
+                @endforeach
+            </div>
         </div>
     </div>
 </div>
@@ -40,8 +51,8 @@
                         <p class="ak23-series-desc">{{ $series->description }}</p>
                     </div>
 
-                    <a href="{{ route('home') }}" class="ak23-btn-series-link">
-                        <span>View series page</span>
+                    <a href="{{ route('products', ['series' => $series->slug]) }}" class="ak23-btn-series-link">
+                        <span>Filter this series</span>
                         <i class="las la-arrow-right"></i>
                     </a>
                 </div>
@@ -50,13 +61,17 @@
                 @if($bundle)
                     @php
                         $bundleTitle = $bundle->title ?: ($bundle->name ?? 'Complete Series');
-                        $bundlePrice = $bundle->price ?: ($bundle->price_minor ?? 480000);
+                        $bundlePrice = (float)($bundle->price ?: 480000);
                         $bundleSku = $bundle->sku ?: ('AK23-BUNDLE-' . strtoupper($series->slug));
                     @endphp
                     <div class="ak23-complete-pkg-banner">
                         <div>
                             <div class="ak23-pkg-banner-badge">COMPLETE PACKAGE</div>
-                            <h3 class="ak23-pkg-banner-title">{{ $bundleTitle }}</h3>
+                            <h3 class="ak23-pkg-banner-title">
+                                <a href="{{ route('product.details', $bundle->slug) }}" class="text-white text-decoration-none">
+                                    {{ $bundleTitle }}
+                                </a>
+                            </h3>
                             <p class="ak23-pkg-banner-desc">{{ $bundle->description }}</p>
                         </div>
 
@@ -79,7 +94,7 @@
 
                 <!-- Course Cards Grid -->
                 <div class="ak23-course-grid">
-                    @foreach($courses as $course)
+                    @forelse($courses as $course)
                         @php
                             $seqPadded = str_pad($course->sequence_no ?: 1, 2, '0', STR_PAD_LEFT);
                             $stageSlug = Str::slug($course->stage_label ?: 'beginner');
@@ -88,7 +103,7 @@
                                 'beginner' => 'stage-beginner',
                                 'developing-your-skills' => 'stage-developing',
                                 'intermediate' => 'stage-intermediate',
-                                'advanced-chain-building' => 'stage-advanced',
+                                'advanced-chain-building', 'advanced' => 'stage-advanced',
                                 'studio-workflow' => 'stage-advanced',
                                 'building-musical-ideas' => 'stage-developing',
                                 'developing-your-sound' => 'stage-developing',
@@ -97,83 +112,60 @@
                                 default => 'stage-beginner'
                             };
                             $licenseLabel = ($series->slug === 'vocal-mixing') ? 'PLUGIN LICENSE INCLUDED' : 'SOFTWARE LICENSE INCLUDED';
-                            $courseTitle = $course->title ?: ($course->name ?? 'Course');
-                            $coursePrice = $course->price ?: ($course->price_minor ?? 140000);
-                            $courseSku = $course->sku ?: ($course->slug ?: 'AK23-COURSE-' . $course->id);
+                            $courseTitle = $course->title;
+                            $coursePrice = (float)$course->price;
+                            $courseSku = $course->sku ?: ('AK23-COURSE-' . $course->id);
                             $lessonCount = $course->lesson_count ?: 8;
                             $videoMin = $course->video_duration_seconds ? round($course->video_duration_seconds / 60) : 120;
+                            $accentColor = $course->accent_color ?: '#FBAF43';
+                            $hasCustomThumb = !empty($course->thumbnail) && $course->thumbnail !== 'default.png' && file_exists(public_path(getFilePath('productThumbnail') . '/' . productFilePath($course, 'thumbnail')));
                         @endphp
 
                         <div class="ak23-course-card">
-                            <!-- Visual Top with SVG Graphic -->
+                            <!-- Visual Top with Image or Dynamic DAW Graphics -->
                             <div class="ak23-course-visual">
                                 <span class="ak23-seq-circle">{{ $seqPadded }}</span>
-                                <span class="ak23-stage-badge {{ $stageBadgeClass }}">{{ $course->stage_label ?: 'Beginner' }}</span>
+                                <span class="ak23-stage-badge {{ $stageBadgeClass }}">{{ $course->stage_label ?: 'Studio Masterclass' }}</span>
 
-                                @if($series->slug === 'vocal-mixing')
-                                    @if($course->sequence_no == 1)
-                                        <svg width="270" height="135" viewBox="0 0 270 135" fill="none"><rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535"/><text x="30" y="34" fill="#D9A742" font-size="9" font-weight="800" letter-spacing="1">TUNED // PITCH ENGINE</text><line x1="30" y1="42" x2="240" y2="42" stroke="#252535"/><line x1="30" y1="60" x2="240" y2="60" stroke="#1C1C28" stroke-dasharray="2 2"/><path d="M30 75 Q60 45 90 65 T150 55 T210 70 T240 50" fill="none" stroke="#D9A742" stroke-width="2"/><circle cx="55" cy="100" r="10" fill="#191924" stroke="#D9A742" stroke-width="1.5"/><circle cx="115" cy="100" r="10" fill="#191924" stroke="#D9A742" stroke-width="1.5"/><circle cx="175" cy="100" r="10" fill="#191924" stroke="#D9A742" stroke-width="1.5"/></svg>
-                                    @elseif($course->sequence_no == 2)
-                                        <svg width="270" height="135" viewBox="0 0 270 135" fill="none"><rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535"/><text x="30" y="34" fill="#DE784D" font-size="9" font-weight="800" letter-spacing="1">VOXITY // MULTI-FX UNIT</text><line x1="30" y1="42" x2="240" y2="42" stroke="#252535"/><circle cx="135" cy="72" r="22" fill="#171724" stroke="#DE784D" stroke-width="1.5" stroke-dasharray="3 2"/><circle cx="135" cy="72" r="12" fill="#DE784D" fill-opacity="0.2"/><rect x="40" y="55" width="12" height="35" rx="2" fill="#191926" stroke="#28283C"/><rect x="42" y="65" width="8" height="6" rx="1" fill="#DE784D"/><circle cx="195" cy="72" r="12" fill="#191924" stroke="#DE784D" stroke-width="1.5"/></svg>
-                                    @elseif($course->sequence_no == 3)
-                                        <svg width="270" height="135" viewBox="0 0 270 135" fill="none"><rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535"/><text x="30" y="34" fill="#9B77D2" font-size="9" font-weight="800" letter-spacing="1">XVOX PRO // VOCAL STRIP</text><line x1="30" y1="42" x2="240" y2="42" stroke="#252535"/><rect x="30" y="52" width="38" height="42" rx="3" fill="#181826" stroke="#2E2840"/><rect x="74" y="52" width="38" height="42" rx="3" fill="#181826" stroke="#2E2840"/><rect x="118" y="52" width="38" height="42" rx="3" fill="#181826" stroke="#9B77D2" stroke-width="1.5"/><rect x="124" y="62" width="26" height="4" fill="#9B77D2"/><text x="124" y="85" fill="#9B77D2" font-size="7" font-weight="700">COMP</text></svg>
-                                    @elseif($course->sequence_no == 4)
-                                        <svg width="270" height="135" viewBox="0 0 270 135" fill="none"><rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535"/><text x="30" y="34" fill="#ED7C66" font-size="9" font-weight="800" letter-spacing="1">NECTAR 4 // VOCAL ASSISTANT</text><line x1="30" y1="42" x2="240" y2="42" stroke="#252535"/><path d="M30 78 Q75 40 120 75 T190 60 T240 82" fill="none" stroke="#ED7C66" stroke-width="2"/><circle cx="85" cy="52" r="4" fill="#ED7C66"/><circle cx="160" cy="68" r="4" fill="#ED7C66"/></svg>
-                                    @else
-                                        <svg width="270" height="135" viewBox="0 0 270 135" fill="none"><rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535"/><text x="30" y="34" fill="#4FA6C9" font-size="9" font-weight="800" letter-spacing="1">WAVES 17 // STUDIO RACK</text><line x1="30" y1="42" x2="240" y2="42" stroke="#252535"/><rect x="30" y="52" width="80" height="40" rx="3" fill="#0E171C" stroke="#1D303B"/><path d="M45 82 Q70 60 95 82" fill="none" stroke="#284858"/><line x1="70" y1="84" x2="80" y2="62" stroke="#4FA6C9" stroke-width="1.5"/><circle cx="135" cy="65" r="10" fill="#18232A" stroke="#4FA6C9" stroke-width="1.5"/><circle cx="170" cy="65" r="10" fill="#18232A" stroke="#4FA6C9" stroke-width="1.5"/></svg>
-                                    @endif
-                                @elseif($series->slug === 'audio-editing-software')
-                                    <!-- DAW Station SVG -->
-                                    <svg width="270" height="135" viewBox="0 0 270 135" fill="none">
-                                        <rect x="15" y="15" width="240" height="105" rx="6" fill="#111119" stroke="#232332"/>
-                                        <text x="30" y="34" fill="{{ $course->accent_color ?: '#F0A62F' }}" font-size="9" font-weight="800" letter-spacing="1">{{ $course->short_name ?: 'DAW' }} // WORKSTATION</text>
-                                        <line x1="30" y1="42" x2="240" y2="42" stroke="#232332"/>
-                                        <!-- Timeline Tracks -->
-                                        <rect x="30" y="52" width="210" height="14" rx="2" fill="#161622"/>
-                                        <rect x="50" y="54" width="70" height="10" rx="2" fill="{{ $course->accent_color ?: '#F0A62F' }}" fill-opacity="0.6"/>
-                                        <rect x="135" y="54" width="80" height="10" rx="2" fill="{{ $course->accent_color ?: '#F0A62F' }}" fill-opacity="0.3"/>
-                                        <rect x="30" y="70" width="210" height="14" rx="2" fill="#161622"/>
-                                        <rect x="75" y="72" width="110" height="10" rx="2" fill="{{ $course->accent_color ?: '#F0A62F' }}" fill-opacity="0.5"/>
-                                        <!-- Fader Knobs -->
-                                        <circle cx="50" cy="104" r="8" fill="#1A1A26" stroke="{{ $course->accent_color ?: '#F0A62F' }}" stroke-width="1.5"/>
-                                        <circle cx="90" cy="104" r="8" fill="#1A1A26" stroke="{{ $course->accent_color ?: '#F0A62F' }}" stroke-width="1.5"/>
-                                        <circle cx="130" cy="104" r="8" fill="#1A1A26" stroke="#2D2D3D" stroke-width="1.5"/>
-                                        <rect x="165" y="96" width="60" height="14" rx="3" fill="#181824" stroke="#2D2D3D"/>
-                                    </svg>
+                                @if($hasCustomThumb)
+                                    <img src="{{ getImage(getFilePath('productThumbnail') . '/' . productFilePath($course, 'thumbnail')) }}" alt="{{ $courseTitle }}" class="w-100 h-100 object-fit-cover">
                                 @else
-                                    <!-- Beat Making Synth / Drum Pad SVG -->
+                                    <!-- Dynamic CMS Studio Hardware/Plugin Visual Rack -->
                                     <svg width="270" height="135" viewBox="0 0 270 135" fill="none">
                                         <rect x="15" y="15" width="240" height="105" rx="6" fill="#111119" stroke="#232332"/>
-                                        <text x="30" y="34" fill="{{ $course->accent_color ?: '#F0A62F' }}" font-size="9" font-weight="800" letter-spacing="1">{{ $course->short_name ?: 'BEATS' }} // PRODUCTION LAB</text>
+                                        <text x="30" y="34" fill="{{ $accentColor }}" font-size="8.5" font-weight="800" letter-spacing="1">
+                                            {{ strtoupper(Str::limit($course->software_name ?: 'STUDIO SUITE', 26)) }}
+                                        </text>
                                         <line x1="30" y1="42" x2="240" y2="42" stroke="#232332"/>
-                                        <!-- 4x2 MPC Pads -->
-                                        <rect x="30" y="50" width="22" height="20" rx="3" fill="#191924" stroke="#2C2C3E"/>
-                                        <rect x="58" y="50" width="22" height="20" rx="3" fill="#191924" stroke="{{ $course->accent_color ?: '#F0A62F' }}" stroke-width="1.5"/>
-                                        <rect x="86" y="50" width="22" height="20" rx="3" fill="#191924" stroke="#2C2C3E"/>
-                                        <rect x="114" y="50" width="22" height="20" rx="3" fill="#191924" stroke="#2C2C3E"/>
-                                        <rect x="30" y="76" width="22" height="20" rx="3" fill="#191924" stroke="{{ $course->accent_color ?: '#F0A62F' }}" stroke-width="1.5"/>
-                                        <rect x="58" y="76" width="22" height="20" rx="3" fill="#191924" stroke="#2C2C3E"/>
-                                        <rect x="86" y="76" width="22" height="20" rx="3" fill="#191924" stroke="#2C2C3E"/>
-                                        <rect x="114" y="76" width="22" height="20" rx="3" fill="#191924" stroke="#2C2C3E"/>
-                                        <!-- Step Sequencer & Knobs -->
-                                        <circle cx="165" cy="65" r="12" fill="#181826" stroke="{{ $course->accent_color ?: '#F0A62F' }}" stroke-width="1.5"/>
-                                        <circle cx="205" cy="65" r="12" fill="#181826" stroke="{{ $course->accent_color ?: '#F0A62F' }}" stroke-width="1.5"/>
-                                        <rect x="145" y="88" width="85" height="14" rx="2" fill="#161622" stroke="#29293A"/>
+                                        <!-- Dynamic Waveform & EQ Curve -->
+                                        <path d="M30 75 Q65 42 100 68 T170 55 T215 75 T240 60" fill="none" stroke="{{ $accentColor }}" stroke-width="2"/>
+                                        <!-- Control Dials & Meters -->
+                                        <circle cx="50" cy="100" r="9" fill="#181824" stroke="{{ $accentColor }}" stroke-width="1.5"/>
+                                        <circle cx="85" cy="100" r="9" fill="#181824" stroke="{{ $accentColor }}" stroke-width="1.5"/>
+                                        <circle cx="120" cy="100" r="9" fill="#181824" stroke="#2D2D3D" stroke-width="1.5"/>
+                                        <rect x="150" y="93" width="75" height="14" rx="2" fill="#161622" stroke="#28283A"/>
+                                        <rect x="153" y="96" width="38" height="8" rx="1" fill="{{ $accentColor }}" fill-opacity="0.8"/>
                                     </svg>
                                 @endif
                             </div>
 
                             <!-- Card Body -->
                             <div class="ak23-course-body">
-                                <h3 class="ak23-course-title">{{ $courseTitle }}</h3>
-                                <p class="ak23-course-outcome">{{ $course->learning_outcome ?: 'Professional music production mastery with studio stems and software package.' }}</p>
+                                <h3 class="ak23-course-title">
+                                    <a href="{{ route('product.details', $course->slug) }}" class="text-white text-decoration-none">
+                                        {{ $courseTitle }}
+                                    </a>
+                                </h3>
+                                <p class="ak23-course-outcome">
+                                    {{ $course->learning_outcome ?: 'Professional music production mastery with studio stems and software package.' }}
+                                </p>
 
                                 <div class="ak23-course-meta">
                                     {{ $lessonCount }} LESSONS &bull; {{ $videoMin }} MIN
                                 </div>
 
-                                <a href="javascript:void(0)" class="ak23-preview-link">
-                                    <i class="las la-play"></i>
+                                <a href="{{ route('product.details', $course->slug) }}" class="ak23-preview-link">
+                                    <i class="las la-play-circle fs-14 me-1"></i>
                                     <span>PREVIEW COURSE</span>
                                 </a>
 
@@ -184,21 +176,21 @@
 
                                 <div class="ak23-software-section">
                                     <div class="ak23-software-tag">LICENSED SOFTWARE INCLUDED</div>
-                                    @php
-                                        $ed = $course->software_edition;
-                                        if (!$ed || str_contains($ed, '[Confirm')) {
-                                            $ed = 'Studio Edition';
-                                        }
-                                    @endphp
-                                    <p class="ak23-software-name">{{ $course->software_name ? $course->software_name . ' — ' . $ed : 'Matching Studio Software License Included' }}</p>
+                                    <p class="ak23-software-name">
+                                        {{ $course->software_name ? $course->software_name . ' — ' . ($course->software_edition ?: 'Studio Edition') : 'Matching Studio Software License Included' }}
+                                    </p>
                                 </div>
 
                                 <!-- Card Footer -->
                                 <div class="ak23-course-card-footer">
                                     <div class="ak23-price-group">
-                                        <span class="ak23-price-val">
-                                            TSH {{ number_format($coursePrice) }}
-                                        </span>
+                                        @if($course->is_free)
+                                            <span class="ak23-price-val text-success">@lang('FREE')</span>
+                                        @else
+                                            <span class="ak23-price-val">
+                                                TSH {{ number_format($coursePrice) }}
+                                            </span>
+                                        @endif
                                         <span class="ak23-price-label">TOTAL PACKAGE PRICE</span>
                                     </div>
 
@@ -214,7 +206,11 @@
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="col-12 text-center py-5">
+                            <p class="text-muted">No courses published in this series yet.</p>
+                        </div>
+                    @endforelse
                 </div>
             </section>
         @endforeach
@@ -223,17 +219,42 @@
 
 @endsection
 
+@push('style')
+<style>
+.ak23-filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #A0A0B0 !important;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+}
+.ak23-filter-btn:hover {
+    background: rgba(251, 175, 67, 0.12);
+    border-color: rgba(251, 175, 67, 0.4);
+    color: #FBAF43 !important;
+}
+.ak23-filter-btn.active {
+    background: #FBAF43;
+    border-color: #FBAF43;
+    color: #0F0F14 !important;
+    font-weight: 700;
+}
+</style>
+@endpush
+
 @push('script')
 <script>
-    // Series filter linked to header navigation
+    // Series filter linked to header navigation & pill buttons
     $(document).ready(function() {
         function applySeriesFilter(seriesSlug) {
             if (!seriesSlug || seriesSlug === 'all') {
                 $('.ak23-series-section').fadeIn(200);
-                $('.ak23-nav-link').removeClass('active');
-                $('.ak23-nav-link[data-series="all"], .ak23-nav-link:not([data-series])').filter(function() {
-                    return $(this).text().trim() === 'All Courses';
-                }).addClass('active');
+                $('.ak23-filter-btn').removeClass('active');
+                $('.ak23-filter-btn[data-series="all"]').addClass('active');
             } else {
                 $('.ak23-series-section').hide();
                 const $target = $('.series-group-' + seriesSlug);
@@ -242,12 +263,26 @@
                 } else {
                     $('.ak23-series-section').fadeIn(200);
                 }
-                $('.ak23-nav-link').removeClass('active');
-                $('.ak23-nav-link[data-series="' + seriesSlug + '"]').addClass('active');
+                $('.ak23-filter-btn').removeClass('active');
+                $('.ak23-filter-btn[data-series="' + seriesSlug + '"]').addClass('active');
             }
         }
 
-        // Intercept clicks on header navigation series links when already on catalog page for instant response
+        // Handle filter buttons click
+        $(document).on('click', '.ak23-filter-btn', function(e) {
+            e.preventDefault();
+            const series = $(this).data('series') || 'all';
+            const url = new URL(window.location.href);
+            if (series === 'all') {
+                url.searchParams.delete('series');
+            } else {
+                url.searchParams.set('series', series);
+            }
+            window.history.pushState({ series: series }, '', url.toString());
+            applySeriesFilter(series);
+        });
+
+        // Intercept clicks on header navigation series links when already on catalog page
         $(document).on('click', '.ak23-nav-link', function(e) {
             const href = $(this).attr('href');
             if (!href) return;
@@ -273,7 +308,7 @@
             applySeriesFilter(series);
         });
 
-        // Add to Cart via AJAX (Deduplicated event handler)
+        // Add to Cart via AJAX
         $(document).off('click', '.ak23-btn-add-cart').on('click', '.ak23-btn-add-cart', function(e) {
             e.preventDefault();
             e.stopImmediatePropagation();

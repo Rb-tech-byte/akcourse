@@ -123,15 +123,18 @@ class ManageProductController extends Controller
             }
         }
 
-        if ($request->has('sku') && $request->sku) { $product->sku = $request->sku; }
-        if ($request->has('learning_outcome')) { $product->learning_outcome = $request->learning_outcome; }
-        if ($request->has('software_name')) { $product->software_name = $request->software_name; }
-        if ($request->has('software_edition')) { $product->software_edition = $request->software_edition; }
-        if ($request->has('stage_label')) { $product->stage_label = $request->stage_label; }
-        if ($request->has('sequence_no')) { $product->sequence_no = (int)$request->sequence_no; }
-        if ($request->has('lesson_count')) { $product->lesson_count = (int)$request->lesson_count; }
-        if ($request->has('video_duration_seconds')) { $product->video_duration_seconds = (int)$request->video_duration_seconds; }
-        if ($request->has('product_type')) { $product->product_type = $request->product_type; }
+        $product->product_type           = $request->product_type ?: ($product->product_type ?: 'course');
+        $product->sku                    = $request->sku ?: ($product->sku ?: ('AK23-' . ($product->product_type == 'bundle' ? 'BUNDLE-' : 'COURSE-') . strtoupper(Str::slug($product->title, '_'))));
+        $product->learning_outcome       = $request->learning_outcome ?: $product->learning_outcome;
+        $product->software_name          = $request->software_name ?: $product->software_name;
+        $product->software_edition       = $request->software_edition ?: $product->software_edition;
+        $product->stage_label            = $request->stage_label ?: $product->stage_label;
+        $product->sequence_no            = $request->has('sequence_no') ? (int)$request->sequence_no : ($product->sequence_no ?: 1);
+        $product->lesson_count           = $request->has('lesson_count') ? (int)$request->lesson_count : ($product->lesson_count ?: 8);
+        $product->video_duration_seconds = $request->has('video_duration_seconds') ? (int)$request->video_duration_seconds : ($product->video_duration_seconds ?: 7200);
+        if ($request->has('accent_color') && $request->accent_color) {
+            $product->accent_color = $request->accent_color;
+        }
 
         $product->save();
 

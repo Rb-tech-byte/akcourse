@@ -109,6 +109,22 @@
                                             <input type="number" name="video_duration_seconds" class="form-control form-control-sm" value="{{ old('video_duration_seconds', 7200) }}">
                                         </div>
                                     </div>
+                                    <div class="row g-2 mb-2">
+                                        <div class="col-12 col-sm-6">
+                                            <label class="form-label fs-12 fw-bold text-dark mb-1">Package Type</label>
+                                            <select name="product_type" class="form-select form-select-sm">
+                                                <option value="course" @selected(old('product_type') == 'course')>Individual Course</option>
+                                                <option value="bundle" @selected(old('product_type') == 'bundle')>Complete Series Bundle</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 col-sm-6">
+                                            <label class="form-label fs-12 fw-bold text-dark mb-1">Card Accent Color</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="color" class="form-control form-control-color form-control-sm" id="accentColorPicker" value="{{ old('accent_color', '#FBAF43') }}" onchange="document.getElementById('accentColorHex').value = this.value">
+                                                <input type="text" name="accent_color" id="accentColorHex" class="form-control form-control-sm font-monospace" value="{{ old('accent_color', '#FBAF43') }}" placeholder="#FBAF43">
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="row g-2">
                                         <div class="col-12">
                                             <label class="form-label fs-12 fw-bold text-dark mb-1">Learning Outcome Headline</label>

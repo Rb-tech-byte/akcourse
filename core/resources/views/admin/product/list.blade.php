@@ -137,10 +137,16 @@
                                                     <img src="{{ getImage(getFilePath('productThumbnail') . '/' . productFilePath($product, 'thumbnail')) }}" alt="{{ $product->title }}" class="w-100 h-100" style="object-fit: cover;">
                                                 </div>
                                                 <div class="overflow-hidden">
-                                                    <a href="{{ route('product.details', $product->slug) }}" target="_blank" class="fw-bold text-dark text-decoration-none d-block text-truncate" style="max-width: 220px;" title="{{ $product->title }}">
-                                                        {{ __($product->title) }}
-                                                    </a>
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <a href="{{ route('product.details', $product->slug) }}" target="_blank" class="fw-bold text-dark text-decoration-none d-block text-truncate" style="max-width: 220px;" title="{{ $product->title }}">
+                                                            {{ __($product->title) }}
+                                                        </a>
+                                                        @if($product->product_type == 'bundle')
+                                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-1 rounded fs-10">Bundle</span>
+                                                        @endif
+                                                    </div>
                                                     <span class="text-muted fs-11">
+                                                        <span class="font-monospace text-secondary fs-10 me-1">{{ $product->sku }}</span> &middot;
                                                         {{ showDateTime($product->created_at, 'd M, Y') }}
                                                         @if($product->demo_url)
                                                             &middot; <a href="{{ $product->demo_url }}" target="_blank" class="text-primary text-decoration-none" title="Live Preview"><i class="las la-play-circle"></i> Preview</a>
