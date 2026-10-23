@@ -148,8 +148,6 @@ class AkcourseAcademySeeder extends Seeder
             $reply->created_at   = Carbon::parse($comment->created_at)->addHours(3);
             $reply->save();
         }
-
-        }
     }
 }
 
