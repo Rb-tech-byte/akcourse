@@ -104,6 +104,14 @@ class User extends Authenticatable
         );
     }
 
+    public function image(): Attribute
+    {
+        return new Attribute(
+            get: fn() => $this->avatar,
+            set: fn($value) => ['avatar' => $value],
+        );
+    }
+
     // SCOPES
     public function scopeActive($query)
     {
