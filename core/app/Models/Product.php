@@ -23,6 +23,10 @@ class Product extends Model {
         return auth()->id() == $this->getAttribute('user_id');
     }
 
+    public function getNameAttribute() {
+        return $this->attributes['title'] ?? ($this->attributes['name'] ?? '');
+    }
+
     public function scopeFeatured($query) {
         return $query->where('is_featured', Status::ENABLE);
     }
