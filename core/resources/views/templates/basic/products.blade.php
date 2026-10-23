@@ -3,7 +3,10 @@
 @section('content')
 
 @php
-    $totalCoursesCount = collect($catalog)->sum(fn($i) => count($i['courses']));
+    $allCourses = collect($catalog)->flatMap(fn($i) => $i['courses']);
+    $allBundles = collect($catalog)->map(fn($i) => $i['bundle'])->filter();
+    $totalCoursesCount = $allCourses->count();
+    $totalBundlesCount = $allBundles->count();
 @endphp
 
 <!-- =========================================================================
@@ -11,18 +14,18 @@
      ========================================================================= -->
 <div class="ak23-catalog-top-bar">
     <div class="ak23-container">
-        <!-- Top Row: Page Title & Real-Time Search Input -->
+        <!-- Top Row: Page Title & Real-Time Search -->
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
             <div>
-                <span class="ak23-catalog-bar-tag"><i class="las la-certificate text-warning me-1"></i> MASTERCLASS CATALOG &amp; LICENSES</span>
-                <h1 class="ak23-catalog-bar-title mb-1">All Training Programs</h1>
-                <p class="text-muted fs-13 mb-0">Every studio course includes matching software, production stems, and lifetime access.</p>
+                <span class="ak23-catalog-bar-tag"><i class="las la-graduation-cap text-warning me-1"></i> AUDIO PRODUCTION CURRICULUM</span>
+                <h1 class="ak23-catalog-bar-title mb-1">Courses &amp; Production Software</h1>
+                <p class="text-muted fs-13 mb-0">Hands-on studio workflows paired with genuine software licenses, multitrack stems, and lifetime access.</p>
             </div>
 
             <!-- Real-time Live Search Input -->
             <div class="ak23-search-box">
                 <i class="las la-search search-icon"></i>
-                <input type="text" id="ak23LiveSearch" class="form-control" placeholder="Search courses, DAWs, plugins, SKUs..." autocomplete="off">
+                <input type="text" id="ak23LiveSearch" class="form-control" placeholder="Search by course title, DAW, plugin, or topic..." autocomplete="off">
                 <button type="button" id="ak23ClearSearch" class="clear-btn d-none" title="Clear search">
                     <i class="las la-times-circle"></i>
                 </button>
@@ -34,7 +37,7 @@
             <!-- Category Series Filter Pills -->
             <div class="d-flex align-items-center gap-2 flex-wrap" id="ak23SeriesFilterPills">
                 <button type="button" class="btn btn-sm ak23-filter-btn {{ !request('series') && !request('category') ? 'active' : '' }}" data-series="all">
-                    <span>All Series ({{ $totalCoursesCount }})</span>
+                    <span>All Courses ({{ $totalCoursesCount }})</span>
                 </button>
                 @foreach($catalog as $cItem)
                     @php
@@ -49,6 +52,10 @@
                         <span>{{ $cSeries->title }} ({{ count($cItem['courses']) }})</span>
                     </button>
                 @endforeach
+                <!-- Bundles Quick Filter Pill -->
+                <button type="button" class="btn btn-sm ak23-filter-btn {{ request('series') === 'bundles' ? 'active' : '' }}" data-series="bundles">
+                    <span><i class="las la-cubes me-1"></i>Series Bundles ({{ $totalBundlesCount }})</span>
+                </button>
             </div>
 
             <!-- Right Controls: Level Filter, Sort Dropdown & Match Counter -->
@@ -60,7 +67,7 @@
                     <option value="beginner">Beginner</option>
                     <option value="developing-your-skills">Developing Skills</option>
                     <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced / Workflow</option>
+                    <option value="advanced">Advanced</option>
                 </select>
 
                 <!-- Sort Dropdown -->
@@ -69,12 +76,12 @@
                     <option value="price-asc">Price: Low to High</option>
                     <option value="price-desc">Price: High to Low</option>
                     <option value="title-asc">Title: A to Z</option>
-                    <option value="lessons-desc">Most Lessons</option>
+                    <option value="lessons-desc">Lessons: High to Low</option>
                 </select>
 
                 <!-- Live Results Count -->
                 <div class="text-muted fs-12 px-2" id="ak23LiveCount">
-                    Showing <strong class="text-white" id="ak23CountNum">{{ $totalCoursesCount }}</strong> programs
+                    Showing <strong class="text-white" id="ak23CountNum">{{ $totalCoursesCount }}</strong> courses
                 </div>
             </div>
         </div>
@@ -91,253 +98,149 @@
 </div>
 
 <!-- =========================================================================
-     SERIES CATALOG BODY (STRICTLY 3 COURSES PER ROW LAYOUT)
+     CATALOG BODY (STRICTLY 3 PER ROW WITH 6-PER-PAGE PAGINATION)
      ========================================================================= -->
 <div class="ak23-catalog-body">
     <div class="ak23-container">
+        <!-- Target Anchor for Smooth Page Switch Scrolling -->
+        <div id="ak23CatalogTopTarget"></div>
 
         <!-- Zero Results Fallback Banner -->
         <div id="ak23NoResults" class="ak23-no-results text-center py-5 d-none">
-            <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 68px; height: 68px; background: rgba(251, 175, 67, 0.1); color: #FBAF43; font-size: 32px;">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 64px; height: 64px; background: rgba(251, 175, 67, 0.1); color: #FBAF43; font-size: 28px;">
                 <i class="las la-search"></i>
             </div>
-            <h4 class="text-white fw-bold mb-1">No courses found matching your criteria</h4>
-            <p class="text-muted fs-13 mb-3 mx-auto" style="max-width: 480px;">
-                We couldn't find any programs matching <span class="text-warning fw-bold" id="ak23QueryDisplay">""</span>. Try searching for DAWs like Cubase, FL Studio, Ableton, or plugins like Voxity and Nectar.
+            <h4 class="text-white fw-bold mb-1">No courses found matching your search</h4>
+            <p class="text-muted fs-13 mb-3 mx-auto" style="max-width: 460px;">
+                We couldn't find any courses matching <span class="text-warning fw-bold" id="ak23QueryDisplay">""</span>. Try searching by DAW (e.g., Cubase, FL Studio, Ableton) or specific skills like vocal tuning or beat arrangement.
             </p>
             <button type="button" class="btn btn-sm btn--base rounded-pill px-4 py-2" id="ak23ResetBtn">
                 <i class="las la-redo me-1"></i> Reset All Filters
             </button>
         </div>
 
-        @foreach($catalog as $sIndex => $item)
-            @php
-                $series = $item['series'];
-                $courses = $item['courses'];
-                $bundle = $item['bundle'];
-                $seriesSeqPadded = str_pad($series->sequence_no, 2, '0', STR_PAD_LEFT);
-                $isSeriesActive = !request('series') && !request('category') 
-                    || request('series') === 'all' 
-                    || request('series') === $series->slug 
-                    || request('category') === $series->slug
-                    || (string)request('category') === (string)$series->id;
-            @endphp
-
-            <section class="ak23-series-section series-group-{{ $series->slug }}" 
-                     id="series-{{ $series->slug }}" 
-                     data-series-slug="{{ $series->slug }}" 
-                     data-category-id="{{ $series->id }}"
-                     data-series-title="{{ strtolower($series->title) }}"
-                     style="{{ $isSeriesActive ? '' : 'display: none;' }}">
-                
-                <!-- Series Section Header -->
-                <div class="ak23-series-header d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
-                    <div>
-                        <div class="ak23-series-tag">PRODUCT {{ $seriesSeqPadded }}</div>
-                        <h2 class="ak23-series-title mb-1">{{ $series->title }}</h2>
-                        <p class="ak23-series-desc mb-0">{{ $series->description }}</p>
-                    </div>
-
-                    <a href="{{ route('products', ['series' => $series->slug]) }}" 
-                       class="ak23-btn-series-link ak23-series-filter-trigger" 
-                       data-series="{{ $series->slug }}" 
-                       data-title="{{ $series->title }}"
-                       title="Filter only {{ $series->title }}">
-                        <span>Filter this series</span>
-                        <i class="las la-arrow-right"></i>
-                    </a>
-                </div>
-
-                <!-- Complete Package Banner (Bundle) -->
-                @if($bundle)
-                    @php
-                        $bundleTitle = $bundle->title ?: ($bundle->name ?? 'Complete Series');
-                        $bundlePrice = (float)($bundle->price ?: 480000);
-                        $bundleSku = $bundle->sku ?: ('AK23-BUNDLE-' . strtoupper($series->slug));
-                    @endphp
-                    <div class="ak23-complete-pkg-banner mb-4" 
-                         data-bundle-title="{{ strtolower($bundleTitle) }}"
-                         data-bundle-desc="{{ strtolower($bundle->description) }}"
-                         data-series="{{ $series->slug }}">
+        <!-- Category Information & Bundle Highlights (Shown when a category is selected) -->
+        <div id="ak23CategoryHeaderWrapper" class="mb-4 d-none">
+            @foreach($catalog as $item)
+                @php
+                    $series = $item['series'];
+                    $bundle = $item['bundle'];
+                @endphp
+                <div class="ak23-category-summary-box series-summary-{{ $series->slug }} d-none" data-series-slug="{{ $series->slug }}">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
                         <div>
-                            <div class="ak23-pkg-banner-badge">COMPLETE PACKAGE &middot; ALL-IN-ONE</div>
-                            <h3 class="ak23-pkg-banner-title">
-                                <a href="{{ route('product.details', $bundle->slug) }}" class="text-white text-decoration-none">
-                                    {{ $bundleTitle }}
-                                </a>
-                            </h3>
-                            <p class="ak23-pkg-banner-desc mb-0">{{ $bundle->description }}</p>
+                            <span class="ak23-series-track-badge"><i class="las la-layer-group me-1"></i> CURRICULUM TRACK</span>
+                            <h2 class="ak23-series-title mb-1">{{ $series->title }}</h2>
+                            <p class="ak23-series-desc mb-0">{{ $series->description }}</p>
                         </div>
-
-                        <div class="ak23-pkg-banner-right">
-                            <span class="ak23-pkg-banner-price">
-                                TSH {{ number_format($bundlePrice) }}
-                            </span>
-                            <div class="d-flex align-items-center gap-2">
-                                <button type="button" class="btn btn-outline-warning ak23-btn-add-cart px-3" data-sku="{{ $bundleSku }}" title="Add Bundle to Cart">
-                                    <i class="las la-cart-plus fs-18"></i>
-                                </button>
-                                <a href="{{ route('order.checkout', ['sku' => $bundleSku]) }}" class="ak23-btn-pkg-get">
-                                    <span>Get complete series</span>
-                                    <i class="las la-arrow-right"></i>
-                                </a>
-                            </div>
-                        </div>
+                        <a href="{{ route('products') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fs-12 ak23-view-all-trigger">
+                            <i class="las la-th-large me-1"></i> View All Courses
+                        </a>
                     </div>
-                @endif
 
-                <!-- Course Cards Grid: Strictly 3 Columns per Row -->
-                <div class="ak23-course-grid-3">
-                    @forelse($courses as $course)
+                    @if($bundle)
                         @php
-                            $seqPadded = str_pad($course->sequence_no ?: 1, 2, '0', STR_PAD_LEFT);
-                            $stageSlug = Str::slug($course->stage_label ?: 'beginner');
-                            $licenseLabel = ($series->slug === 'vocal-mixing') ? 'Plugin License Included' : 'Software License Included';
-                            $courseTitle = $course->title ?: $course->name;
-                            $coursePrice = (float)$course->price;
-                            $courseSku = $course->sku ?: ('AK23-COURSE-' . $course->id);
-                            $lessonCount = $course->lesson_count ?: 8;
-                            $videoMin = $course->video_duration_seconds ? round($course->video_duration_seconds / 60) : 120;
-                            $accentColor = $course->accent_color ?: '#FBAF43';
-                            $hasCustomThumb = !empty($course->thumbnail) && $course->thumbnail !== 'default.png' && file_exists(public_path(getFilePath('productThumbnail') . '/' . productFilePath($course, 'thumbnail')));
-                            $detailUrl = route('product.details', $course->slug);
-                            $searchHaystack = strtolower($courseTitle . ' ' . $course->software_name . ' ' . $course->software_edition . ' ' . $course->stage_label . ' ' . $course->learning_outcome . ' ' . $courseSku . ' ' . $series->title . ' ' . $series->slug);
+                            $bundleTitle = $bundle->title ?: ($bundle->name ?? 'Complete Series');
+                            $bundlePrice = (float)($bundle->price ?: 480000);
+                            $bundleSku = $bundle->sku ?: ('AK23-BUNDLE-' . strtoupper($series->slug));
                         @endphp
-
-                        <div class="ak23-card-minimal ak23-course-item"
-                             data-url="{{ $detailUrl }}"
-                             data-search="{{ $searchHaystack }}"
-                             data-title="{{ strtolower($courseTitle) }}"
-                             data-software="{{ strtolower($course->software_name) }}"
-                             data-stage="{{ $stageSlug }}"
-                             data-series="{{ $series->slug }}"
-                             data-category-id="{{ $series->id }}"
-                             data-price="{{ $coursePrice }}"
-                             data-seq="{{ (int)($course->sequence_no ?: 99) }}"
-                             data-lessons="{{ (int)$lessonCount }}"
-                             tabindex="0"
-                             role="link"
-                             aria-label="{{ $courseTitle }}">
-
-                            <!-- Header Visual: Custom Image or Dynamic Native Audio Rack Vector -->
-                            <div class="ak23-card-visual-compact">
-                                <span class="ak23-pill-seq">#{{ $seqPadded }}</span>
-                                <span class="ak23-pill-stage" style="border-color: {{ $accentColor }}44; color: {{ $accentColor }}; background: {{ $accentColor }}18;">
-                                    {{ strtoupper($course->stage_label ?: 'COURSE') }}
-                                </span>
-
-                                @if($hasCustomThumb)
-                                    <img src="{{ getImage(getFilePath('productThumbnail') . '/' . productFilePath($course, 'thumbnail')) }}" alt="{{ $courseTitle }}" class="ak23-card-img-compact">
-                                @else
-                                    <!-- Dynamic Minimal Studio Audio Hardware Graphic (SVG) -->
-                                    <svg viewBox="0 0 360 136" fill="none" xmlns="http://www.w3.org/2000/svg" class="ak23-hardware-rack-svg" preserveAspectRatio="none">
-                                        <rect width="360" height="136" fill="#10111A"/>
-                                        <defs>
-                                            <radialGradient id="glow-{{ $course->id }}" cx="50%" cy="50%" r="50%">
-                                                <stop offset="0%" stop-color="{{ $accentColor }}" stop-opacity="0.16"/>
-                                                <stop offset="100%" stop-color="{{ $accentColor }}" stop-opacity="0"/>
-                                            </radialGradient>
-                                            <linearGradient id="meter-{{ $course->id }}" x1="0%" y1="0%" x2="100%" y2="0%">
-                                                <stop offset="0%" stop-color="#20BF6B"/>
-                                                <stop offset="70%" stop-color="#FBAF43"/>
-                                                <stop offset="100%" stop-color="#EB3B5A"/>
-                                            </linearGradient>
-                                        </defs>
-                                        <!-- Soft Radial Lighting -->
-                                        <rect width="360" height="136" fill="url(#glow-{{ $course->id }})"/>
-                                        <!-- Studio Guide Lines -->
-                                        <line x1="16" y1="28" x2="344" y2="28" stroke="#1D1F2D" stroke-width="1"/>
-                                        <line x1="16" y1="108" x2="344" y2="108" stroke="#1D1F2D" stroke-width="1"/>
-                                        <!-- Chassis Screws -->
-                                        <circle cx="12" cy="12" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
-                                        <circle cx="348" cy="12" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
-                                        <circle cx="12" cy="124" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
-                                        <circle cx="348" cy="124" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
-                                        <!-- Software Readout Screen -->
-                                        <rect x="24" y="38" width="180" height="26" rx="4" fill="#0C0D14" stroke="#222436"/>
-                                        <circle cx="34" cy="51" r="2.5" fill="{{ $accentColor }}"/>
-                                        <text x="44" y="55" fill="{{ $accentColor }}" font-size="9" font-family="monospace" font-weight="700" letter-spacing="1">
-                                            {{ strtoupper(Str::limit($course->software_name ?: 'STUDIO DAW', 22)) }}
-                                        </text>
-                                        <!-- Audio Waveform Line -->
-                                        <path d="M214 51 Q 230 36, 245 51 T 275 51 T 305 42 T 335 51" fill="none" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
-                                        <!-- Knobs & Meters -->
-                                        <g transform="translate(36, 76)">
-                                            <circle cx="14" cy="14" r="12" fill="#151724" stroke="#2A2C40" stroke-width="1.5"/>
-                                            <line x1="14" y1="4" x2="14" y2="10" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
-                                            <text x="14" y="35" fill="#6A6C7E" font-size="7.5" font-weight="700" text-anchor="middle">GAIN</text>
-                                        </g>
-                                        <g transform="translate(76, 76)">
-                                            <circle cx="14" cy="14" r="12" fill="#151724" stroke="#2A2C40" stroke-width="1.5"/>
-                                            <line x1="14" y1="4" x2="14" y2="10" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
-                                            <text x="14" y="35" fill="#6A6C7E" font-size="7.5" font-weight="700" text-anchor="middle">FREQ</text>
-                                        </g>
-                                        <g transform="translate(136, 80)">
-                                            <rect width="110" height="12" rx="3" fill="#0C0D14" stroke="#222436"/>
-                                            <rect x="3" y="3" width="75" height="6" rx="1.5" fill="url(#meter-{{ $course->id }})"/>
-                                            <text x="55" y="24" fill="#6A6C7E" font-size="7" font-weight="700" text-anchor="middle">MASTER VU &middot; 48kHz</text>
-                                        </g>
-                                        <g transform="translate(260, 80)">
-                                            <rect width="84" height="18" rx="4" fill="{{ $accentColor }}15" stroke="{{ $accentColor }}40"/>
-                                            <text x="302" y="92" fill="{{ $accentColor }}" font-size="8" font-weight="800" text-anchor="middle">DSP ENGINE</text>
-                                        </g>
-                                    </svg>
-                                @endif
-                            </div>
-
-                            <!-- Card Body -->
-                            <div class="ak23-card-body-compact">
-                                <!-- Title with Native Stretched Link for Full Clickability -->
-                                <h3 class="ak23-card-title-compact" title="{{ $courseTitle }}">
-                                    <a href="{{ $detailUrl }}" class="ak23-card-title-link stretched-link text-white text-decoration-none">
-                                        {{ $courseTitle }}
+                        <div class="ak23-complete-pkg-banner">
+                            <div>
+                                <div class="ak23-pkg-banner-badge"><i class="las la-cubes me-1"></i> COMPLETE SERIES BUNDLE</div>
+                                <h3 class="ak23-pkg-banner-title">
+                                    <a href="{{ route('product.details', $bundle->slug) }}" class="text-white text-decoration-none">
+                                        {{ $bundleTitle }}
                                     </a>
                                 </h3>
+                                <p class="ak23-pkg-banner-desc mb-0">{{ $bundle->description }}</p>
+                            </div>
 
-                                <!-- Included Software Tag -->
-                                <div class="ak23-card-soft-pill text-truncate" title="{{ $course->software_name }} ({{ $course->software_edition }})">
-                                    <i class="las la-certificate" style="color: {{ $accentColor }}; font-size: 13px;"></i>
-                                    <span class="text-white fw-semibold text-truncate">{{ $course->software_name ?: 'Studio Software' }}</span>
-                                    <span class="text-muted fs-11 ms-auto text-truncate">({{ $course->software_edition ?: 'Included' }})</span>
+                            <div class="ak23-pkg-banner-right">
+                                <span class="ak23-pkg-banner-price">
+                                    TSH {{ number_format($bundlePrice) }}
+                                </span>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button type="button" class="btn btn-outline-warning ak23-btn-add-cart px-3" data-sku="{{ $bundleSku }}" title="Add Bundle to Cart">
+                                        <i class="las la-cart-plus fs-18"></i>
+                                    </button>
+                                    <a href="{{ route('order.checkout', ['sku' => $bundleSku]) }}" class="ak23-btn-pkg-get">
+                                        <span>Enroll in Complete Series</span>
+                                        <i class="las la-arrow-right"></i>
+                                    </a>
                                 </div>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            @endforeach
+        </div>
 
-                                <!-- Outcome / Snippet -->
+        <!-- Standalone Series Bundles View (Active when Series Bundles tab is clicked) -->
+        <div id="ak23BundlesGridWrapper" class="d-none mb-4">
+            <div class="mb-3">
+                <span class="ak23-series-track-badge"><i class="las la-cubes me-1"></i> ALL-IN-ONE PACKAGES</span>
+                <h2 class="ak23-series-title mb-1">Complete Curriculum Bundles</h2>
+                <p class="ak23-series-desc mb-0">Get the full course track and included perpetual software licenses at a significant bundled discount.</p>
+            </div>
+            <div class="ak23-course-grid-3">
+                @foreach($catalog as $item)
+                    @php
+                        $bundle = $item['bundle'];
+                    @endphp
+                    @if($bundle)
+                        @php
+                            $bTitle = $bundle->title ?: ($bundle->name ?? 'Complete Series');
+                            $bPrice = (float)($bundle->price ?: 480000);
+                            $bSku = $bundle->sku ?: ('AK23-BUNDLE-' . $bundle->id);
+                            $bUrl = route('product.details', $bundle->slug);
+                            $bAccent = $bundle->accent_color ?: '#FBAF43';
+                        @endphp
+                        <div class="ak23-card-minimal ak23-bundle-card-item"
+                             data-url="{{ $bUrl }}"
+                             data-title="{{ strtolower($bTitle) }}"
+                             data-price="{{ $bPrice }}"
+                             data-series="{{ $item['series']->slug }}"
+                             tabindex="0"
+                             role="link"
+                             aria-label="{{ $bTitle }}">
+
+                            <div class="ak23-card-visual-compact" style="height: 120px;">
+                                <span class="ak23-pill-stage" style="border-color: #FBAF4355; color: #FBAF43; background: rgba(251, 175, 67, 0.12);">
+                                    FULL TRACK BUNDLE
+                                </span>
+                                <svg viewBox="0 0 360 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="ak23-hardware-rack-svg" preserveAspectRatio="none">
+                                    <rect width="360" height="120" fill="#12131F"/>
+                                    <circle cx="180" cy="60" r="90" fill="{{ $bAccent }}" fill-opacity="0.12"/>
+                                    <line x1="20" y1="24" x2="340" y2="24" stroke="#222436" stroke-width="1"/>
+                                    <line x1="20" y1="96" x2="340" y2="96" stroke="#222436" stroke-width="1"/>
+                                    <text x="180" y="55" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">
+                                        {{ strtoupper($item['series']->title) }}
+                                    </text>
+                                    <text x="180" y="74" fill="{{ $bAccent }}" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="1.5">
+                                        ALL COURSES &amp; SOFTWARE LICENSES INCLUDED
+                                    </text>
+                                </svg>
+                            </div>
+
+                            <div class="ak23-card-body-compact">
+                                <h3 class="ak23-card-title-compact" title="{{ $bTitle }}">
+                                    <a href="{{ $bUrl }}" class="ak23-card-title-link stretched-link text-white text-decoration-none">
+                                        {{ $bTitle }}
+                                    </a>
+                                </h3>
                                 <p class="ak23-card-outcome-compact">
-                                    {{ $course->learning_outcome ?: $course->description }}
+                                    {{ $bundle->description }}
                                 </p>
-
-                                <!-- Specs Bar -->
-                                <div class="ak23-card-specs-bar">
-                                    <span><i class="las la-play-circle text-warning me-1"></i>{{ $lessonCount }} Lessons</span>
-                                    <span><i class="las la-clock text-warning me-1"></i>{{ $videoMin }} Min</span>
-                                    <span class="text-success"><i class="las la-shield-alt me-1"></i>License Inc.</span>
-                                </div>
-
-                                <!-- Card Footer: Price & Actions (z-index ensures click priority over card link) -->
                                 <div class="ak23-card-footer-compact">
                                     <div>
-                                        <span class="ak23-price-sub">PACKAGE PRICE</span>
-                                        @if($course->is_free)
-                                            <span class="ak23-price-tag text-success">FREE</span>
-                                        @else
-                                            <span class="ak23-price-tag">
-                                                TSH {{ number_format($coursePrice) }}
-                                            </span>
-                                        @endif
+                                        <span class="ak23-price-sub">BUNDLE SAVINGS</span>
+                                        <span class="ak23-price-tag">TSH {{ number_format($bPrice) }}</span>
                                     </div>
-
                                     <div class="d-flex align-items-center gap-1 ak23-card-actions-wrapper">
-                                        <!-- Quick Add to Cart Button -->
-                                        <button type="button" 
-                                                class="btn btn-sm btn-outline-warning ak23-btn-add-cart ak23-action-btn rounded-circle p-0 d-inline-flex align-items-center justify-content-center" 
-                                                style="width: 32px; height: 32px;"
-                                                data-sku="{{ $courseSku }}" 
-                                                title="Add to Cart">
+                                        <button type="button" class="btn btn-sm btn-outline-warning ak23-btn-add-cart ak23-action-btn rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" data-sku="{{ $bSku }}" title="Add to Cart">
                                             <i class="las la-cart-plus fs-16"></i>
                                         </button>
-                                        <!-- Direct Checkout / Details Button -->
-                                        <a href="{{ route('order.checkout', ['sku' => $courseSku]) }}" 
-                                           class="btn btn-sm btn--base ak23-btn-enroll ak23-action-btn rounded-pill px-3 py-1 fs-12 fw-semibold d-inline-flex align-items-center gap-1">
+                                        <a href="{{ route('order.checkout', ['sku' => $bSku]) }}" class="btn btn-sm btn--base ak23-btn-enroll ak23-action-btn rounded-pill px-3 py-1 fs-12 fw-semibold d-inline-flex align-items-center gap-1">
                                             <span>Enroll</span>
                                             <i class="las la-arrow-right fs-10"></i>
                                         </a>
@@ -345,14 +248,198 @@
                                 </div>
                             </div>
                         </div>
-                    @empty
-                        <div class="col-12 text-center py-5">
-                            <p class="text-muted">No courses published in this series yet.</p>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+
+        <!-- Main Course Grid: Strictly 3 Columns per Row, 6 Courses per Page -->
+        <div class="ak23-course-grid-3" id="ak23CourseGrid">
+            @foreach($catalog as $cItem)
+                @php
+                    $series = $cItem['series'];
+                    $courses = $cItem['courses'];
+                @endphp
+                @foreach($courses as $course)
+                    @php
+                        $stageSlug = Str::slug($course->stage_label ?: 'beginner');
+                        $courseTitle = $course->title ?: $course->name;
+                        $coursePrice = (float)$course->price;
+                        $courseSku = $course->sku ?: ('AK23-COURSE-' . $course->id);
+                        $lessonCount = $course->lesson_count ?: 8;
+                        $videoMin = $course->video_duration_seconds ? round($course->video_duration_seconds / 60) : 120;
+                        $accentColor = $course->accent_color ?: '#FBAF43';
+                        $hasCustomThumb = !empty($course->thumbnail) && $course->thumbnail !== 'default.png' && file_exists(public_path(getFilePath('productThumbnail') . '/' . productFilePath($course, 'thumbnail')));
+                        $detailUrl = route('product.details', $course->slug);
+                        $searchHaystack = strtolower($courseTitle . ' ' . $course->software_name . ' ' . $course->software_edition . ' ' . $course->stage_label . ' ' . $course->learning_outcome . ' ' . $courseSku . ' ' . $series->title . ' ' . $series->slug);
+                    @endphp
+
+                    <div class="ak23-card-minimal ak23-course-item"
+                         data-url="{{ $detailUrl }}"
+                         data-search="{{ $searchHaystack }}"
+                         data-title="{{ strtolower($courseTitle) }}"
+                         data-software="{{ strtolower($course->software_name) }}"
+                         data-stage="{{ $stageSlug }}"
+                         data-series="{{ $series->slug }}"
+                         data-category-id="{{ $series->id }}"
+                         data-price="{{ $coursePrice }}"
+                         data-seq="{{ (int)($course->sequence_no ?: 99) }}"
+                         data-lessons="{{ (int)$lessonCount }}"
+                         tabindex="0"
+                         role="link"
+                         aria-label="{{ $courseTitle }}">
+
+                        <!-- Header Visual: Custom Image or Dynamic Studio Hardware Rack Vector -->
+                        <div class="ak23-card-visual-compact">
+                            <!-- Track & Series Identifier Badge (Human Copy) -->
+                            <span class="ak23-pill-category" style="color: {{ $accentColor }}; background: {{ $accentColor }}18; border-color: {{ $accentColor }}33;">
+                                {{ $series->title }}
+                            </span>
+                            <!-- Difficulty Level Badge -->
+                            <span class="ak23-pill-stage" style="border-color: {{ $accentColor }}44; color: {{ $accentColor }}; background: {{ $accentColor }}18;">
+                                {{ strtoupper($course->stage_label ?: 'COURSE') }}
+                            </span>
+
+                            @if($hasCustomThumb)
+                                <img src="{{ getImage(getFilePath('productThumbnail') . '/' . productFilePath($course, 'thumbnail')) }}" alt="{{ $courseTitle }}" class="ak23-card-img-compact">
+                            @else
+                                <!-- Dynamic Studio Audio Hardware Vector Graphic -->
+                                <svg viewBox="0 0 360 136" fill="none" xmlns="http://www.w3.org/2000/svg" class="ak23-hardware-rack-svg" preserveAspectRatio="none">
+                                    <rect width="360" height="136" fill="#10111A"/>
+                                    <defs>
+                                        <radialGradient id="glow-{{ $course->id }}" cx="50%" cy="50%" r="50%">
+                                            <stop offset="0%" stop-color="{{ $accentColor }}" stop-opacity="0.16"/>
+                                            <stop offset="100%" stop-color="{{ $accentColor }}" stop-opacity="0"/>
+                                        </radialGradient>
+                                        <linearGradient id="meter-{{ $course->id }}" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#20BF6B"/>
+                                            <stop offset="70%" stop-color="#FBAF43"/>
+                                            <stop offset="100%" stop-color="#EB3B5A"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <rect width="360" height="136" fill="url(#glow-{{ $course->id }})"/>
+                                    <line x1="16" y1="28" x2="344" y2="28" stroke="#1D1F2D" stroke-width="1"/>
+                                    <line x1="16" y1="108" x2="344" y2="108" stroke="#1D1F2D" stroke-width="1"/>
+                                    <circle cx="12" cy="12" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
+                                    <circle cx="348" cy="12" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
+                                    <circle cx="12" cy="124" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
+                                    <circle cx="348" cy="124" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
+                                    
+                                    <!-- Dynamic Software Screen -->
+                                    <rect x="24" y="38" width="180" height="26" rx="4" fill="#0C0D14" stroke="#222436"/>
+                                    <circle cx="34" cy="51" r="2.5" fill="{{ $accentColor }}"/>
+                                    <text x="44" y="55" fill="{{ $accentColor }}" font-size="9" font-family="monospace" font-weight="700" letter-spacing="1">
+                                        {{ strtoupper(Str::limit($course->software_name ?: 'STUDIO WORKSTATION', 22)) }}
+                                    </text>
+                                    
+                                    <!-- Waveform Spectrum Trace -->
+                                    <path d="M214 51 Q 230 36, 245 51 T 275 51 T 305 42 T 335 51" fill="none" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
+                                    
+                                    <!-- Studio Hardware Knobs -->
+                                    <g transform="translate(36, 76)">
+                                        <circle cx="14" cy="14" r="12" fill="#151724" stroke="#2A2C40" stroke-width="1.5"/>
+                                        <line x1="14" y1="4" x2="14" y2="10" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
+                                        <text x="14" y="35" fill="#6A6C7E" font-size="7.5" font-weight="700" text-anchor="middle">INPUT</text>
+                                    </g>
+                                    <g transform="translate(76, 76)">
+                                        <circle cx="14" cy="14" r="12" fill="#151724" stroke="#2A2C40" stroke-width="1.5"/>
+                                        <line x1="14" y1="4" x2="14" y2="10" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
+                                        <text x="14" y="35" fill="#6A6C7E" font-size="7.5" font-weight="700" text-anchor="middle">OUTPUT</text>
+                                    </g>
+                                    
+                                    <!-- Master VU Meter -->
+                                    <g transform="translate(136, 80)">
+                                        <rect width="110" height="12" rx="3" fill="#0C0D14" stroke="#222436"/>
+                                        <rect x="3" y="3" width="75" height="6" rx="1.5" fill="url(#meter-{{ $course->id }})"/>
+                                        <text x="55" y="24" fill="#6A6C7E" font-size="7" font-weight="700" text-anchor="middle">MASTER VU &middot; 48kHz</text>
+                                    </g>
+                                    
+                                    <!-- Studio Specs Badge -->
+                                    <g transform="translate(260, 80)">
+                                        <rect width="84" height="18" rx="4" fill="{{ $accentColor }}15" stroke="{{ $accentColor }}40"/>
+                                        <text x="302" y="92" fill="{{ $accentColor }}" font-size="8" font-weight="800" text-anchor="middle">24-BIT / 48kHz</text>
+                                    </g>
+                                </svg>
+                            @endif
                         </div>
-                    @endforelse
-                </div>
-            </section>
-        @endforeach
+
+                        <!-- Card Body -->
+                        <div class="ak23-card-body-compact">
+                            <!-- Title with Stretched Link for Full Clickability -->
+                            <h3 class="ak23-card-title-compact" title="{{ $courseTitle }}">
+                                <a href="{{ $detailUrl }}" class="ak23-card-title-link stretched-link text-white text-decoration-none">
+                                    {{ $courseTitle }}
+                                </a>
+                            </h3>
+
+                            <!-- Included Software Tag -->
+                            <div class="ak23-card-soft-pill text-truncate" title="{{ $course->software_name }} ({{ $course->software_edition }})">
+                                <i class="las la-certificate" style="color: {{ $accentColor }}; font-size: 13px;"></i>
+                                <span class="text-white fw-semibold text-truncate">{{ $course->software_name ?: 'Studio Software' }}</span>
+                                <span class="text-muted fs-11 ms-auto text-truncate">({{ $course->software_edition ?: 'Included' }})</span>
+                            </div>
+
+                            <!-- Outcome / Brief Description -->
+                            <p class="ak23-card-outcome-compact">
+                                {{ $course->learning_outcome ?: $course->description }}
+                            </p>
+
+                            <!-- Specs Bar -->
+                            <div class="ak23-card-specs-bar">
+                                <span><i class="las la-play-circle text-warning me-1"></i>{{ $lessonCount }} Lessons</span>
+                                <span><i class="las la-clock text-warning me-1"></i>{{ $videoMin }} Min</span>
+                                <span class="text-success"><i class="las la-shield-alt me-1"></i>License Inc.</span>
+                            </div>
+
+                            <!-- Card Footer: Price & Direct Actions -->
+                            <div class="ak23-card-footer-compact">
+                                <div>
+                                    <span class="ak23-price-sub">COURSE PRICE</span>
+                                    @if($course->is_free)
+                                        <span class="ak23-price-tag text-success">FREE</span>
+                                    @else
+                                        <span class="ak23-price-tag">
+                                            TSH {{ number_format($coursePrice) }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <div class="d-flex align-items-center gap-1 ak23-card-actions-wrapper">
+                                    <button type="button" 
+                                            class="btn btn-sm btn-outline-warning ak23-btn-add-cart ak23-action-btn rounded-circle p-0 d-inline-flex align-items-center justify-content-center" 
+                                            style="width: 32px; height: 32px;"
+                                            data-sku="{{ $courseSku }}" 
+                                            title="Add to Cart">
+                                        <i class="las la-cart-plus fs-16"></i>
+                                    </button>
+                                    <a href="{{ route('order.checkout', ['sku' => $courseSku]) }}" 
+                                       class="btn btn-sm btn--base ak23-btn-enroll ak23-action-btn rounded-pill px-3 py-1 fs-12 fw-semibold d-inline-flex align-items-center gap-1">
+                                        <span>Enroll</span>
+                                        <i class="las la-arrow-right fs-10"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endforeach
+        </div>
+
+        <!-- =====================================================================
+             PAGINATION CONTROLS (AT LEAST 6 ITEMS PER PAGE)
+             ===================================================================== -->
+        <div id="ak23PaginationWrapper" class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-4 mt-2 border-top" style="border-color: rgba(255, 255, 255, 0.08) !important;">
+            <div class="text-muted fs-13" id="ak23PaginationSummary">
+                Showing <strong>1–6</strong> of <strong>{{ $totalCoursesCount }}</strong> courses
+            </div>
+
+            <nav aria-label="Course catalog page navigation">
+                <ul class="pagination pagination-sm mb-0 gap-1" id="ak23PaginationList">
+                    <!-- Dynamic page numbers rendered by JS -->
+                </ul>
+            </nav>
+        </div>
+
     </div>
 </div>
 
@@ -360,7 +447,7 @@
 
 @push('style')
 <style>
-/* Catalog Control Bar & Top Area */
+/* Catalog Top Bar & Layout */
 .ak23-catalog-top-bar {
     padding: 32px 0 20px;
     background: radial-gradient(circle at 50% 0%, rgba(251, 175, 67, 0.08) 0%, transparent 60%), #0D0E15;
@@ -395,7 +482,7 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 22px;
-    margin-bottom: 44px;
+    margin-bottom: 30px;
 }
 
 @media (max-width: 991px) {
@@ -444,7 +531,7 @@
     box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.2);
 }
 
-/* Header Visual: 136px height with clean bottom edge */
+/* Header Visual: 136px height */
 .ak23-card-visual-compact {
     height: 136px;
     background: linear-gradient(180deg, #161824 0%, #0E0F16 100%);
@@ -471,27 +558,24 @@
     width: 100%;
     height: 100%;
     display: block;
-    transition: opacity 0.3s ease;
 }
 
-/* Floating Badges */
-.ak23-pill-seq {
+/* Badges on Visual Header */
+.ak23-pill-category {
     position: absolute;
     top: 10px;
     left: 10px;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: rgba(18, 19, 28, 0.88);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
     backdrop-filter: blur(6px);
-    border: 1px solid rgba(251, 175, 67, 0.45);
-    color: #FBAF43;
-    font-size: 10.5px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    border: 1px solid transparent;
     z-index: 2;
+    max-width: 55%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ak23-pill-stage {
@@ -539,7 +623,7 @@
     color: #FBAF43 !important;
 }
 
-/* Software License Pill */
+/* Software Included Pill */
 .ak23-card-soft-pill {
     display: inline-flex;
     align-items: center;
@@ -629,7 +713,7 @@
 /* Live Search Box */
 .ak23-search-box {
     position: relative;
-    max-width: 340px;
+    max-width: 360px;
     width: 100%;
 }
 
@@ -750,6 +834,7 @@
     align-items: center;
     justify-content: space-between;
     gap: 16px;
+    margin-top: 12px;
 }
 
 .ak23-pkg-banner-badge {
@@ -798,18 +883,15 @@
     color: #0F0F14;
 }
 
-/* Series Section Header */
-.ak23-series-header {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    padding-bottom: 12px;
-}
-
-.ak23-series-tag {
-    font-size: 10.5px;
+/* Category Track Summary Header */
+.ak23-series-track-badge {
+    font-size: 10px;
     font-weight: 800;
     letter-spacing: 0.1em;
     color: #FBAF43;
     text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 4px;
 }
 
 .ak23-series-title {
@@ -823,19 +905,37 @@
     color: #8C8D9E;
 }
 
-.ak23-btn-series-link {
-    color: #A0A1B2;
+/* Pagination Bar Styling */
+.pagination .page-link {
+    background: #13141F;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #C0C0D0;
+    border-radius: 8px;
+    padding: 6px 12px;
     font-size: 12px;
     font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: color 0.18s ease;
+    transition: all 0.18s ease;
+    box-shadow: none !important;
 }
 
-.ak23-btn-series-link:hover {
+.pagination .page-link:hover {
+    background: rgba(251, 175, 67, 0.15);
+    border-color: rgba(251, 175, 67, 0.45);
     color: #FBAF43;
+}
+
+.pagination .page-item.active .page-link {
+    background: #FBAF43;
+    border-color: #FBAF43;
+    color: #0F0F14;
+    font-weight: 800;
+}
+
+.pagination .page-item.disabled .page-link {
+    background: #0E0F16;
+    border-color: rgba(255, 255, 255, 0.05);
+    color: #555768;
+    pointer-events: none;
 }
 </style>
 @endpush
@@ -849,7 +949,6 @@
         
         // Parse initial URL parameters with category & series synonyms
         let rawSeries = urlParams.get('series') || urlParams.get('category') || urlParams.get('cat') || 'all';
-        // Map numeric category ID to slug if needed
         const categoryIdMap = {
             '1': 'vocal-mixing',
             '2': 'audio-editing-software',
@@ -863,6 +962,8 @@
         let currentSearch = urlParams.get('search') || urlParams.get('q') || '';
         let currentLevel = urlParams.get('level') || urlParams.get('stage') || 'all';
         let currentSort = urlParams.get('sort') || 'default';
+        let currentPage = parseInt(urlParams.get('page')) || 1;
+        const itemsPerPage = 6; // At least 6 items per page (strictly 2 full rows of 3)
 
         // Set initial values into controls
         if (currentSearch) {
@@ -883,7 +984,7 @@
         // 1. Fully Clickable Card - Direct click navigation backup for non-interactive areas
         $(document).on('click', '.ak23-card-minimal', function(e) {
             if ($(e.target).closest('.ak23-action-btn, .ak23-card-actions-wrapper, a, button, input, select').length) {
-                return; // Let native button or stretched-link handle
+                return;
             }
             const targetUrl = $(this).data('url');
             if (targetUrl) {
@@ -906,31 +1007,28 @@
 
         // 2. Sorting Handler
         function applySortOrder() {
-            $('.ak23-course-grid-3').each(function() {
-                const $grid = $(this);
-                const $cards = $grid.children('.ak23-course-item').get();
+            const $grid = $('#ak23CourseGrid');
+            const $cards = $grid.children('.ak23-course-item').get();
 
-                $cards.sort(function(a, b) {
-                    const $a = $(a);
-                    const $b = $(b);
+            $cards.sort(function(a, b) {
+                const $a = $(a);
+                const $b = $(b);
 
-                    if (currentSort === 'price-asc') {
-                        return parseFloat($a.data('price')) - parseFloat($b.data('price'));
-                    } else if (currentSort === 'price-desc') {
-                        return parseFloat($b.data('price')) - parseFloat($a.data('price'));
-                    } else if (currentSort === 'title-asc') {
-                        return ($a.data('title') || '').localeCompare($b.data('title') || '');
-                    } else if (currentSort === 'lessons-desc') {
-                        return parseInt($b.data('lessons')) - parseInt($a.data('lessons'));
-                    } else {
-                        // Default sequence
-                        return parseInt($a.data('seq')) - parseInt($b.data('seq'));
-                    }
-                });
+                if (currentSort === 'price-asc') {
+                    return parseFloat($a.data('price')) - parseFloat($b.data('price'));
+                } else if (currentSort === 'price-desc') {
+                    return parseFloat($b.data('price')) - parseFloat($a.data('price'));
+                } else if (currentSort === 'title-asc') {
+                    return ($a.data('title') || '').localeCompare($b.data('title') || '');
+                } else if (currentSort === 'lessons-desc') {
+                    return parseInt($b.data('lessons')) - parseInt($a.data('lessons'));
+                } else {
+                    return parseInt($a.data('seq')) - parseInt($b.data('seq'));
+                }
+            });
 
-                $.each($cards, function(i, card) {
-                    $grid.append(card);
-                });
+            $.each($cards, function(i, card) {
+                $grid.append(card);
             });
         }
 
@@ -956,7 +1054,7 @@
                 const seriesTitle = $('#ak23SeriesFilterPills .ak23-filter-btn[data-series="' + currentSeries + '"] span').text().split('(')[0].trim() || currentSeries;
                 $container.append(`
                     <span class="ak23-filter-chip">
-                        <span>Series: ${seriesTitle}</span>
+                        <span>Category: ${seriesTitle}</span>
                         <i class="las la-times chip-remove" data-action="clear-series"></i>
                     </span>
                 `);
@@ -991,86 +1089,203 @@
             }
         }
 
-        // 4. Real-time Search and Filtering Engine
-        function runCatalogFilter() {
+        // 4. Render Pagination Navigation Controls
+        function renderPagination(totalMatches) {
+            const totalPages = Math.ceil(totalMatches / itemsPerPage);
+            const $wrapper = $('#ak23PaginationWrapper');
+            const $list = $('#ak23PaginationList');
+            const $summary = $('#ak23PaginationSummary');
+
+            if (totalMatches === 0) {
+                $wrapper.addClass('d-none');
+                return;
+            }
+
+            // Ensure currentPage is within bounds
+            if (currentPage > totalPages) {
+                currentPage = 1;
+            }
+
+            // Calculate start and end index
+            const startIndex = (currentPage - 1) * itemsPerPage + 1;
+            const endIndex = Math.min(currentPage * itemsPerPage, totalMatches);
+
+            if (totalMatches <= itemsPerPage) {
+                $summary.html(`Showing all <strong>${totalMatches}</strong> courses`);
+                $wrapper.removeClass('d-none');
+                $list.empty();
+                return;
+            }
+
+            $summary.html(`Showing <strong>${startIndex}–${endIndex}</strong> of <strong>${totalMatches}</strong> courses`);
+            $wrapper.removeClass('d-none');
+            $list.empty();
+
+            // Previous Button
+            const prevDisabled = currentPage === 1 ? 'disabled' : '';
+            $list.append(`
+                <li class="page-item ${prevDisabled}">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
+                        <i class="las la-angle-left"></i> Prev
+                    </a>
+                </li>
+            `);
+
+            // Page Number Buttons
+            for (let p = 1; p <= totalPages; p++) {
+                const activeClass = p === currentPage ? 'active' : '';
+                $list.append(`
+                    <li class="page-item ${activeClass}">
+                        <a class="page-link" href="#" data-page="${p}">${p}</a>
+                    </li>
+                `);
+            }
+
+            // Next Button
+            const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+            $list.append(`
+                <li class="page-item ${nextDisabled}">
+                    <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
+                        Next <i class="las la-angle-right"></i>
+                    </a>
+                </li>
+            `);
+        }
+
+        // 5. Real-Time Catalog Filtering & Pagination Engine
+        function runCatalogFilter(resetToPageOne = false) {
+            if (resetToPageOne) {
+                currentPage = 1;
+            }
+
             const query = currentSearch.trim().toLowerCase();
-            let totalVisibleCourses = 0;
 
-            // Apply card sorting
-            applySortOrder();
+            // If bundles tab is selected
+            if (currentSeries === 'bundles') {
+                $('#ak23CourseGrid').addClass('d-none');
+                $('#ak23CategoryHeaderWrapper').addClass('d-none');
+                $('#ak23BundlesGridWrapper').removeClass('d-none');
+                $('#ak23PaginationWrapper').addClass('d-none');
 
-            $('.ak23-series-section').each(function() {
-                const $section = $(this);
-                const sectionSeries = $section.data('series-slug');
-                const sectionCatId = String($section.data('category-id'));
-
-                // Series / Category matching
-                const seriesMatches = (currentSeries === 'all' 
-                    || currentSeries === sectionSeries 
-                    || currentSeries === sectionCatId);
-
-                if (!seriesMatches) {
-                    $section.hide();
-                    return;
-                }
-
-                let sectionVisibleCount = 0;
-
-                // Filter individual course cards in this series
-                $section.find('.ak23-course-item').each(function() {
-                    const $card = $(this);
-                    const cardSearch = $card.data('search') || '';
-                    const cardStage = $card.data('stage') || '';
-
-                    const matchesQuery = !query || cardSearch.includes(query);
-                    const matchesLevel = (currentLevel === 'all' || cardStage.includes(currentLevel));
-
-                    if (matchesQuery && matchesLevel) {
-                        $card.show();
-                        sectionVisibleCount++;
-                        totalVisibleCourses++;
+                let visibleBundles = 0;
+                $('.ak23-bundle-card-item').each(function() {
+                    const $b = $(this);
+                    const bTitle = $b.data('title') || '';
+                    if (!query || bTitle.includes(query)) {
+                        $b.show();
+                        visibleBundles++;
                     } else {
-                        $card.hide();
+                        $b.hide();
                     }
                 });
 
-                // Filter complete bundle banner in this series
-                const $bundleBanner = $section.find('.ak23-complete-pkg-banner');
-                if ($bundleBanner.length) {
-                    if (!query && currentLevel === 'all') {
-                        $bundleBanner.show();
-                    } else {
-                        const bTitle = $bundleBanner.data('bundle-title') || '';
-                        const bDesc = $bundleBanner.data('bundle-desc') || '';
-                        if (query && (bTitle.includes(query) || bDesc.includes(query))) {
-                            $bundleBanner.show();
-                        } else {
-                            $bundleBanner.hide();
-                        }
-                    }
+                $('#ak23CountNum').text(visibleBundles);
+                if (visibleBundles === 0) {
+                    $('#ak23QueryDisplay').text(query || 'bundles');
+                    $('#ak23NoResults').removeClass('d-none');
+                } else {
+                    $('#ak23NoResults').addClass('d-none');
                 }
 
-                // Show or hide series section based on matching items
-                if (sectionVisibleCount > 0) {
-                    $section.fadeIn(120);
+                updateActiveFilterChips();
+                return;
+            }
+
+            // Normal courses view
+            $('#ak23BundlesGridWrapper').addClass('d-none');
+            $('#ak23CourseGrid').removeClass('d-none');
+
+            // Category summary header handling
+            if (currentSeries !== 'all') {
+                $('#ak23CategoryHeaderWrapper').removeClass('d-none');
+                $('.ak23-category-summary-box').addClass('d-none');
+                $('.ak23-category-summary-box[data-series-slug="' + currentSeries + '"]').removeClass('d-none');
+            } else {
+                $('#ak23CategoryHeaderWrapper').addClass('d-none');
+                $('.ak23-category-summary-box').addClass('d-none');
+            }
+
+            // Apply card ordering
+            applySortOrder();
+
+            // Collect all matching courses
+            const matchingCards = [];
+
+            $('.ak23-course-item').each(function() {
+                const $card = $(this);
+                const cardSearch = $card.data('search') || '';
+                const cardStage = $card.data('stage') || '';
+                const cardSeries = $card.data('series') || '';
+                const cardCatId = String($card.data('category-id'));
+
+                const matchesSeries = (currentSeries === 'all' 
+                    || currentSeries === cardSeries 
+                    || currentSeries === cardCatId);
+                const matchesQuery = !query || cardSearch.includes(query);
+                const matchesLevel = (currentLevel === 'all' || cardStage.includes(currentLevel));
+
+                if (matchesSeries && matchesQuery && matchesLevel) {
+                    matchingCards.push($card);
                 } else {
-                    $section.hide();
+                    $card.hide();
                 }
             });
 
-            // Update live counter & empty state
-            $('#ak23CountNum').text(totalVisibleCourses);
+            const totalMatches = matchingCards.length;
 
-            if (totalVisibleCourses === 0) {
-                $('#ak23QueryDisplay').text(query || 'selected filters');
-                $('#ak23NoResults').removeClass('d-none').fadeIn(150);
+            // Apply 6-per-page pagination
+            const totalPages = Math.ceil(totalMatches / itemsPerPage) || 1;
+            if (currentPage > totalPages) {
+                currentPage = 1;
+            }
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+
+            $.each(matchingCards, function(index, $card) {
+                if (index >= startIndex && index < endIndex) {
+                    $card.show();
+                } else {
+                    $card.hide();
+                }
+            });
+
+            // Update live counter
+            $('#ak23CountNum').text(totalMatches);
+
+            // Empty state display
+            if (totalMatches === 0) {
+                $('#ak23QueryDisplay').text(query || 'selected criteria');
+                $('#ak23NoResults').removeClass('d-none');
+                $('#ak23PaginationWrapper').addClass('d-none');
             } else {
                 $('#ak23NoResults').addClass('d-none');
+                renderPagination(totalMatches);
             }
 
             // Update active chips
             updateActiveFilterChips();
         }
+
+        // Pagination Click Handler
+        $(document).on('click', '#ak23PaginationList .page-link', function(e) {
+            e.preventDefault();
+            const targetPage = parseInt($(this).data('page'));
+            if (!isNaN(targetPage) && targetPage !== currentPage && targetPage >= 1) {
+                currentPage = targetPage;
+                runCatalogFilter(false);
+
+                // Smooth scroll to catalog target
+                $('html, body').animate({
+                    scrollTop: $('#ak23CatalogTopTarget').offset().top - 90
+                }, 220);
+
+                // Update URL page param
+                const url = new URL(window.location.href);
+                url.searchParams.set('page', currentPage);
+                window.history.pushState({ page: currentPage }, '', url.toString());
+            }
+        });
 
         // Search Input Event Handler (Instant Real-time)
         $('#ak23LiveSearch').on('input', function() {
@@ -1080,7 +1295,7 @@
             } else {
                 $('#ak23ClearSearch').addClass('d-none');
             }
-            runCatalogFilter();
+            runCatalogFilter(true);
         });
 
         // Clear Search Button
@@ -1105,37 +1320,28 @@
                 url.searchParams.set('series', series);
                 url.searchParams.delete('category');
             }
+            url.searchParams.delete('page');
             window.history.pushState({ series: series }, '', url.toString());
 
-            runCatalogFilter();
+            runCatalogFilter(true);
         });
 
-        // Section header link trigger ("Filter this series")
-        $(document).on('click', '.ak23-series-filter-trigger', function(e) {
+        // "View All Courses" trigger in Category Summary Box
+        $(document).on('click', '.ak23-view-all-trigger', function(e) {
             e.preventDefault();
-            const series = $(this).data('series');
-            currentSeries = series;
-            $('#ak23SeriesFilterPills .ak23-filter-btn').removeClass('active');
-            $('#ak23SeriesFilterPills .ak23-filter-btn[data-series="' + series + '"]').addClass('active');
-
-            const url = new URL(window.location.href);
-            url.searchParams.set('series', series);
-            window.history.pushState({ series: series }, '', url.toString());
-
-            runCatalogFilter();
-            $('html, body').animate({ scrollTop: 0 }, 250);
+            $('#ak23SeriesFilterPills .ak23-filter-btn[data-series="all"]').trigger('click');
         });
 
         // Level Filter Dropdown
         $('#ak23LevelFilter').on('change', function() {
             currentLevel = $(this).val();
-            runCatalogFilter();
+            runCatalogFilter(true);
         });
 
         // Sort Filter Dropdown
         $('#ak23SortFilter').on('change', function() {
             currentSort = $(this).val();
-            runCatalogFilter();
+            runCatalogFilter(false);
         });
 
         // Chip Remove Actions
@@ -1158,6 +1364,7 @@
             currentSeries = 'all';
             currentLevel = 'all';
             currentSort = 'default';
+            currentPage = 1;
 
             $('#ak23LiveSearch').val('');
             $('#ak23ClearSearch').addClass('d-none');
@@ -1173,9 +1380,10 @@
             url.searchParams.delete('search');
             url.searchParams.delete('level');
             url.searchParams.delete('sort');
+            url.searchParams.delete('page');
             window.history.pushState({}, '', url.toString());
 
-            runCatalogFilter();
+            runCatalogFilter(true);
         });
 
         // Add to Cart via AJAX (Deduplicated with stopPropagation)
@@ -1221,8 +1429,8 @@
             });
         });
 
-        // Initialize on load
-        runCatalogFilter();
+        // Initial catalog filter and pagination run on load
+        runCatalogFilter(false);
     });
 </script>
 @endpush
