@@ -1,0 +1,72 @@
+name: CD Deployment Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      deploy_environment:
+        description: 'Target Deployment Environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Execute Remote Deployment via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            echo "🚀 Starting automated deployment for AK23 Course Portal..."
+            cd ${{ secrets.DEPLOY_PATH }}
+
+            # Activate maintenance mode
+            cd core && php artisan down --render="errors.503" || true
+            cd ..
+
+            # Pull latest changes
+            echo "📥 Pulling latest codebase..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Install Composer production dependencies
+            echo "📦 Installing production dependencies..."
+            cd core
+            composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+
+            # Run database migrations
+            echo "🗄️ Executing database migrations..."
+            php artisan migrate --force
+
+            # Optimize caches
+            echo "⚡ Optimizing system caches..."
+            php artisan optimize:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+
+            # Set correct storage and cache permissions
+            echo "🔒 Updating directory permissions..."
+            chmod -R 775 storage bootstrap/cache
+
+            # Bring application back up
+            echo "🌐 Disabling maintenance mode..."
+            php artisan up
+
+            echo "✅ Deployment completed successfully!"

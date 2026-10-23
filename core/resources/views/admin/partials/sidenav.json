@@ -1,0 +1,330 @@
+{
+    "dashboard": {
+        "header": "OVERVIEW",
+        "keyword": [
+            "Dashboard",
+            "Home",
+            "Panel",
+            "Admin"
+        ],
+        "title": "Dashboard",
+        "icon": "las la-th-large",
+        "route_name": "admin.dashboard",
+        "menu_active": "admin.dashboard.main"
+    },
+    "analytics": {
+        "keyword": [
+            "Analytics",
+            "Sales Analytics",
+            "Performance",
+            "Metrics"
+        ],
+        "title": "Analytics",
+        "icon": "las la-chart-bar",
+        "route_name": "admin.dashboard",
+        "menu_active": "admin.dashboard"
+    },
+    "manage_products": {
+        "header": "COURSE CATALOG",
+        "keyword": [
+            "Courses",
+            "Course Catalog",
+            "Bundles",
+            "Digital Downloads",
+            "Categories"
+        ],
+        "title": "Course Catalog",
+        "icon": "las la-boxes",
+        "menu_active": [
+            "admin.product.*",
+            "admin.category.*"
+        ],
+        "submenu": [
+            {
+                "title": "All Courses",
+                "route_name": "admin.product.all",
+                "menu_active": "admin.product.all"
+            },
+            {
+                "title": "Published Courses",
+                "route_name": "admin.product.approved",
+                "menu_active": "admin.product.approved"
+            },
+            {
+                "title": "Pending Review",
+                "route_name": "admin.product.pending",
+                "counter": "pendingProductsCount",
+                "menu_active": "admin.product.pending"
+            },
+            {
+                "title": "Course Categories",
+                "route_name": "admin.category.index",
+                "menu_active": "admin.category.*"
+            }
+        ]
+    },
+    "review_comment": {
+        "title": "Reviews & Comments",
+        "icon": "las la-comments",
+        "menu_active": [
+            "admin.review.*",
+            "admin.comment.*"
+        ],
+        "submenu": [
+            {
+                "title": "Reviews",
+                "route_name": "admin.review.index",
+                "menu_active": "admin.review.*"
+            },
+            {
+                "title": "Comments",
+                "route_name": "admin.comment.index",
+                "menu_active": "admin.comment.*"
+            }
+        ]
+    },
+    "commerce_orders": {
+        "header": "COMMERCE",
+        "keyword": [
+            "Orders",
+            "Purchases",
+            "Transactions",
+            "Sales"
+        ],
+        "title": "Orders",
+        "icon": "las la-box",
+        "counter": "paidOrdersCount",
+        "badge_color": "green",
+        "route_name": "admin.sell.items",
+        "menu_active": "admin.sell.items"
+    },
+    "commerce_selcom": {
+        "keyword": [
+            "Payments",
+            "Selcom Payments",
+            "Mobile Money",
+            "M-Pesa",
+            "Tigo Pesa",
+            "Airtel Money"
+        ],
+        "title": "Payments",
+        "icon": "las la-credit-card",
+        "route_name": "admin.deposit.list",
+        "menu_active": "admin.deposit.list"
+    },
+    "commerce_students": {
+        "keyword": [
+            "Students",
+            "Users",
+            "Learners",
+            "Customers"
+        ],
+        "title": "Students",
+        "icon": "las la-user-graduate",
+        "route_name": "admin.users.all",
+        "menu_active": "admin.users.*"
+    },
+    "commerce_entitlements": {
+        "keyword": [
+            "Entitlements",
+            "Access Grants",
+            "Fulfillment",
+            "Delivery"
+        ],
+        "title": "Entitlements",
+        "icon": "las la-check-circle",
+        "route_name": "admin.sell.refunded",
+        "menu_active": "admin.sell.refunded"
+    },
+    "payments": {
+        "title": "Gateways & Deposits",
+        "icon": "las la-file-invoice-dollar",
+        "counters": [
+            "pendingDepositsCount"
+        ],
+        "menu_active": "admin.deposit.*",
+        "submenu": [
+            {
+                "title": "Pending Payments",
+                "route_name": "admin.deposit.pending",
+                "menu_active": "admin.deposit.pending",
+                "counter": "pendingDepositsCount"
+            },
+            {
+                "title": "Approved Payments",
+                "route_name": "admin.deposit.approved",
+                "menu_active": "admin.deposit.approved"
+            },
+            {
+                "title": "Successful Payments",
+                "route_name": "admin.deposit.successful",
+                "menu_active": "admin.deposit.successful"
+            },
+            {
+                "title": "Rejected Payments",
+                "route_name": "admin.deposit.rejected",
+                "menu_active": "admin.deposit.rejected"
+            },
+            {
+                "title": "Initiated Payments",
+                "route_name": "admin.deposit.initiated",
+                "menu_active": "admin.deposit.initiated"
+            },
+            {
+                "title": "All Payments",
+                "route_name": "admin.deposit.list",
+                "menu_active": "admin.deposit.list"
+            }
+        ]
+    },
+    "manage_coupons": {
+        "title": "Coupons",
+        "icon": "las la-percentage",
+        "route_name": "admin.coupon.index",
+        "menu_active": "admin.coupon.*"
+    },
+    "campaigns": {
+        "title": "Campaigns",
+        "icon": "las la-bullseye",
+        "route_name": "admin.campaign.index",
+        "menu_active": "admin.campaign.*"
+    },
+    "system_api": {
+        "header": "SYSTEM",
+        "keyword": [
+            "API",
+            "REST API",
+            "RPC",
+            "Developer"
+        ],
+        "title": "REST & RPC API",
+        "icon": "las la-code-branch",
+        "route_name": "admin.setting.system.configuration",
+        "menu_active": "admin.setting.system.configuration"
+    },
+    "system_webhooks": {
+        "keyword": [
+            "Webhooks",
+            "Events",
+            "Callbacks",
+            "Notifications"
+        ],
+        "title": "Webhooks",
+        "icon": "las la-envelope",
+        "route_name": "admin.setting.notification.global.email",
+        "menu_active": "admin.setting.notification.*"
+    },
+    "system_settings": {
+        "keyword": [
+            "Settings",
+            "General Setting",
+            "Configuration"
+        ],
+        "title": "Settings",
+        "icon": "las la-cog",
+        "route_name": "admin.setting.general",
+        "menu_active": "admin.setting.general"
+    },
+    "support_ticket": {
+        "title": "Support Ticket",
+        "icon": "las la-ticket-alt",
+        "counters": [
+            "pendingTicketCount"
+        ],
+        "menu_active": "admin.ticket.*",
+        "submenu": [
+            {
+                "title": "Pending Ticket",
+                "route_name": "admin.ticket.pending",
+                "menu_active": "admin.ticket.pending",
+                "counter": "pendingTicketCount"
+            },
+            {
+                "title": "Closed Ticket",
+                "route_name": "admin.ticket.closed",
+                "menu_active": "admin.ticket.closed"
+            },
+            {
+                "title": "Answered Ticket",
+                "route_name": "admin.ticket.answered",
+                "menu_active": "admin.ticket.answered"
+            },
+            {
+                "title": "All Ticket",
+                "route_name": "admin.ticket.index",
+                "menu_active": "admin.ticket.index"
+            }
+        ]
+    },
+    "subscriber": {
+        "title": "Subscribers",
+        "icon": "las la-thumbs-up",
+        "route_name": "admin.subscriber.index",
+        "menu_active": "admin.subscriber.*"
+    },
+    "system_setting": {
+        "title": "System Setting",
+        "icon": "las la-sliders-h",
+        "route_name": "admin.setting.system",
+        "menu_active": "admin.setting.system"
+    },
+    "extra": {
+        "title": "Extra",
+        "icon": "las la-server",
+        "menu_active": "admin.system.*",
+        "counters": [
+            "updateAvailable"
+        ],
+        "submenu": [
+            {
+                "title": "Application",
+                "route_name": "admin.system.info",
+                "menu_active": "admin.system.info"
+            },
+            {
+                "title": "Server",
+                "route_name": "admin.system.server.info",
+                "menu_active": "admin.system.server.info"
+            },
+            {
+                "title": "Cache",
+                "route_name": "admin.system.optimize",
+                "menu_active": "admin.system.optimize"
+            },
+            {
+                "title": "Update",
+                "route_name": "admin.system.update",
+                "menu_active": "admin.system.update*",
+                "counter": "updateAvailable"
+            }
+        ]
+    },
+    "reports": {
+        "title": "Report",
+        "icon": "las la-file-alt",
+        "menu_active": "admin.report.*",
+        "submenu": [
+            {
+                "title": "Transaction History",
+                "route_name": "admin.report.transaction",
+                "menu_active": [
+                    "admin.report.transaction",
+                    "admin.report.transaction.search"
+                ]
+            },
+            {
+                "title": "Login History",
+                "route_name": "admin.report.login.history",
+                "menu_active": [
+                    "admin.report.login.history",
+                    "admin.report.login.ipHistory"
+                ]
+            },
+            {
+                "title": "Notification History",
+                "route_name": "admin.report.notification.history",
+                "menu_active": "admin.report.notification.history"
+            }
+        ]
+    }
+}

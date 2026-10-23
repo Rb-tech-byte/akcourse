@@ -1,0 +1,69 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main", "master", "develop" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  laravel-tests:
+    name: Build & Test (PHP 8.3)
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: akcourse_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+
+      - name: Setup PHP Environment
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, bcmath, curl, zip, gd, fileinfo
+          coverage: none
+
+      - name: Validate composer.json
+        run: |
+          cd core
+          composer validate --strict
+
+      - name: Cache Composer Dependencies
+        uses: actions/cache@v4
+        with:
+          path: core/vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install Composer Dependencies
+        run: |
+          cd core
+          composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare Application Environment
+        run: |
+          cd core
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Check PHP Syntax & Linting
+        run: |
+          find core/app -name "*.php" -exec php -l {} +
+
+      - name: Verify Laravel Configuration & Optimizations
+        run: |
+          cd core
+          php artisan optimize:clear
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache

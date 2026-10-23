@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 500" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgBlobGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.85"/>
+      <stop offset="50%" stop-color="#FDE68A" stop-opacity="0.65"/>
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0.25"/>
+    </linearGradient>
+
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FCD34D"/>
+      <stop offset="50%" stop-color="#FBAF43"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <linearGradient id="darkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#0F172A"/>
+    </linearGradient>
+
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F8FAFC"/>
+    </linearGradient>
+
+    <!-- Filters for Depth Shadows -->
+    <filter id="cardShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#0F172A" flood-opacity="0.12"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Ambient Golden Glow -->
+  <circle cx="260" cy="240" r="180" fill="url(#bgBlobGrad)" filter="url(#glow)" opacity="0.7"/>
+
+  <!-- Organic Theme Blob Shape -->
+  <path d="M 390,140 C 470,200 480,310 430,390 C 380,470 270,480 180,440 C 90,400 60,300 100,210 C 140,120 310,80 390,140 Z" fill="url(#bgBlobGrad)"/>
+
+  <!-- Equalizer / Waveform Ambient Rings -->
+  <circle cx="260" cy="235" r="150" fill="none" stroke="#FBAF43" stroke-width="2" stroke-dasharray="6,8" opacity="0.45"/>
+  <circle cx="260" cy="235" r="120" fill="none" stroke="#D97706" stroke-width="1.5" stroke-dasharray="4,6" opacity="0.35"/>
+
+  <!-- Audio Waveform Bars (Base Center) -->
+  <g transform="translate(140, 310)" opacity="0.85">
+    <rect x="0" y="25" width="6" height="30" rx="3" fill="#FBAF43"/>
+    <rect x="14" y="15" width="6" height="50" rx="3" fill="#D97706"/>
+    <rect x="28" y="5" width="6" height="70" rx="3" fill="#FBAF43"/>
+    <rect x="42" y="20" width="6" height="40" rx="3" fill="#FCD34D"/>
+    <rect x="56" y="0" width="6" height="80" rx="3" fill="url(#goldGrad)"/>
+    <rect x="70" y="10" width="6" height="60" rx="3" fill="#FBAF43"/>
+    <rect x="84" y="25" width="6" height="30" rx="3" fill="#D97706"/>
+    <rect x="98" y="15" width="6" height="50" rx="3" fill="#FBAF43"/>
+    <rect x="112" y="30" width="6" height="20" rx="3" fill="#FCD34D"/>
+    <rect x="126" y="8" width="6" height="64" rx="3" fill="url(#goldGrad)"/>
+    <rect x="140" y="18" width="6" height="44" rx="3" fill="#FBAF43"/>
+    <rect x="154" y="0" width="6" height="80" rx="3" fill="#D97706"/>
+    <rect x="168" y="22" width="6" height="36" rx="3" fill="#FBAF43"/>
+    <rect x="182" y="12" width="6" height="56" rx="3" fill="#FCD34D"/>
+    <rect x="196" y="26" width="6" height="28" rx="3" fill="#FBAF43"/>
+    <rect x="210" y="16" width="6" height="48" rx="3" fill="#D97706"/>
+    <rect x="224" y="28" width="6" height="24" rx="3" fill="#FBAF43"/>
+  </g>
+
+  <!-- Studio Headphone Graphic (Hero Object) -->
+  <g transform="translate(155, 120)" filter="url(#cardShadow)">
+    <!-- Headband Arch -->
+    <path d="M 30,130 C 20,40 190,40 180,130" fill="none" stroke="url(#darkGrad)" stroke-width="20" stroke-linecap="round"/>
+    <path d="M 30,130 C 20,40 190,40 180,130" fill="none" stroke="url(#goldGrad)" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+
+    <!-- Headband Inner Cushion -->
+    <path d="M 46,115 C 40,65 170,65 164,115" fill="none" stroke="#334155" stroke-width="10" stroke-linecap="round"/>
+
+    <!-- Left Ear Cup Assembly -->
+    <g transform="translate(10, 110)">
+      <!-- Gold Hinge Pivot -->
+      <rect x="5" y="0" width="16" height="12" rx="3" fill="url(#goldGrad)"/>
+      <!-- Outer Ear Cup Shell -->
+      <rect x="0" y="10" width="26" height="64" rx="13" fill="url(#darkGrad)"/>
+      <rect x="3" y="14" width="20" height="56" rx="10" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+      <!-- Soft Leather Ear Pad Cushion -->
+      <rect x="20" y="6" width="16" height="72" rx="8" fill="#0F172A"/>
+      <rect x="28" y="10" width="6" height="64" rx="3" fill="#334155" opacity="0.6"/>
+    </g>
+
+    <!-- Right Ear Cup Assembly -->
+    <g transform="translate(174, 110)">
+      <!-- Gold Hinge Pivot -->
+      <rect x="5" y="0" width="16" height="12" rx="3" fill="url(#goldGrad)"/>
+      <!-- Soft Leather Ear Pad Cushion -->
+      <rect x="-10" y="6" width="16" height="72" rx="8" fill="#0F172A"/>
+      <rect x="-8" y="10" width="6" height="64" rx="3" fill="#334155" opacity="0.6"/>
+      <!-- Outer Ear Cup Shell -->
+      <rect x="0" y="10" width="26" height="64" rx="13" fill="url(#darkGrad)"/>
+      <rect x="3" y="14" width="20" height="56" rx="10" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+    </g>
+
+    <!-- Center AK23 Audio Badge on Headband -->
+    <rect x="85" y="32" width="40" height="18" rx="9" fill="url(#goldGrad)"/>
+    <text x="105" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="900" fill="#0F172A" text-anchor="middle">AK23</text>
+  </g>
+
+  <!-- Left Floating Card: FAQ / Question Chat Bubble -->
+  <g transform="translate(45, 95)" filter="url(#cardShadow)">
+    <rect x="0" y="0" width="160" height="85" rx="16" fill="url(#cardGrad)" stroke="#FDE68A" stroke-width="1.5"/>
+    <!-- Gold Icon Circle with Question Mark -->
+    <circle cx="36" cy="35" r="18" fill="url(#goldGrad)"/>
+    <text x="36" y="42" font-family="'Plus Jakarta Sans', sans-serif" font-size="18" font-weight="900" fill="#0F172A" text-anchor="middle">?</text>
+    
+    <!-- Text Lines -->
+    <rect x="64" y="24" width="75" height="9" rx="4.5" fill="#0F172A"/>
+    <rect x="64" y="39" width="55" height="6" rx="3" fill="#94A3B8"/>
+    <rect x="20" y="62" width="120" height="4" rx="2" fill="#E2E8F0"/>
+    
+    <!-- Badge Pill -->
+    <rect x="95" y="56" width="48" height="16" rx="8" fill="#FEF3C7"/>
+    <text x="119" y="67" font-family="'Plus Jakarta Sans', sans-serif" font-size="8" font-weight="800" fill="#B45309" text-anchor="middle">FAQ HELP</text>
+  </g>
+
+  <!-- Right Floating Card: Direct Studio Answer & Verified Badge -->
+  <g transform="translate(325, 200)" filter="url(#cardShadow)">
+    <rect x="0" y="0" width="155" height="92" rx="16" fill="url(#cardGrad)" stroke="#FDE68A" stroke-width="1.5"/>
+    
+    <!-- Golden Shield with Checkmark -->
+    <g transform="translate(18, 16)">
+      <path d="M 16,0 L 32,7 L 32,22 C 32,32 16,39 16,39 C 16,39 0,32 0,22 L 0,7 Z" fill="url(#goldGrad)"/>
+      <path d="M 10,18 L 14,22 L 23,13" fill="none" stroke="#0F172A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <!-- Info Lines -->
+    <text x="60" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="800" fill="#0F172A">Instant Answers</text>
+    <text x="60" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="600" fill="#64748B">Course &amp; Downloads</text>
+
+    <!-- Rating / Stars -->
+    <g transform="translate(20, 66)">
+      <circle cx="8" cy="8" r="4" fill="#FBAF43"/>
+      <circle cx="24" cy="8" r="4" fill="#FBAF43"/>
+      <circle cx="40" cy="8" r="4" fill="#FBAF43"/>
+      <circle cx="56" cy="8" r="4" fill="#FBAF43"/>
+      <circle cx="72" cy="8" r="4" fill="#FBAF43"/>
+      <text x="86" y="11" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" font-weight="800" fill="#0F172A">5.0 SLA</text>
+    </g>
+  </g>
+
+  <!-- Bottom Floating Card: Audio Format & Downloads Support -->
+  <g transform="translate(140, 390)" filter="url(#cardShadow)">
+    <rect x="0" y="0" width="240" height="58" rx="29" fill="#0F172A" stroke="url(#goldGrad)" stroke-width="1.5"/>
+    
+    <!-- Icon Circle -->
+    <circle cx="30" cy="29" r="16" fill="url(#goldGrad)"/>
+    <!-- Headphone / Download Icon in Circle -->
+    <path d="M 24,30 L 30,36 L 36,30 M 30,22 L 30,35" fill="none" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Text -->
+    <text x="58" y="27" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" font-weight="800" fill="#FFFFFF">Direct Vocal Mixing Series</text>
+    <text x="58" y="42" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="600" fill="#FBAF43">Cubase • FL Studio • Studio One</text>
+  </g>
+
+  <!-- Floating Sparkles & Particles -->
+  <path d="M 90,260 L 93,267 L 100,270 L 93,273 L 90,280 L 87,273 L 80,270 L 87,267 Z" fill="#FBAF43"/>
+  <path d="M 440,110 L 442,116 L 448,118 L 442,120 L 440,126 L 438,120 L 432,118 L 438,116 Z" fill="#D97706"/>
+  <circle cx="430" cy="330" r="5" fill="#FCD34D"/>
+  <circle cx="110" cy="370" r="4" fill="#FBAF43" opacity="0.8"/>
+  <circle cx="280" cy="80" r="4" fill="#FBAF43" opacity="0.6"/>
+</svg>

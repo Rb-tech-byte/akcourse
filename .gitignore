@@ -1,0 +1,51 @@
+# Laravel core dependencies and environment
+core/vendor/
+core/.env
+core/.env.backup
+core/.env.production
+core/.env.testing
+
+# Storage files & cache
+core/storage/*.key
+core/storage/logs/*
+!core/storage/logs/.gitkeep
+core/storage/framework/cache/*
+!core/storage/framework/cache/.gitkeep
+core/storage/framework/cache/data/*
+!core/storage/framework/cache/data/.gitkeep
+core/storage/framework/sessions/*
+!core/storage/framework/sessions/.gitkeep
+core/storage/framework/views/*
+!core/storage/framework/views/.gitkeep
+core/storage/framework/testing/*
+!core/storage/framework/testing/.gitkeep
+
+# Public uploads & compiled assets
+core/public/storage
+core/public/hot
+core/public/build
+core/node_modules/
+
+# Testing & caches
+.phpunit.cache/
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+
+# IDE & OS files
+.fleet/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Local scratch and temporary scripts
+scratch/
+*.sql
+*.tar.gz
+*.zip

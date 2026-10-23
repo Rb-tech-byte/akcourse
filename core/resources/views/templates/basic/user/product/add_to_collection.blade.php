@@ -1,0 +1,1 @@
+{{-- Multi-vendor collections retired for single-vendor academy --}}

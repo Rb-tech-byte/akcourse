@@ -1,0 +1,624 @@
+/* ==========================================================================
+   AK23 ACADEMY ADMIN & SALES ANALYTICS (AKCOURSE.png) STYLES
+   ========================================================================== */
+
+:root {
+  --ak-admin-gold: #FBAF43;
+  --ak-admin-gold-dark: #E29828;
+  --ak-admin-gold-light: #FFF7ED;
+  --ak-admin-teal: #14B8A6;
+  --ak-admin-blue: #FBAF43;
+  --ak-admin-amber: #F59E0B;
+  --ak-admin-red: #EF4444;
+  --ak-admin-border: #E2E8F0;
+  --ak-admin-text-main: #0F172A;
+  --ak-admin-text-muted: #64748B;
+  --ak-admin-sidebar-bg: #121316;
+}
+
+/* Sidenav Brand & Footer */
+.sidebar.bg--dark {
+  background-color: var(--ak-admin-sidebar-bg) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ak23-admin-logo-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px 20px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ak23-admin-logo-square {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background-color: var(--ak-admin-gold);
+  color: #0A0D12;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(251, 175, 67, 0.35);
+}
+
+.ak23-admin-brand-title {
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.ak23-admin-brand-subtitle {
+  color: #64748B;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.ak23-admin-profile-box {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ak23-admin-profile-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #252015;
+  border: 1px solid rgba(251, 175, 67, 0.4);
+  color: var(--ak-admin-gold);
+  font-weight: 800;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ak23-admin-profile-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.ak23-admin-profile-name {
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ak23-admin-profile-role {
+  color: #64748B;
+  font-size: 11px;
+}
+
+.ak23-admin-profile-arrow {
+  color: #64748B;
+  font-size: 15px;
+  text-decoration: none !important;
+  transition: color 0.2s ease;
+}
+
+.ak23-admin-profile-arrow:hover {
+  color: #FFFFFF;
+}
+
+/* Topbar New Course Button */
+.ak23-btn-new-course {
+  background: var(--ak-admin-gold-dark);
+  color: #FFFFFF !important;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  margin-right: 12px;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+}
+
+.ak23-btn-new-course:hover {
+  background: #C8811C;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   SALES ANALYTICS DASHBOARD (AKCOURSE.png)
+   ========================================================================== */
+
+.ak23-analytics-container {
+  padding: 10px 0 40px;
+}
+
+/* Header */
+.ak23-analytics-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.ak23-analytics-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--ak-admin-text-main);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.ak23-analytics-sub {
+  font-size: 14px;
+  color: var(--ak-admin-text-muted);
+  margin: 0;
+}
+
+.ak23-btn-storefront {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ak-admin-gold-dark);
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+
+.ak23-btn-storefront:hover {
+  color: #C8811C;
+}
+
+/* 4 Stat Cards Row */
+.ak23-analytics-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.ak23-stat-tile {
+  background: #FFFFFF;
+  border: 1px solid var(--ak-admin-border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 135px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ak23-stat-tile-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ak23-stat-tile-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ak-admin-text-muted);
+  margin-bottom: 4px;
+}
+
+.ak23-stat-tile-val {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--ak-admin-text-main);
+  line-height: 1.1;
+}
+
+.ak23-stat-tile-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ak23-stat-tile-icon.green {
+  background: var(--ak-admin-gold-light);
+  color: var(--ak-admin-gold-dark);
+}
+
+.ak23-stat-tile-icon.blue {
+  background: rgba(251, 175, 67, 0.12);
+  color: var(--ak-admin-gold);
+}
+
+.ak23-stat-tile-icon.amber {
+  background: #FEF3C7;
+  color: var(--ak-admin-amber);
+}
+
+.ak23-stat-tile-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+}
+
+.ak23-pill-trend {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.ak23-pill-trend.green {
+  background: #FFF7ED;
+  color: #B45309;
+}
+
+.ak23-pill-trend.amber {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.ak23-sparkline-svg {
+  width: 90px;
+  height: 28px;
+  overflow: visible;
+}
+
+/* Card General */
+.ak23-card {
+  background: #FFFFFF;
+  border: 1px solid var(--ak-admin-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  height: 100%;
+}
+
+.ak23-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.ak23-card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ak-admin-text-main);
+  margin-bottom: 2px;
+}
+
+.ak23-card-sub {
+  font-size: 12.5px;
+  color: var(--ak-admin-text-muted);
+  margin: 0;
+}
+
+/* Revenue Overview Chart Area */
+.ak23-chart-tabs {
+  display: inline-flex;
+  background: #F1F5F9;
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.ak23-chart-tab {
+  border: none;
+  background: transparent;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ak-admin-text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ak23-chart-tab.active {
+  background: #FFFFFF;
+  color: var(--ak-admin-text-main);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.ak23-spline-chart-box {
+  width: 100%;
+  height: 250px;
+  margin-top: 14px;
+}
+
+/* Order Status Donut */
+.ak23-donut-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ak23-donut-relative {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  margin-bottom: 20px;
+}
+
+.ak23-donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.ak23-donut-number {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ak-admin-text-main);
+  line-height: 1.1;
+}
+
+.ak23-donut-sub {
+  font-size: 11px;
+  color: var(--ak-admin-text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.ak23-donut-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ak23-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+
+.ak23-legend-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ak-admin-text-main);
+}
+
+.ak23-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.ak23-legend-dot.green { background: #FBAF43; }
+.ak23-legend-dot.teal { background: #14B8A6; }
+.ak23-legend-dot.blue { background: #E29828; }
+.ak23-legend-dot.red { background: #EF4444; }
+
+.ak23-legend-val {
+  font-weight: 700;
+  color: var(--ak-admin-text-main);
+}
+
+/* Tables */
+.ak23-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ak23-admin-table th {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94A3B8;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ak-admin-border);
+}
+
+.ak23-admin-table td {
+  padding: 14px 12px;
+  font-size: 13px;
+  color: #334155;
+  border-bottom: 1px solid #F1F5F9;
+  vertical-align: middle;
+}
+
+.ak23-admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.ak23-table-seq {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94A3B8;
+  width: 25px;
+}
+
+.ak23-course-row-title {
+  font-weight: 700;
+  color: var(--ak-admin-text-main);
+  margin-bottom: 2px;
+}
+
+.ak23-course-row-price {
+  font-size: 11px;
+  color: var(--ak-admin-text-muted);
+}
+
+.ak23-table-bold {
+  font-weight: 700;
+  color: var(--ak-admin-text-main);
+}
+
+/* Revenue by Series Bars */
+.ak23-series-bars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.ak23-series-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ak23-series-bar-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ak-admin-text-main);
+}
+
+.ak23-series-track {
+  height: 8px;
+  background: #F1F5F9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ak23-series-fill {
+  height: 100%;
+  background: var(--ak-admin-gold-dark);
+  border-radius: 4px;
+}
+
+/* Customer Row in Transactions */
+.ak23-customer-col {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ak23-customer-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #E2E8F0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ak23-badge-status {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.ak23-badge-status.paid {
+  background: #FFF7ED;
+  color: #B45309;
+}
+
+.ak23-badge-status.processing {
+  background: #E6FFFA;
+  color: #0D9488;
+}
+
+.ak23-badge-status.pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.ak23-badge-status.failed {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+/* Fulfillment Health Meters */
+.ak23-health-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 10px;
+}
+
+.ak23-health-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ak23-health-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+
+.ak23-health-name {
+  font-weight: 600;
+  color: var(--ak-admin-text-main);
+}
+
+.ak23-health-percent {
+  font-weight: 700;
+  color: var(--ak-admin-text-main);
+}
+
+.ak23-health-counts {
+  font-size: 11px;
+  color: var(--ak-admin-text-muted);
+}
+
+.ak23-health-track {
+  height: 7px;
+  background: #F1F5F9;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ak23-health-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+  .ak23-analytics-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .ak23-analytics-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  .ak23-analytics-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
