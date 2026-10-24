@@ -12,7 +12,7 @@
                 @php
                     $logoDark = siteLogo('dark');
                 @endphp
-                <img src="{{ $logoDark }}" alt="{{ gs('site_name') }}" style="height: 32px; max-width: 155px; object-fit: contain;">
+                <img src="{{ $logoDark }}" alt="{{ gs('site_name') }}" style="height: 32px; max-width: 200px; width: auto; object-fit: contain;">
             </a>
 
             <!-- Desktop Nav Links (Fully Dynamic Backend Driven) -->

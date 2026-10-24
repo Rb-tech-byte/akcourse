@@ -85,7 +85,7 @@
                         <div class="ak23-auth-card-header">
                             <div class="ak23-auth-card-topmark">
                                 <div class="ak23-auth-mark-icon">
-                                    <img src="{{ asset('assets/images/logo_icon/logo_dark.png') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 130px; object-fit: contain;">
+                                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 150px; object-fit: contain;">
                                 </div>
                                 <span class="ak23-auth-mark-label">Student Registration</span>
                             </div>

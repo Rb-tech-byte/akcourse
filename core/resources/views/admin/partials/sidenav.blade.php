@@ -16,7 +16,7 @@
         <div class="sidebar__logo p-0 border-0">
             <div class="ak23-admin-logo-box">
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none flex-grow-1">
-                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" class="m23-sidebar-brand-img" style="height: 32px; max-width: 150px; object-fit: contain;">
+                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" class="m23-sidebar-brand-img" style="height: 32px; max-width: 165px; width: auto; object-fit: contain;">
                 </a>
                 <!-- Sleek Core/All View Toggle Icon Button -->
                 <button type="button" class="ak23-view-toggle-btn {{ $isAnySubActive ? 'all-active' : '' }}" id="ak23GlobalViewToggle" title="Toggle Core View (AKCOURSE.png) / All Components">
@@ -358,20 +358,12 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.ak23-admin-logo-square {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    background-color: #FBAF43;
-    color: #0A0D12;
-    font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    font-weight: 900;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 3px 12px rgba(251, 175, 67, 0.35);
-    flex-shrink: 0;
+.m23-sidebar-brand-img {
+    height: 32px;
+    max-width: 165px;
+    width: auto;
+    object-fit: contain;
+    display: block;
 }
 
 .ak23-admin-brand-title {

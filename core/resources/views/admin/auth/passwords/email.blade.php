@@ -12,7 +12,9 @@
             <div class="ak-admin-card">
                 <div class="ak-admin-card-header text-center">
                     <div class="ak-admin-topmark justify-content-center">
-                        <div class="ak-admin-logo-mark">AK</div>
+                        <div class="ak-admin-logo-mark">
+                            <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 130px; object-fit: contain;">
+                        </div>
                         <span class="ak-admin-topmark-label">Account Recovery</span>
                     </div>
                     <h2 class="ak-admin-card-title">@lang('Reset Admin Password')</h2>

@@ -33,14 +33,9 @@
          ========================================================================= -->
     <aside class="ak23-portal-sidebar">
         <!-- Brand Header -->
-        <a href="{{ route('home') }}" class="ak23-portal-brand text-decoration-none">
-            <div class="ak23-portal-logo-square">
-                <span>M23</span>
-            </div>
-            <div class="ak23-portal-brand-meta">
-                <span class="ak23-portal-brand-title">Maarifa23</span>
-                <span class="ak23-portal-brand-subtitle">STUDENT PORTAL</span>
-            </div>
+        <a href="{{ route('home') }}" class="ak23-portal-brand text-decoration-none d-flex flex-column gap-1">
+            <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" class="ak23-portal-logo-img" style="height: 28px; max-width: 175px; width: auto; object-fit: contain;">
+            <span class="ak23-portal-brand-subtitle text-muted fs-10 fw-bold letter-spacing-1 ps-1" style="font-size: 10px; letter-spacing: 0.1em; opacity: 0.7;">STUDENT PORTAL</span>
         </a>
 
         <!-- Navigation Menu -->

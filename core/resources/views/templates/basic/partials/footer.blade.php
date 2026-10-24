@@ -3,7 +3,7 @@
         <div class="ak23-footer-top">
             <div>
                 <a class="ak23-brand" href="{{ route('home') }}">
-                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 140px; object-fit: contain;">
+                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 175px; width: auto; object-fit: contain;">
                 </a>
                 <p class="ak23-footer-tagline">Practical audio & software education. Built for modern creators.</p>
             </div>

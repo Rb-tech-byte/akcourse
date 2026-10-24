@@ -80,7 +80,7 @@
                         <div class="ak-admin-card-header">
                             <div class="ak-admin-topmark">
                                 <div class="ak-admin-logo-mark">
-                                    <img src="{{ asset('assets/images/logo_icon/logo_dark.png') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 130px; object-fit: contain;">
+                                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 150px; object-fit: contain;">
                                 </div>
                                 <span class="ak-admin-topmark-label">Master Administration</span>
                             </div>
