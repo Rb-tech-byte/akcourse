@@ -37,9 +37,15 @@ if ! command -v composer &> /dev/null; then
     fi
 fi
 
-# 4. Install PHP Dependencies
+# 4. Install PHP Dependencies (with legacy DRM eradication)
 echo "📦 Installing PHP composer dependencies (no-dev)..."
 cd "$CORE_DIR"
+
+# Completely remove any legacy activation/DRM package and cached manifests
+rm -rf "$CORE_DIR/vendor/laramin"
+rm -f "$CORE_DIR/bootstrap/cache/packages.php"
+rm -f "$CORE_DIR/bootstrap/cache/services.php"
+
 $COMPOSER_BIN install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
 # 5. Generate Application Key if not set

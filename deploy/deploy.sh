@@ -28,6 +28,9 @@ git reset --hard origin/main
 # 3. Install production Composer packages
 echo "📦 Installing PHP composer dependencies (no-dev)..."
 cd "$CORE_DIR"
+rm -rf "$CORE_DIR/vendor/laramin"
+rm -f "$CORE_DIR/bootstrap/cache/packages.php"
+rm -f "$CORE_DIR/bootstrap/cache/services.php"
 composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
 # 4. Run database migrations
