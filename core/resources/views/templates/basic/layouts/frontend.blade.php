@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/main.css') }}">
     <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/custom.css') }}">
     <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/template.css') }}">
-    <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/ak23.css') }}?v={{ file_exists(public_path($activeTemplateTrue . 'css/ak23.css')) ? filemtime(public_path($activeTemplateTrue . 'css/ak23.css')) : time() }}">
+    <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/ak23.css') }}?v={{ file_exists(base_path('../' . $activeTemplateTrue . 'css/ak23.css')) ? filemtime(base_path('../' . $activeTemplateTrue . 'css/ak23.css')) : time() }}">
 
     @stack('style-lib')
 

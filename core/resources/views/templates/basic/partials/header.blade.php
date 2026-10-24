@@ -5,6 +5,23 @@
     $logoDark = siteLogo('dark');
 @endphp
 
+<style>
+/* Defensive Header Layout Rules (Zero Vertical Wrapping Guarantee) */
+.ak23-header-inner { display: flex !important; align-items: center !important; justify-content: space-between !important; flex-wrap: nowrap !important; }
+.ak23-header-right { display: flex !important; align-items: center !important; gap: 8px !important; flex-shrink: 0 !important; }
+.ak23-login-link { white-space: nowrap !important; }
+.ak23-cart-btn { white-space: nowrap !important; }
+@media (max-width: 767.98px) {
+  .ak23-header-right .ak23-login-link { display: none !important; }
+  .ak23-cart-btn { width: 40px !important; height: 40px !important; padding: 0 !important; border-radius: 50% !important; justify-content: center !important; }
+  .ak23-cart-btn-label, .ak23-cart-pill, .ak23-cart-btn .la-arrow-right { display: none !important; }
+  .ak23-cart-icon-wrap { font-size: 20px !important; }
+}
+@media (max-width: 575.98px) {
+  .ak23-brand img, .ak23-brand-img { height: 26px !important; max-width: 140px !important; }
+}
+</style>
+
 <!-- =========================================================================
      AK23 MAIN NAVBAR (RESPONSIVE & MOBILE-FIRST)
      ========================================================================= -->

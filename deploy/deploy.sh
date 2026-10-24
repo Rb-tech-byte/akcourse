@@ -65,7 +65,13 @@ if command -v supervisorctl &> /dev/null; then
     supervisorctl restart all || true
 fi
 
-# 8. Exit Maintenance Mode
+# 8. Flush Web Server OPcache & LiteSpeed Cache
+if command -v systemctl &> /dev/null; then
+    echo "🔄 Refreshing web server & OPcache..."
+    systemctl restart lsws 2>/dev/null || systemctl restart openlitespeed 2>/dev/null || true
+fi
+
+# 9. Exit Maintenance Mode
 echo "🌐 Bringing application back online..."
 php artisan up
 
