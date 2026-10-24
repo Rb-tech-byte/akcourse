@@ -15,4 +15,10 @@ Route::namespace('Api')->name('api.')->group(function () {
         Route::get('/detail', 'courseDetail')->name('courses.detail');
     });
 
+    // One-Time Lifetime License & Certificate Verification API
+    Route::controller('LicenseApiController')->prefix('license')->group(function () {
+        Route::match(['get', 'post'], '/verify', 'verify')->name('license.verify');
+        Route::get('/check/{code}', 'check')->name('license.check');
+    });
+
 });

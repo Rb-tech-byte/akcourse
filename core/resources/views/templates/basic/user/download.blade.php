@@ -36,8 +36,8 @@
                             <thead>
                                 <tr>
                                     <th>@lang('Product | Date')</th>
-                                    <th>@lang('Purchase Code')</th>
-                                    <th>@lang('License')</th>
+                                    <th>@lang('License Key')</th>
+                                    <th>@lang('License Status')</th>
                                     <th>@lang('Action')</th>
                                 </tr>
                             </thead>
@@ -60,8 +60,18 @@
                                                 @endif
                                             </div>
                                         </td>
-                                        <td> {{ $purchasedItem->purchase_code }} </td>
-                                        <td>@php echo $purchasedItem->licenseBadge; @endphp</td>
+                                        <td>
+                                            <div class="fw-bold text-dark font-monospace fs-12">{{ $purchasedItem->license_key ?: $purchasedItem->purchase_code }}</div>
+                                            <small class="text-muted d-block">Cert: {{ $purchasedItem->certificate_number ?: 'AK23-CERT' }}</small>
+                                        </td>
+                                        <td>
+                                            @php echo $purchasedItem->licenseBadge; @endphp
+                                            <div class="mt-1">
+                                                <a href="{{ route('user.certificate', $purchasedItem->certificate_number ?: $purchasedItem->purchase_code) }}" target="_blank" class="badge bg-warning-subtle text-dark border border-warning-subtle text-decoration-none">
+                                                    <i class="las la-award me-1"></i> @lang('Purchase Cert')
+                                                </a>
+                                            </div>
+                                        </td>
                                         <td>
                                             <div class="dropdown-action">
                                                 <span class="dropdown-action-btn"><i class="las la-angle-down"></i><span
@@ -71,6 +81,12 @@
                                                         <a href="{{ route('user.author.product.download', $purchasedItem->purchase_code) }}?time={{ time() }}"
                                                             class="btn btn-outline--primary btn--sm w-100">
                                                             <i class="la la-download"></i> @lang('Download')
+                                                        </a>
+                                                    </li>
+                                                    <li class="action-list__item">
+                                                        <a href="{{ route('user.certificate', $purchasedItem->certificate_number ?: $purchasedItem->purchase_code) }}" target="_blank"
+                                                            class="btn btn-outline--warning btn--sm w-100">
+                                                            <i class="la la-certificate"></i> @lang('Purchase Certificate')
                                                         </a>
                                                     </li>
                                                     <li class="action-list__item">

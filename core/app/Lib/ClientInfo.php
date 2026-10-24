@@ -14,7 +14,7 @@ class ClientInfo{
 	    $ip = getRealIP();
 
 
-	    $xml = @simplexml_load_file("http://www.geoplugin.net/xml.gp?ip=" . $ip);
+	    $xml = @simplexml_load_file("https://www.geoplugin.net/xml.gp?ip=" . $ip);
 
 
 	    $country = @$xml->geoplugin_countryName;

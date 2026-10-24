@@ -44,7 +44,7 @@
                         </a>
                     </h6>
                     <span class="product-card__author text-muted" style="font-size: 11.5px;">
-                        <i class="las la-certificate text-success"></i> AK23 Academy
+                        <i class="las la-certificate text-success"></i> Maarifa23 Academy &middot; @lang('Lifetime License')
                     </span>
                 </div>
                 @if ($product->is_free)

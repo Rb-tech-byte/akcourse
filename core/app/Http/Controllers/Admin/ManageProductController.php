@@ -46,9 +46,9 @@ class ManageProductController extends Controller
             'price_cl'        => 'nullable|numeric|gte:0',
             'description'     => 'required|string',
             'demo_url'        => 'nullable|url',
-            'thumbnail'       => 'nullable|image',
-            'preview_image'   => 'nullable|image',
-            'main_file'       => 'nullable|file',
+            'thumbnail'       => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'preview_image'   => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
+            'main_file'       => ['nullable', 'file', 'mimes:zip,rar,tar,gz,7z,pdf,mp4,mp3,wav', 'max:1048576'],
         ]);
 
         if ($id) {

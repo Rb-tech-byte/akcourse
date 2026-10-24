@@ -14,8 +14,9 @@ class FileTypeValidate implements Rule
      */
     public function __construct($extensions)
     {
-
-        $this->extensions = $extensions;
+        $this->extensions = array_map(function ($item) {
+            return strtolower(trim($item));
+        }, is_array($extensions) ? $extensions : explode(',', (string)$extensions));
     }
 
     /**
@@ -27,7 +28,22 @@ class FileTypeValidate implements Rule
      */
     public function passes($attribute, $value)
     {
-        return in_array($value->getClientOriginalExtension(), $this->extensions);
+        if (!$value || !method_exists($value, 'getClientOriginalExtension')) {
+            return false;
+        }
+
+        $ext = strtolower($value->getClientOriginalExtension());
+        $dangerous = [
+            'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phar', 'inc',
+            'asp', 'aspx', 'jsp', 'jspx', 'cgi', 'pl', 'py', 'sh', 'bash', 'env',
+            'exe', 'bat', 'cmd', 'com', 'htaccess', 'htpasswd', 'user.ini', 'ini'
+        ];
+
+        if (in_array($ext, $dangerous)) {
+            return false;
+        }
+
+        return in_array($ext, $this->extensions);
     }
 
     /**

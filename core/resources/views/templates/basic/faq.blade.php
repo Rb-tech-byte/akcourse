@@ -4,7 +4,7 @@
     @php
         $waExtension = \App\Models\Extension::where('act', 'whatsapp-chat')->where('status', \App\Constants\Status::ENABLE)->first();
         $waPhone = @$waExtension->shortcode->phone_number->value ?? '255755000000';
-        $waMessage = @$waExtension->shortcode->default_message->value ?? 'Hello AK23 Academy! I have an inquiry about the vocal mixing courses and bundle download.';
+        $waMessage = @$waExtension->shortcode->default_message->value ?? 'Hello Maarifa23 Academy! I have an inquiry about the vocal mixing courses and bundle download.';
         $waUrl = 'https://wa.me/' . preg_replace('/[^0-9]/', '', $waPhone) . '?text=' . urlencode($waMessage);
 
         // Merge akFaqs with any CMS faqs if needed
@@ -38,7 +38,7 @@
             <!-- Header -->
             <div class="ak23-faq-page-header text-center">
                 <div class="ak23-badge-gold">
-                    <i class="las la-question-circle"></i> @lang('AK23 ACADEMY • HELP CENTER')
+                    <i class="las la-question-circle"></i> @lang('MAARIFA23 ACADEMY • HELP CENTER')
                 </div>
                 <h1 class="ak23-clean-title">
                     Frequently Asked <span style="color: #D97706;">Questions</span>

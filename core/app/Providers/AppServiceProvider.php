@@ -56,9 +56,12 @@ class AppServiceProvider extends ServiceProvider {
 
 
         view()->composer('partials.seo', function ($view) {
-            $seo = Frontend::where('data_keys', 'seo.data')->first();
+            $seoData = cache()->remember('seo_data', 3600, function () {
+                $seo = Frontend::where('data_keys', 'seo.data')->first();
+                return $seo ? $seo->data_values : null;
+            });
             $view->with([
-                'seo' => $seo ? $seo->data_values : $seo,
+                'seo' => $seoData,
             ]);
         });
 

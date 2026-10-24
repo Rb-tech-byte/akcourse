@@ -9,7 +9,7 @@
         // Fetch WhatsApp extension credentials if active for dynamic linking
         $waExtension = \App\Models\Extension::where('act', 'whatsapp-chat')->where('status', \App\Constants\Status::ENABLE)->first();
         $waPhone = @$waExtension->shortcode->phone_number->value ?? '255755000000';
-        $waMessage = @$waExtension->shortcode->default_message->value ?? 'Hello AK23 Academy! I have an inquiry about the vocal mixing courses and bundle download.';
+        $waMessage = @$waExtension->shortcode->default_message->value ?? 'Hello Maarifa23 Academy! I have an inquiry about the vocal mixing courses and bundle download.';
         $waUrl = 'https://wa.me/' . preg_replace('/[^0-9]/', '', $waPhone) . '?text=' . urlencode($waMessage);
     @endphp
 
@@ -19,13 +19,13 @@
             <!-- Header Banner -->
             <div class="ak23-clean-header">
                 <div class="ak23-badge-gold">
-                    <i class="las la-headset"></i> @lang('SUPPORT & INQUIRIES • AK23 ACADEMY')
+                    <i class="las la-headset"></i> @lang('SUPPORT & INQUIRIES • MAARIFA23 ACADEMY')
                 </div>
                 <h1 class="ak23-clean-title">
                     {{ __(@$contactContent->heading_one ?? 'Contact & Academic Support') }}
                 </h1>
                 <p class="ak23-clean-subtitle">
-                    {{ __(@$contactContent->subheading_one ?? 'Have questions about the AK23 vocal mixing course series, direct zip package downloads, or plugin licenses? Reach out directly.') }}
+                    {{ __(@$contactContent->subheading_one ?? 'Have questions about the Maarifa23 vocal mixing course series, direct zip package downloads, or plugin licenses? Reach out directly.') }}
                 </p>
             </div>
 

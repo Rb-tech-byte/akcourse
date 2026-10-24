@@ -19,7 +19,11 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 
-    <Files .env>
+    # Block direct web access to sensitive directories
+    RewriteRule ^(core|deploy|scratch|\.git) - [F,L,NC]
+
+    # Block access to environment, config, database, and log files
+    <FilesMatch "(?i)^(\.env|\.git|\.composer|composer\.(json|lock)|package(-lock)?\.json|deploy\.sh|.*\.sql|.*\.log|.*\.bak|.*\.yml|.*\.yaml)$">
         <IfModule mod_authz_core.c>
             Require all denied
         </IfModule>
@@ -27,5 +31,14 @@
             Order allow,deny
             Deny from all
         </IfModule>
-    </Files>
+    </FilesMatch>
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Production HTTP Security Headers
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
 </IfModule>

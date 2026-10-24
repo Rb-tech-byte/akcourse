@@ -372,11 +372,11 @@
                                 </a>
                             </h3>
 
-                            <!-- Included Software Tag -->
-                            <div class="ak23-card-soft-pill text-truncate" title="{{ $course->software_name }} ({{ $course->software_edition }})">
+                            <!-- Included Software Tag & Lifetime License -->
+                            <div class="ak23-card-soft-pill text-truncate" title="{{ $course->software_name }} &bull; One-Time Lifetime License & Official Purchase Certificate Included">
                                 <i class="las la-certificate" style="color: {{ $accentColor }}; font-size: 13px;"></i>
                                 <span class="text-white fw-semibold text-truncate">{{ $course->software_name ?: 'Studio Software' }}</span>
-                                <span class="text-muted fs-11 ms-auto text-truncate">({{ $course->software_edition ?: 'Included' }})</span>
+                                <span class="text-success fs-10 ms-auto text-truncate fw-semibold">Lifetime Lic + Purchase Cert</span>
                             </div>
 
                             <!-- Outcome / Brief Description -->
@@ -388,7 +388,7 @@
                             <div class="ak23-card-specs-bar">
                                 <span><i class="las la-play-circle text-warning me-1"></i>{{ $lessonCount }} Lessons</span>
                                 <span><i class="las la-clock text-warning me-1"></i>{{ $videoMin }} Min</span>
-                                <span class="text-success"><i class="las la-shield-alt me-1"></i>License Inc.</span>
+                                <span class="text-success"><i class="las la-award me-1"></i>Lifetime License</span>
                             </div>
 
                             <!-- Card Footer: Price & Direct Actions -->

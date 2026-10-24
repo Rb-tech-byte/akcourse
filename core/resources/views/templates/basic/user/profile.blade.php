@@ -32,7 +32,7 @@
                                 @if (@$author->bio)
                                     @php echo @$author->bio @endphp
                                 @else
-                                    <p class="mb-0 text-secondary">@lang('Passionate music producer and audio mixing student at AK23 Academy.')</p>
+                                    <p class="mb-0 text-secondary">@lang('Passionate music producer and audio mixing student at Maarifa23 Academy.')</p>
                                 @endif
                             </div>
                         </div>

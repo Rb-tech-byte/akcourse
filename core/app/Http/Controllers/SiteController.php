@@ -409,12 +409,12 @@ class SiteController extends Controller
 
         if ($isCartCheckout) {
             foreach ($cartItems as $cItem) {
-                $itemPrice = (float)$cItem->price + (float)$cItem->buyer_fee + (float)$cItem->extended_amount;
+                $itemPrice = (float)$cItem->price;
                 $productPrice += $itemPrice;
                 $orderItemsData[] = [
                     'product_id'    => $cItem->product_id,
                     'product_price' => $itemPrice,
-                    'license'       => $cItem->license ?: 1,
+                    'license'       => 1,
                     'quantity'      => 1,
                 ];
             }
@@ -470,16 +470,20 @@ class SiteController extends Controller
         $order->trx = 'AK-' . strtoupper(Str::random(8));
         $order->save();
 
-        // 2. Create OrderItems for each item in the order
+        // 2. Create OrderItems with auto-generated lifetime license key & certificate number
         foreach ($orderItemsData as $itemData) {
-            $orderItem = new OrderItem();
-            $orderItem->order_id = $order->id;
-            $orderItem->user_id = $user->id;
-            $orderItem->product_id = $itemData['product_id'];
-            $orderItem->product_price = $itemData['product_price'];
-            $orderItem->purchase_code = getPurchaseCode();
-            $orderItem->license = $itemData['license'];
-            $orderItem->quantity = $itemData['quantity'];
+            $orderItem                     = new OrderItem();
+            $orderItem->order_id           = $order->id;
+            $orderItem->user_id            = $user->id;
+            $orderItem->product_id         = $itemData['product_id'];
+            $orderItem->product_price      = $itemData['product_price'];
+            $orderItem->purchase_code      = getPurchaseCode();
+            $orderItem->license_key        = generateLicenseKey();
+            $orderItem->certificate_number = generateCertificateNumber();
+            $orderItem->license            = 1; // Standardized One-Time Lifetime License
+            $orderItem->is_extended        = 0;
+            $orderItem->extended_amount    = 0;
+            $orderItem->quantity           = $itemData['quantity'];
             $orderItem->save();
         }
 
@@ -923,7 +927,9 @@ class SiteController extends Controller
         $pageTitle   = $policy->data_values->title;
         $seoContents = $policy->seo_content;
         $seoImage    = @$seoContents->image ? frontendImage('policy_pages', $seoContents->image, getFileSize('seo'), true) : null;
-        return view('Template::policy', compact('policy', 'pageTitle', 'seoContents', 'seoImage'));
+        $activeTemplate = activeTemplate();
+        $allPolicies = Frontend::where('data_keys', 'policy_pages.element')->get();
+        return view($activeTemplate . 'policy', compact('policy', 'pageTitle', 'seoContents', 'seoImage', 'allPolicies', 'activeTemplate'));
     }
 
     public function changeLanguage($lang = null)
@@ -948,7 +954,9 @@ class SiteController extends Controller
         abort_if($cookieContent->data_values->status != Status::ENABLE, 404);
         $pageTitle = 'Cookie Policy';
         $cookie    = Frontend::where('data_keys', 'cookie.data')->first();
-        return view('Template::cookie', compact('pageTitle', 'cookie'));
+        $activeTemplate = activeTemplate();
+        $allPolicies = Frontend::where('data_keys', 'policy_pages.element')->get();
+        return view($activeTemplate . 'cookie', compact('pageTitle', 'cookie', 'allPolicies', 'activeTemplate'));
     }
 
     public function placeholderImage($size = null)
@@ -998,5 +1006,98 @@ class SiteController extends Controller
             $ad->save();
         }
         return response()->json(['status' => 'Success', 'message' => 'Advertisement Clicked!']);
+    }
+
+    public function viewCertificate($code)
+    {
+        $cleanCode = trim((string)$code);
+        $orderItem = OrderItem::with(['product', 'order', 'buyer'])
+            ->where('certificate_number', $cleanCode)
+            ->orWhere('license_key', $cleanCode)
+            ->orWhere('purchase_code', $cleanCode)
+            ->first();
+
+        abort_if(!$orderItem, 404, 'Official Certificate or License not found.');
+
+        $user = $orderItem->buyer ?: User::find($orderItem->user_id);
+        $product = $orderItem->product;
+        $order = $orderItem->order;
+
+        $studentName = $user ? ($user->fullname ?: ($user->firstname ? trim($user->firstname . ' ' . $user->lastname) : $user->username)) : 'Alex M. Kaseja';
+        $courseTitle = $product ? ($product->title ?: $product->name) : 'Studio Production Course';
+        $softwareName = $product ? ($product->software_name ?: 'Studio Software Suite') : 'Studio Software Suite';
+        $softwareEdition = $product ? ($product->software_edition ?: 'Perpetual License Included') : 'Perpetual License Included';
+        $licenseKey = $orderItem->license_key ?: $orderItem->purchase_code;
+        $certificateNumber = $orderItem->certificate_number ?: ('M23-CERT-' . date('Y') . '-' . strtoupper(substr(md5($orderItem->id), 0, 8)));
+        $issueDate = $orderItem->created_at ? $orderItem->created_at->format('F d, Y') : date('F d, Y');
+
+        $activeTemplate = activeTemplate();
+        $pageTitle = 'Certificate of Course Purchase - ' . $courseTitle;
+
+        return view($activeTemplate . 'user.certificate', compact(
+            'pageTitle',
+            'orderItem',
+            'activeTemplate',
+            'user',
+            'product',
+            'order',
+            'studentName',
+            'courseTitle',
+            'softwareName',
+            'softwareEdition',
+            'licenseKey',
+            'certificateNumber',
+            'issueDate'
+        ));
+    }
+
+    public function verifyLicense(Request $request, $code = null)
+    {
+        $lookupCode = trim((string)($code ?: $request->query('code') ?: $request->input('code')));
+
+        if ($lookupCode) {
+            $orderItem = OrderItem::with(['product', 'order', 'buyer'])
+                ->where('license_key', $lookupCode)
+                ->orWhere('certificate_number', $lookupCode)
+                ->orWhere('purchase_code', $lookupCode)
+                ->first();
+
+            if ($request->wantsJson() || $request->ajax()) {
+                if ($orderItem) {
+                    $user = $orderItem->buyer;
+                    $product = $orderItem->product;
+                    return response()->json([
+                        'status'             => 'valid',
+                        'valid'              => true,
+                        'certificate_type'   => 'Certificate of Course Purchase',
+                        'license_type'       => 'One-Time Perpetual Studio License',
+                        'renewable'          => false,
+                        'expires_at'         => 'Never (Lifetime)',
+                        'license_key'        => $orderItem->license_key ?: $orderItem->purchase_code,
+                        'certificate_number' => $orderItem->certificate_number,
+                        'course_title'       => $product?->title ?? 'Course',
+                        'software_name'      => $product?->software_name ?? 'Studio Software',
+                        'software_edition'   => $product?->software_edition ?? 'Perpetual License',
+                        'buyer_name'         => $user?->fullname ?? 'Verified Buyer',
+                        'issued_at'          => $orderItem->created_at ? $orderItem->created_at->toIso8601String() : now()->toIso8601String(),
+                        'certificate_url'    => route('user.certificate', $orderItem->certificate_number ?: $orderItem->purchase_code),
+                    ]);
+                }
+                return response()->json([
+                    'status'  => 'invalid',
+                    'valid'   => false,
+                    'message' => 'License or purchase certificate code was not found in official registry.',
+                ], 404);
+            }
+
+            if ($orderItem) {
+                return redirect()->route('user.certificate', $orderItem->certificate_number ?: $orderItem->purchase_code);
+            }
+        }
+
+        $activeTemplate = activeTemplate();
+        $pageTitle = 'Course Purchase & License Verification - Maarifa23 Academy';
+        $searched = !empty($lookupCode);
+        return view($activeTemplate . 'verify_license', compact('pageTitle', 'activeTemplate', 'lookupCode', 'searched'));
     }
 }

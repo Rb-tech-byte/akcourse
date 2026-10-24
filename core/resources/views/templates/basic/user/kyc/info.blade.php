@@ -109,7 +109,7 @@
                 <div class="flex-grow-1">
                     <h6 class="mb-1 text-dark fw-bold">Identity Verification Approved</h6>
                     <p class="mb-0 text-muted fs-13">
-                        Your identity has been validated under AK23 Academy guidelines. You are cleared for all certified diplomas, software license deliveries, and offline kit access.
+                        Your identity has been validated under Maarifa23 Academy guidelines. You are cleared for all certified diplomas, software license deliveries, and offline kit access.
                     </p>
                 </div>
                 <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 fs-12 fw-bold d-none d-md-inline-block">

@@ -91,7 +91,7 @@
                                 <tr>
                                     <th class="ps-3 py-2" style="min-width: 220px;">@lang('Course & Purchase Date')</th>
                                     <th class="py-2">@lang('Student (Buyer)')</th>
-                                    <th class="py-2">@lang('Purchase Code')</th>
+                                    <th class="py-2">@lang('License & Certificate')</th>
                                     <th class="py-2">@lang('Price ($)')</th>
                                     <th class="py-2">@lang('Status / Refund')</th>
                                     <th class="text-end pe-3 py-2 no-export d-print-none">@lang('Action')</th>
@@ -126,9 +126,15 @@
                                             <span class="text-muted fs-11"><span>@</span>{{ @$sale->buyer->username ?? @$sale->order->user->username ?? 'student' }}</span>
                                         </td>
 
-                                        <!-- Purchase Code -->
+                                        <!-- License Key & Certificate -->
                                         <td class="py-2">
-                                            <code class="text-primary fw-semibold">{{ $sale->purchase_code }}</code>
+                                            <div class="fw-semibold text-primary font-monospace fs-12">{{ $sale->license_key ?: $sale->purchase_code }}</div>
+                                            <div class="d-flex align-items-center gap-1 mt-1">
+                                                <span class="badge bg-light text-muted border fs-10 font-monospace">{{ $sale->certificate_number ?: 'AK23-CERT' }}</span>
+                                                <a href="{{ route('user.certificate', $sale->certificate_number ?: $sale->purchase_code) }}" target="_blank" class="badge bg-warning-subtle text-dark border border-warning-subtle text-decoration-none fs-10" title="View Purchase Certificate">
+                                                    <i class="las la-award"></i> Cert
+                                                </a>
+                                            </div>
                                         </td>
 
                                         <!-- Price -->
@@ -146,9 +152,14 @@
 
                                         <!-- Action -->
                                         <td class="text-end pe-3 py-2 no-export d-print-none">
-                                            <a href="{{ route('admin.sell.all.details', $sale->id) }}" class="btn btn-sm btn-outline-primary py-1 px-2 fs-12">
-                                                <i class="las la-desktop"></i> @lang('Details')
-                                            </a>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ route('user.certificate', $sale->certificate_number ?: $sale->purchase_code) }}" target="_blank" class="btn btn-outline-warning py-1 px-2 fs-12 text-dark" title="View Purchase Certificate">
+                                                    <i class="las la-award"></i>
+                                                </a>
+                                                <a href="{{ route('admin.sell.all.details', $sale->id) }}" class="btn btn-outline-primary py-1 px-2 fs-12" title="Details">
+                                                    <i class="las la-desktop"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty

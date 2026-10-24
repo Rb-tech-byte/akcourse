@@ -78,10 +78,30 @@ class FileManager
     * @param $file
     * @return void
     */
+    protected static $dangerousExtensions = [
+        'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phar', 'inc',
+        'asp', 'aspx', 'axd', 'asx', 'asmx', 'ashx',
+        'cfm', 'cfc',
+        'jsp', 'jspx', 'jsw', 'jsv', 'jspa',
+        'cgi', 'pl', 'py', 'sh', 'bash', 'env',
+        'exe', 'bat', 'cmd', 'com', 'vbs', 'vbe', 'ps1',
+        'htaccess', 'htpasswd', 'user.ini', 'ini'
+    ];
+
 	public function __construct($file = null){
 		$this->file = $file;
 		if ($file) {
-			$imageExtensions = ['jpg','jpeg','png','JPG','JPEG','PNG'];
+            $ext = strtolower($file->getClientOriginalExtension());
+            if (in_array($ext, static::$dangerousExtensions)) {
+                throw new \InvalidArgumentException('Executable and script file uploads are strictly prohibited.');
+            }
+            $originalName = strtolower($file->getClientOriginalName());
+            foreach (['.php', '.phtml', '.phar', '.htaccess'] as $badPattern) {
+                if (str_contains($originalName, $badPattern)) {
+                    throw new \InvalidArgumentException('Invalid file name pattern detected.');
+                }
+            }
+			$imageExtensions = ['jpg','jpeg','png','webp','JPG','JPEG','PNG','WEBP'];
 			if (in_array($file->getClientOriginalExtension(), $imageExtensions)) {
 				$this->isImage = true;
 			}else{
@@ -109,6 +129,11 @@ class FileManager
         //get the filename
         if(!$this->filename){
             $this->filename = $this->getFileName();
+        } else {
+            $destExt = strtolower(pathinfo($this->filename, PATHINFO_EXTENSION));
+            if (in_array($destExt, static::$dangerousExtensions)) {
+                throw new \InvalidArgumentException('Executable and script file uploads are strictly prohibited.');
+            }
         }
 
         //upload file or image

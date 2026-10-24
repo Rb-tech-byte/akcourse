@@ -57,7 +57,7 @@
                 <div class="ak23-video-preview-card">
                     <div class="ak23-video-screen">
                         <div class="ak23-video-header-tag">
-                            AK23 ACADEMY / SERIES PREVIEW
+                            MAARIFA23 ACADEMY / SERIES PREVIEW
                         </div>
 
                         <!-- Waveform Centerpiece -->
@@ -548,7 +548,7 @@
 @php
     $waExt = \App\Models\Extension::where('act', 'whatsapp-chat')->where('status', \App\Constants\Status::ENABLE)->first();
     $waPhone = @$waExt->shortcode->phone_number->value ?? '255755000000';
-    $waUrl = 'https://wa.me/' . preg_replace('/[^0-9]/', '', $waPhone) . '?text=' . urlencode('Hello AK23 Academy! I have a question about the vocal mixing courses.');
+    $waUrl = 'https://wa.me/' . preg_replace('/[^0-9]/', '', $waPhone) . '?text=' . urlencode('Hello Maarifa23 Academy! I have a question about the vocal mixing courses.');
     $totalFaqs = $akFaqs->count();
     $halfFaqs = ceil($totalFaqs / 2);
     $faqCol1 = $akFaqs->slice(0, $halfFaqs);
@@ -639,7 +639,7 @@
         <div class="modal-content" style="background: #111118; border: 1px solid #2B2B3C; border-radius: 12px; color: #fff;">
             <div class="modal-header border-bottom border-secondary" style="border-color: #232332 !important;">
                 <h5 class="modal-title" id="previewModalLabel" style="font-size: 15px; font-weight: 700; color: #F0A62F;">
-                    <i class="las la-play-circle me-1"></i> AK23 Academy &middot; Vocal Mixing Series Preview
+                    <i class="las la-play-circle me-1"></i> Maarifa23 Academy &middot; Vocal Mixing Series Preview
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>

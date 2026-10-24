@@ -13,6 +13,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Favicon & Touch Icons -->
+    <link rel="shortcut icon" href="{{ siteFavicon() }}" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ siteFavicon() }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ siteFavicon() }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/images/logo_icon/apple-touch-icon.png') }}?v={{ file_exists(base_path('../assets/images/logo_icon/apple-touch-icon.png')) ? filemtime(base_path('../assets/images/logo_icon/apple-touch-icon.png')) : time() }}">
+    <meta name="theme-color" content="#0C0E17">
+
     <link rel="stylesheet" href="{{ asset($activeTemplateTrue . 'css/portal.css') }}?v={{ time() }}">
     @stack('style-lib')
     @stack('style')
@@ -22,19 +29,19 @@
 
 <div class="ak23-portal-wrapper">
     <!-- =========================================================================
-         LEFT SIDEBAR (AK23 STUDENT PORTAL)
+         LEFT SIDEBAR (MAARIFA23 STUDENT PORTAL)
          ========================================================================= -->
     <aside class="ak23-portal-sidebar">
         <!-- Brand Header -->
-        <div class="ak23-portal-brand">
+        <a href="{{ route('home') }}" class="ak23-portal-brand text-decoration-none">
             <div class="ak23-portal-logo-square">
-                <span>AK</span>
+                <span>M23</span>
             </div>
             <div class="ak23-portal-brand-meta">
-                <span class="ak23-portal-brand-title">AK23</span>
+                <span class="ak23-portal-brand-title">Maarifa23</span>
                 <span class="ak23-portal-brand-subtitle">STUDENT PORTAL</span>
             </div>
-        </div>
+        </a>
 
         <!-- Navigation Menu -->
         <div class="ak23-portal-menu-wrapper">
@@ -112,7 +119,7 @@
             </div>
             <div class="ak23-portal-help-title">Need help?</div>
             <p class="ak23-portal-help-desc">
-                Contact the AK23 support team about a course, download, or license.
+                Contact the Maarifa23 support team about a course, download, or license.
             </p>
             <a href="{{ route('ticket.open') }}" class="ak23-portal-help-btn">Get support</a>
         </div>

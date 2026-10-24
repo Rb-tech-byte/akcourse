@@ -41,9 +41,20 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-# 6. Storage permissions
-echo "🔒 Enforcing permissions on storage and bootstrap..."
-chmod -R 775 "$CORE_DIR/storage" "$CORE_DIR/bootstrap/cache"
+# 6. Storage, Assets, and Environment Permissions
+echo "🔒 Enforcing secure permissions on storage, assets, and configuration..."
+mkdir -p "$CORE_DIR/storage/framework/cache" \
+         "$CORE_DIR/storage/framework/sessions" \
+         "$CORE_DIR/storage/framework/views" \
+         "$CORE_DIR/storage/logs" \
+         "$CORE_DIR/bootstrap/cache" \
+         "$APP_DIR/assets"
+
+chmod -R 775 "$CORE_DIR/storage" "$CORE_DIR/bootstrap/cache" "$APP_DIR/assets"
+
+if [ -f "$CORE_DIR/.env" ]; then
+    chmod 600 "$CORE_DIR/.env"
+fi
 
 # 7. Restart background queues if configured
 if command -v supervisorctl &> /dev/null; then

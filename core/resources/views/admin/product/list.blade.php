@@ -177,9 +177,7 @@
                                         <td class="py-2">
                                             @if(!$product->is_free)
                                                 <span class="fw-bold text-dark">{{ showAmount($product->price) }}</span>
-                                                @if($product->price_cl > 0)
-                                                    <div class="fs-11 text-muted" title="Commercial License">{{ showAmount($product->price_cl) }}</div>
-                                                @endif
+                                                <div class="fs-11 text-success"><i class="las la-certificate"></i> Lifetime License</div>
                                             @else
                                                 <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill fs-11">@lang('Free')</span>
                                             @endif

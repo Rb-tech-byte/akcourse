@@ -106,28 +106,18 @@ class CartController extends Controller {
             return false;
         }
 
-        if ($isPersonalLicense) {
-            $price = $product->price;
-            if ($product->campaign_product_price[0]) {
-                $price = $product->campaign_product_price[1] - $product->personalBuyerFee();
-            }
-        } else {
-            $price = $product->price_cl;
-            if ($product->campaign_product_commercial_price[0]) {
-                $price = $product->campaign_product_commercial_price[1] - $product->commercialBuyerFee();
-            }
-        }
+        $price = (float)$product->price;
 
         $cart                  = new Cart();
         $cart->product_id      = $product->id;
-        $cart->title           = $product->title;
+        $cart->title           = $product->title ?: $product->name;
         $cart->category_id     = $product->category_id;
         $cart->category        = @$product->category->name;
-        $cart->license         = $license;
-        $cart->is_extended     = $isExtended ?? 0;
-        $cart->extended_amount = $cart->is_extended ? $product->twelveMonthExtendedFee() : 0;
+        $cart->license         = 1; // One-time lifetime license
+        $cart->is_extended     = 0;
+        $cart->extended_amount = 0;
         $cart->price           = $price;
-        $cart->buyer_fee       = $isPersonalLicense ? $product->personalBuyerFee() : $product->commercialBuyerFee();
+        $cart->buyer_fee       = 0;
         $cart->quantity        = 1;
 
         $cart->user_id    = auth()->check() ? auth()->id() : null;
@@ -140,33 +130,14 @@ class CartController extends Controller {
     public function toggleExtended($id) {
         $userId = auth()->id();
         $sessionId = request()->session()->getId();
-
-        $cartQuery = Cart::with('product')->where('id', $id);
-        if ($userId) {
-            $cartQuery->where('user_id', $userId);
-        } else {
-            $cartQuery->where('session_id', $sessionId);
-        }
-
-        $cart = $cartQuery->first();
-
-        if (!$cart) {
-            return response()->json(['status' => 'error', 'message' => 'Item not found in cart'], 404);
-        }
-
-        $cart->is_extended     = !$cart->is_extended;
-        $cart->extended_amount = $cart->is_extended ? ($cart->product ? $cart->product->twelveMonthExtendedFee() : 0) : 0;
-        $cart->save();
-
-        $itemTotal = (float)$cart->price + (float)$cart->buyer_fee + (float)$cart->extended_amount;
         $calc = $this->getCartCalculation($userId, $sessionId);
 
         return response()->json(array_merge([
             'status'         => 'success',
-            'message'        => 'Support extension updated',
-            'is_extended'    => (bool)$cart->is_extended,
-            'item_price'     => $itemTotal,
-            'formatted_item' => 'TZS ' . number_format($itemTotal),
+            'message'        => 'One-time perpetual studio license included across all courses. No renewals or recurring fees.',
+            'is_extended'    => false,
+            'item_price'     => 0,
+            'formatted_item' => 'Included',
         ], $calc));
     }
 

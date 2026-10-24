@@ -16,7 +16,7 @@
         <div class="sidebar__logo p-0 border-0">
             <div class="ak23-admin-logo-box">
                 <a href="{{ route('admin.dashboard') }}" class="d-flex align-items-center gap-2 text-decoration-none flex-grow-1">
-                    <img src="{{ asset('assets/images/logo_icon/logo_dark.png') }}" alt="{{ gs('site_name') }}" class="m23-sidebar-brand-img" style="height: 32px; max-width: 150px; object-fit: contain;">
+                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" class="m23-sidebar-brand-img" style="height: 32px; max-width: 150px; object-fit: contain;">
                 </a>
                 <!-- Sleek Core/All View Toggle Icon Button -->
                 <button type="button" class="ak23-view-toggle-btn {{ $isAnySubActive ? 'all-active' : '' }}" id="ak23GlobalViewToggle" title="Toggle Core View (AKCOURSE.png) / All Components">

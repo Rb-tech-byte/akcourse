@@ -1,0 +1,32 @@
+# ----------------------------------------------------------------------
+# AK23 Security Policy: Disable Script Execution in Public Assets
+# ----------------------------------------------------------------------
+
+# Disable PHP Engine
+<IfModule mod_php5.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+
+# Remove any script handlers
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .inc
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .inc
+
+# Completely block access to any script or executable extensions
+<FilesMatch "(?i)\.(php|phtml|phar|php[0-9]|inc|pl|py|cgi|sh|bash|exe|bat|cmd|env|ini|htaccess|htpasswd)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Prevent script execution and directory listing
+Options -Indexes -ExecCGI

@@ -175,14 +175,13 @@
                                     </div>
                                     <div class="col-12 col-sm-4">
                                         <label class="form-label fs-12 fw-bold text-dark mb-1">
-                                            @lang('Commercial License Price') (TZS)
+                                            @lang('License Model')
                                         </label>
-                                        <div class="input-group input-group-sm">
-                                            <span class="input-group-text bg-white">TZS</span>
-                                            <input type="number" step="any" name="price_cl" id="coursePriceCl" 
-                                                   class="form-control form-control-sm" 
-                                                   value="{{ old('price_cl', (int)$product->price_cl) }}" placeholder="250000">
+                                        <div class="p-1 px-2 rounded bg-light border text-success fs-12 d-flex align-items-center gap-1" style="min-height: 31px;">
+                                            <i class="las la-certificate"></i>
+                                            <span class="fw-semibold">@lang('One-Time Lifetime License Included')</span>
                                         </div>
+                                        <input type="hidden" name="price_cl" value="0">
                                     </div>
                                     <div class="col-12 col-sm-4 pt-sm-3">
                                         <div class="form-check form-switch d-flex align-items-center gap-2">

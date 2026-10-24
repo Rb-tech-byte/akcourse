@@ -293,12 +293,12 @@
                                         <div class="text-truncate">
                                             <div class="fw-bold fs-12 text-dark text-truncate">{{ $cItem->title }}</div>
                                             <div class="text-muted fs-10 text-truncate">
-                                                {{ $cItem->category ?: 'Audio Course' }} &middot; {{ $cItem->is_extended ? '12-Mo Priority Support' : 'Perpetual License' }}
+                                                {{ $cItem->category ?: 'Audio Course' }} &middot; @lang('One-Time Lifetime License & Purchase Certificate Included')
                                             </div>
                                         </div>
                                     </div>
                                     <div class="fw-bold fs-12 text-dark flex-shrink-0 ms-2">
-                                        TZS {{ number_format($cItem->price + $cItem->buyer_fee + $cItem->extended_amount) }}
+                                        TZS {{ number_format($cItem->price + $cItem->buyer_fee) }}
                                     </div>
                                 </div>
                             @endforeach

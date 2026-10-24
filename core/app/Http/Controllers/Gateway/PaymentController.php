@@ -360,20 +360,22 @@ class PaymentController extends Controller {
         $order->save();
 
         foreach ($cartItems as $cartItem) {
-            $orderItem                  = new OrderItem();
-            $orderItem->user_id         = $order->user_id;
-            $orderItem->order_id        = $order->id;
-            $orderItem->purchase_code   = getPurchaseCode();
-            $orderItem->product_id      = $cartItem->product_id;
-            $orderItem->is_extended     = $cartItem->is_extended;
-            $orderItem->extended_amount = $cartItem->is_extended ? $cartItem->extended_amount : 0;
-            $orderItem->product_price   = $cartItem->price;
-            $orderItem->buyer_fee       = 0;
-            $orderItem->seller_fee      = 0;
-            $orderItem->quantity        = $cartItem->quantity;
-            $orderItem->license         = $cartItem->license;
-            $orderItem->seller_earning  = $cartItem->price + ($cartItem->is_extended ? $cartItem->extended_amount : 0) - ($cartItem->discount ?? 0);
-            $orderItem->discount        = $cartItem->discount;
+            $orderItem                     = new OrderItem();
+            $orderItem->user_id            = $order->user_id;
+            $orderItem->order_id           = $order->id;
+            $orderItem->purchase_code      = getPurchaseCode();
+            $orderItem->license_key        = generateLicenseKey();
+            $orderItem->certificate_number = generateCertificateNumber();
+            $orderItem->product_id         = $cartItem->product_id;
+            $orderItem->is_extended        = 0;
+            $orderItem->extended_amount    = 0;
+            $orderItem->product_price      = $cartItem->price;
+            $orderItem->buyer_fee          = 0;
+            $orderItem->seller_fee         = 0;
+            $orderItem->quantity           = $cartItem->quantity;
+            $orderItem->license            = 1; // One-Time Lifetime License
+            $orderItem->seller_earning     = $cartItem->price - ($cartItem->discount ?? 0);
+            $orderItem->discount           = $cartItem->discount;
             $orderItem->save();
         }
 

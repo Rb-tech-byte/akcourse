@@ -41,6 +41,8 @@ Route::controller('SiteController')->group(function () {
     Route::get('/checkout/{sku?}', 'checkout')->name('order.checkout');
     Route::post('/checkout/{sku?}', 'processCheckout')->name('order.process');
     Route::get('/checkout/status/{trx}', 'checkPaymentStatus')->name('order.check_status');
+    Route::get('/certificate/{code}', 'viewCertificate')->name('user.certificate');
+    Route::get('/verify-license/{code?}', 'verifyLicense')->name('license.verify');
     Route::get('/free-products', 'freeProducts')->name('free.products');
     Route::get('/products/{slug}', 'productDetails')->name('product.details');
     Route::get('/products/{slug}/reviews', 'productReviews')->name('product.reviews');

@@ -20,11 +20,19 @@ class ProfileController extends Controller
     public function submitProfile(Request $request)
     {
         $request->validate([
-            'firstname' => 'required|string',
-            'lastname'  => 'required|string',
+            'firstname' => 'required|string|max:50',
+            'lastname'  => 'required|string|max:50',
+            'image'     => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+            'avatar'    => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
         ], [
             'firstname.required' => 'First name field is required',
-            'lastname.required'  => 'Last name field is required'
+            'lastname.required'  => 'Last name field is required',
+            'image.image'        => 'The profile photo must be a valid image file',
+            'image.mimes'        => 'Supported photo formats: jpeg, jpg, png, webp',
+            'image.max'          => 'Profile photo must not exceed 2MB',
+            'avatar.image'       => 'The avatar must be a valid image file',
+            'avatar.mimes'       => 'Supported avatar formats: jpeg, jpg, png, webp',
+            'avatar.max'         => 'Avatar must not exceed 2MB',
         ]);
 
         $user = auth()->user();

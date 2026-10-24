@@ -300,8 +300,12 @@
                             <strong class="text-white">{{ $softwareName }}</strong>
                         </div>
                         <div class="d-flex justify-content-between py-2 border-bottom fs-13 text-muted" style="border-color: rgba(255,255,255,0.05) !important;">
-                            <span>@lang('License:')</span>
-                            <strong class="text-success">{{ $softwareEdition }}</strong>
+                            <span>@lang('License Model:')</span>
+                            <strong class="text-success">@lang('One-Time Lifetime (No Renewal)')</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-2 border-bottom fs-13 text-muted" style="border-color: rgba(255,255,255,0.05) !important;">
+                            <span>@lang('Certification:')</span>
+                            <strong class="text-warning">@lang('Auto-Generated Course Purchase Certificate')</strong>
                         </div>
                         <div class="d-flex justify-content-between py-2 border-bottom fs-13 text-muted" style="border-color: rgba(255,255,255,0.05) !important;">
                             <span>@lang('Format:')</span>
@@ -313,7 +317,7 @@
                         </div>
                         <div class="d-flex justify-content-between py-2 border-bottom fs-13 text-muted" style="border-color: rgba(255,255,255,0.05) !important;">
                             <span>@lang('Delivery:')</span>
-                            <strong class="text-warning">ZIP Download + Key</strong>
+                            <strong class="text-warning">ZIP + Key &amp; Purchase Cert</strong>
                         </div>
                     </div>
 

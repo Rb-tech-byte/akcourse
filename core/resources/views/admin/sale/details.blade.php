@@ -21,16 +21,23 @@
                         <div class="card-body">
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('License Type')</span>
-                                    @if ($product->license == Status::PERSONAL_LICENSE)
-                                        <span class="text-secondary">@lang('Personal License')</span>
-                                    @else
-                                        <span class="text-secondary">@lang('Commercial License')</span>
-                                    @endif
+                                    <span class="fw-bold">@lang('License Model')</span>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
+                                        <i class="las la-certificate me-1"></i> @lang('One-Time Lifetime License')
+                                    </span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
-                                    <span class="fw-bold">@lang('Purchase Code')</span>
-                                    <span class="text-secondary">{{ $product->purchase_code }}</span>
+                                    <span class="fw-bold">@lang('License Key')</span>
+                                    <span class="font-monospace fw-bold text-primary">{{ $product->license_key ?: $product->purchase_code }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">
+                                    <span class="fw-bold">@lang('Purchase Certificate')</span>
+                                    <div>
+                                        <span class="font-monospace text-muted me-2">{{ $product->certificate_number ?: 'AK23-CERT' }}</span>
+                                        <a href="{{ route('user.certificate', $product->certificate_number ?: $product->purchase_code) }}" target="_blank" class="btn btn-xs btn-outline-warning text-dark fw-bold px-2 py-0-5">
+                                            <i class="las la-award me-1"></i> View Purchase Certificate
+                                        </a>
+                                    </div>
                                 </li>
                                 @if (!$product->is_free)
                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap">

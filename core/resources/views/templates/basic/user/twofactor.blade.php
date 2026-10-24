@@ -199,7 +199,7 @@
                     </div>
                     <h5 class="fw-bold text-dark mb-1">Account Highly Secured</h5>
                     <p class="text-muted fs-13 mb-0 mx-auto" style="max-width: 420px;">
-                        Google Authenticator verification is required whenever logging into your AK23 account or unlocking commercial software license deliveries.
+                        Google Authenticator verification is required whenever logging into your Maarifa23 account or unlocking commercial software license deliveries.
                     </p>
                 </div>
 
@@ -208,7 +208,7 @@
                     <ul class="text-muted fs-12 ps-3 mb-0">
                         <li class="mb-1">Ensure your mobile device clock is synced accurately with network time.</li>
                         <li class="mb-1">Do not share your authenticator codes or screenshots with anyone.</li>
-                        <li>AK23 Academy support will never ask you for your 2FA security code.</li>
+                        <li>Maarifa23 Academy support will never ask you for your 2FA security code.</li>
                     </ul>
                 </div>
             </div>

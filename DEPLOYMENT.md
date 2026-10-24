@@ -61,18 +61,61 @@ To enable automated CD deployment, configure the following secrets in your GitHu
 
 ---
 
-## 5. Directory Permissions
+## 5. Web Server Configuration & Hardening
 
-Ensure web server and deployment user have write permissions:
+### Apache
+The repository includes pre-configured, hardened `.htaccess` files:
+- Root `.htaccess`: Enforces security headers, blocks direct access to `core/`, `deploy/`, `scratch/`, `.git/`, and sensitive files (`.env`, `.sql`, `.log`, `.yml`).
+- `assets/.htaccess`: Completely disables the PHP engine and denies execution of all uploaded scripts.
+- `core/.htaccess`: Denies all direct HTTP requests to backend source files.
+
+### Nginx
+A production-ready, hardened Nginx server block template is provided in [`deploy/nginx-site.conf.example`](file:///c:/wamp64/www/akcourse/deploy/nginx-site.conf.example).
+Copy it to your Nginx sites configuration:
 ```bash
-cd /path/to/akcourse
-chown -R www-data:www-data assets core/storage core/bootstrap/cache
-chmod -R 775 core/storage core/bootstrap/cache
+cp deploy/nginx-site.conf.example /etc/nginx/sites-available/akcourse.conf
+ln -s /etc/nginx/sites-available/akcourse.conf /etc/nginx/sites-enabled/
+nginx -t && systemctl reload nginx
 ```
 
 ---
 
-## 6. Scheduled Tasks (Cron Jobs)
+## 6. Directory Permissions & Environment Setup
+
+1. Copy `.env.example` to `.env` inside `core/`:
+```bash
+cp core/.env.example core/.env
+cd core && php artisan key:generate
+```
+2. Update `core/.env` for production:
+   - `APP_ENV=production`
+   - `APP_DEBUG=false`
+   - `APP_URL=https://your-domain.com`
+   - `SESSION_SECURE_COOKIE=true`
+3. Enforce secure permissions:
+```bash
+cd /path/to/akcourse
+chown -R www-data:www-data assets core/storage core/bootstrap/cache
+chmod -R 775 core/storage core/bootstrap/cache assets
+chmod 600 core/.env
+```
+
+---
+
+## 7. Performance Optimization & Caching
+
+During deployment (automated via [`deploy/deploy.sh`](file:///c:/wamp64/www/akcourse/deploy/deploy.sh)):
+```bash
+cd core
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
+---
+
+## 8. Scheduled Tasks (Cron Jobs)
 
 Add the Laravel scheduler or system cron to your server's crontab:
 ```bash
@@ -84,5 +127,5 @@ Add the following entry:
 ```
 Or for custom system cron:
 ```bash
-* * * * * curl -s http://your-domain.com/cron >> /dev/null 2>&1
+* * * * * curl -s https://your-domain.com/cron >> /dev/null 2>&1
 ```

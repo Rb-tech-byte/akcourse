@@ -28,6 +28,8 @@ class UserController extends Controller
             ->select([
                 'oi.id as item_id',
                 'oi.purchase_code',
+                'oi.license_key',
+                'oi.certificate_number',
                 'oi.product_price',
                 'oi.downloads',
                 'oi.license',
@@ -84,29 +86,27 @@ class UserController extends Controller
             $recentOrders = (clone $ordersQuery)->latest('o.id')->take(5)->get();
         }
 
-        // 3. Fetch software licenses joined with courses and packages from ak23 connection
-        $licenses = collect();
-        try {
-            $licenses = \Illuminate\Support\Facades\DB::connection('ak23')
-                ->table('courses as c')
-                ->join('course_software as cs', 'cs.course_id', '=', 'c.id')
-                ->join('software_packages as sp', 'sp.id', '=', 'cs.software_package_id')
-                ->select([
-                    'c.title as course_title',
-                    'c.slug as course_slug',
-                    'sp.product_name',
-                    'sp.edition',
-                    'sp.license_model',
-                    'sp.status'
-                ])
-                ->take(5)
-                ->get();
-        } catch (\Throwable $e) {}
+        // 3. One-Time Lifetime Licenses derived directly from verified purchases (No renewals or external DB join)
+        $licenses = $purchasedItems->map(function ($item) {
+            $licenseKey = $item->license_key ?: $item->purchase_code;
+            $certNumber = $item->certificate_number ?: ('AK23-CERT-' . date('Y') . '-' . strtoupper(substr(md5((string)$item->item_id), 0, 8)));
+            return (object)[
+                'course_title'       => $item->product_title,
+                'course_slug'        => $item->product_slug,
+                'product_name'       => $item->software_name ?: 'Studio Software Suite',
+                'edition'            => $item->software_edition ?: 'One-Time Perpetual License',
+                'license_model'      => 'One-Time Perpetual',
+                'license_key'        => $licenseKey,
+                'certificate_number' => $certNumber,
+                'status'             => 'active',
+                'certificate_url'    => route('user.certificate', $certNumber),
+            ];
+        });
 
         $coursesCount   = $purchasedItems->count();
         $downloadsCount = $purchasedItems->sum('downloads') ?: $coursesCount;
         $ordersCount    = $recentOrders->count();
-        $licensesCount  = $licenses->count() ?: 3;
+        $licensesCount  = $licenses->count();
 
         return view('Template::user.dashboard', compact(
             'pageTitle',

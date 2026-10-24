@@ -107,12 +107,12 @@
                                         <span class="fw-bold text-dark">@lang('Package Price')</span>
                                         <span class="fw-bold text-dark fs-14">{{ showAmount($product->price) }}</span>
                                     </li>
-                                    @if($product->price_cl > 0)
-                                        <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
-                                            <span class="fw-bold text-dark">@lang('Commercial License Price')</span>
-                                            <span class="text-muted">{{ showAmount($product->price_cl) }}</span>
-                                        </li>
-                                    @endif
+                                    <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
+                                        <span class="fw-bold text-dark">@lang('License Policy')</span>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
+                                            <i class="las la-certificate me-1"></i> @lang('One-Time Lifetime License Included')
+                                        </span>
+                                    </li>
                                 @else
                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
                                         <span class="fw-bold text-dark">@lang('Price')</span>

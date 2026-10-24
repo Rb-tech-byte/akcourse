@@ -7,7 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ gs()->siteName($pageTitle ?? '') }}</title>
 
-    <link rel="shortcut icon" type="image/png" href="{{ siteFavicon() }}">
+    <link rel="shortcut icon" href="{{ siteFavicon() }}" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ siteFavicon() }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ siteFavicon() }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('assets/images/logo_icon/apple-touch-icon.png') }}?v={{ file_exists(base_path('../assets/images/logo_icon/apple-touch-icon.png')) ? filemtime(base_path('../assets/images/logo_icon/apple-touch-icon.png')) : time() }}">
+    <meta name="theme-color" content="#0C0E17">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('assets/global/css/bootstrap.min.css') }}">
 

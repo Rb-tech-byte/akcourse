@@ -68,10 +68,16 @@ function activeTemplateName() {
 
 function siteLogo($type = null) {
     $name = $type ? "/logo_$type.png" : '/logo.png';
-    return getImage(getFilePath('logoIcon') . $name);
+    $path = getFilePath('logoIcon') . $name;
+    $fullPath = base_path('../' . $path);
+    $v = file_exists($fullPath) ? filemtime($fullPath) : time();
+    return getImage($path) . '?v=' . $v;
 }
 function siteFavicon() {
-    return getImage(getFilePath('logoIcon') . '/favicon.png');
+    $path = getFilePath('logoIcon') . '/favicon.png';
+    $fullPath = base_path('../' . $path);
+    $v = file_exists($fullPath) ? filemtime($fullPath) : time();
+    return getImage($path) . '?v=' . $v;
 }
 
 function loadReCaptcha() {
@@ -596,6 +602,30 @@ function cartCount() {
     }
 }
 
+function generateLicenseKey() {
+    while (true) {
+        $p1 = strtoupper(substr(md5(uniqid((string)mt_rand(), true)), 0, 4));
+        $p2 = strtoupper(substr(md5(uniqid((string)mt_rand(), true)), 0, 4));
+        $p3 = strtoupper(substr(md5(uniqid((string)mt_rand(), true)), 0, 4));
+        $key = "M23-LIC-{$p1}-{$p2}-{$p3}";
+        if (!\App\Models\OrderItem::where('license_key', $key)->exists()) {
+            return $key;
+        }
+    }
+}
+
+function generateCertificateNumber() {
+    $year = date('Y');
+    while (true) {
+        $c1 = strtoupper(substr(md5(uniqid((string)mt_rand(), true)), 0, 4));
+        $c2 = strtoupper(substr(md5(uniqid((string)mt_rand(), true)), 0, 4));
+        $cert = "M23-CERT-{$year}-{$c1}-{$c2}";
+        if (!\App\Models\OrderItem::where('certificate_number', $cert)->exists()) {
+            return $cert;
+        }
+    }
+}
+
 function getPurchaseCode() {
     $randomPart1 = rand(100000, 999999);
     $randomPart2 = rand(10, 99);
@@ -776,7 +806,9 @@ function getHeaderNavItems(): array {
 
     // 2. Dynamic Series from Categories (Vocal Mixing, Audio Editing Software, Beat Making)
     try {
-        $categories = \App\Models\Category::active()->orderBy('id', 'asc')->get(['id', 'name']);
+        $categories = Cache::remember('header_categories', 3600, function() {
+            return \App\Models\Category::active()->orderBy('id', 'asc')->get(['id', 'name']);
+        });
         foreach ($categories as $cat) {
             $slug = match((int)$cat->id) {
                 1 => 'vocal-mixing',
@@ -800,10 +832,12 @@ function getHeaderNavItems(): array {
 
     // 3. Dynamic CMS Custom Pages from Admin Page Builder
     try {
-        $pages = \App\Models\Page::where('is_default', \App\Constants\Status::NO)
-            ->where('tempname', activeTemplate())
-            ->orderBy('id', 'asc')
-            ->get(['name', 'slug']);
+        $pages = Cache::remember('header_custom_pages', 3600, function() {
+            return \App\Models\Page::where('is_default', \App\Constants\Status::NO)
+                ->where('tempname', activeTemplate())
+                ->orderBy('id', 'asc')
+                ->get(['name', 'slug']);
+        });
 
         $reserved = ['faq', 'contact', '/', 'home', 'products', 'courses', 'cart', 'checkout'];
         foreach ($pages as $p) {

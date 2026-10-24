@@ -267,7 +267,7 @@
                 </div>
                 <div class="modal-body py-4">
                     <p class="text-center mb-0 fs-15 text-white-50">
-                        @lang('An account with this email address already exists in AK23 Academy.')
+                        @lang('An account with this email address already exists in Maarifa23 Academy.')
                     </p>
                 </div>
                 <div class="modal-footer d-flex justify-content-between">

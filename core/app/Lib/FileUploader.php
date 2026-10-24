@@ -89,7 +89,16 @@ class FileUploader
                 $disk = Storage::disk($server);
             }
 
-            $fileExtension = $this->file->getClientOriginalExtension();
+            $fileExtension = strtolower($this->file->getClientOriginalExtension());
+            $dangerousExtensions = [
+                'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phar', 'inc',
+                'asp', 'aspx', 'jsp', 'jspx', 'cgi', 'pl', 'py', 'sh', 'bash', 'env',
+                'exe', 'bat', 'cmd', 'com', 'htaccess', 'htpasswd', 'user.ini', 'ini'
+            ];
+            if (in_array($fileExtension, $dangerousExtensions)) {
+                $this->error = true;
+                return;
+            }
             $file = File::get($this->file);
 
             if ($server != 'backblaze') {

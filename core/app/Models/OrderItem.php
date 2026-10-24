@@ -38,14 +38,36 @@ class OrderItem extends Model {
 
     public function licenseBadge(): Attribute {
         return new Attribute(function () {
-            $html = '';
-            if ($this->license == Status::PERSONAL_LICENSE) {
-                $html = '<span class="badge badge--primary">' . trans('Personal') . '</span>';
-            } else {
-                $html = '<span class="badge badge--success">' . trans('Commercial') . '</span>';
-            }
-            return $html;
+            return '<span class="badge badge--success"><i class="las la-certificate me-1"></i>' . trans('Lifetime License') . '</span>';
         });
+    }
+
+    public function getLicenseKeyAttribute($value) {
+        if (!empty($value)) {
+            return $value;
+        }
+        $key = generateLicenseKey();
+        $this->attributes['license_key'] = $key;
+        if ($this->exists) {
+            $this->saveQuietly();
+        }
+        return $key;
+    }
+
+    public function getCertificateNumberAttribute($value) {
+        if (!empty($value)) {
+            return $value;
+        }
+        $cert = generateCertificateNumber();
+        $this->attributes['certificate_number'] = $cert;
+        if ($this->exists) {
+            $this->saveQuietly();
+        }
+        return $cert;
+    }
+
+    public function getCertificateUrlAttribute() {
+        return route('user.certificate', $this->certificate_number ?: $this->purchase_code);
     }
 
     public function refundedBadge(): Attribute {

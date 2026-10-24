@@ -6,7 +6,7 @@
     $subtotal = $subtotal ?? 0;
     if ($subtotal == 0 && isset($cartItems)) {
         foreach ($cartItems as $item) {
-            $subtotal += ($item->price + $item->buyer_fee + $item->extended_amount);
+            $subtotal += ($item->price + $item->buyer_fee);
         }
     }
     $discount = $discount ?? (float)session('coupon_total', 0);
@@ -46,7 +46,7 @@
                 <div class="ak23-cart-items-container" id="cartItemsList">
                     @forelse ($cartItems as $cartItem)
                         @php
-                            $itemTotal = $cartItem->price + $cartItem->buyer_fee + $cartItem->extended_amount;
+                            $itemTotal = $cartItem->price + $cartItem->buyer_fee;
                             $thumb = $cartItem->product ? getImage(getFilePath('productThumbnail') . productFilePath($cartItem->product, 'thumbnail')) : null;
                         @endphp
                         <div class="ak23-cart-item-card mb-3 p-3 p-sm-4 rounded-4 bg-white border shadow-sm" id="cart-item-row-{{ $cartItem->id }}" data-id="{{ $cartItem->id }}" data-price="{{ $itemTotal }}">
@@ -92,22 +92,15 @@
 
                                     <!-- Price & License Controls -->
                                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2 border-top">
-                                        <div class="form-check form-switch mb-0">
-                                            <input class="form-check-input extended" 
-                                                   type="checkbox" 
-                                                   id="extend-{{ $cartItem->id }}" 
-                                                   data-id="{{ $cartItem->id }}" 
-                                                   data-product="{{ @$cartItem->product }}"
-                                                   data-extended-price="{{ $cartItem->product?->twelveMonthExtendedFee() ?? 0 }}"
-                                                   @checked($cartItem->is_extended)>
-                                            <label class="form-check-label fs-11 text-muted cursor-pointer" for="extend-{{ $cartItem->id }}">
-                                                @lang('12-Month Priority Support') (+TZS {{ number_format($cartItem->product?->twelveMonthExtendedFee() ?? 0) }})
-                                            </label>
+                                        <div class="d-flex align-items-center gap-1">
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill fs-11 px-2 py-1">
+                                                <i class="las la-certificate me-1"></i> @lang('One-Time Lifetime License Included')
+                                            </span>
                                         </div>
 
                                         <div class="text-end">
                                             <span class="ak23-item-price-tag text-dark fw-bold fs-15" id="item-price-display-{{ $cartItem->id }}">
-                                                TZS {{ number_format($itemTotal) }}
+                                                TZS {{ number_format($cartItem->product->price ?? $itemTotal) }}
                                             </span>
                                         </div>
                                     </div>
@@ -422,43 +415,6 @@ $(document).ready(function() {
         });
     });
 
-    // Real-Time Support Extension Toggle
-    $(document).on('change', '.extended', function() {
-        const checkbox = $(this);
-        const cartId = checkbox.data('id');
-        const url = "{{ route('cart.extended.toggle', ':id') }}".replace(':id', cartId);
-
-        $.ajax({
-            url: url,
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': "{{ csrf_token() }}",
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            success: function(res) {
-                if (res.status === 'success') {
-                    // Update Item Price Tag
-                    $(`#item-price-display-${cartId}`).text(res.formatted_item);
-
-                    // Update Summary Totals
-                    $('#cartSubtotalDisplay').text(res.formatted_subtotal);
-                    $('#cartTotalDisplay').text(res.formatted_total);
-
-                    if (res.has_coupon && res.discount > 0) {
-                        $('#discountRow').removeClass('d-none');
-                        $('#discountDisplay').text(res.formatted_discount);
-                    } else {
-                        $('#discountRow').addClass('d-none');
-                    }
-
-                    notify('success', res.message);
-                }
-            },
-            error: function() {
-                notify('error', 'Unable to update support extension.');
-            }
-        });
-    });
 
     // Apply Promo Code in Real Time
     $('#btnApplyCartCoupon').on('click', function() {

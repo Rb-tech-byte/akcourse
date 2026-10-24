@@ -86,7 +86,7 @@
         @include('partials.push_script')
     @endif
 
-    @include('Template::partials.waveserfer')
+    @include($activeTemplate . 'partials.waveserfer')
 
     <script>
         (function($) {

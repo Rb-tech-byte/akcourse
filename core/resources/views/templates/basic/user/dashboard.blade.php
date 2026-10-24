@@ -125,7 +125,7 @@
 
                         <!-- Compact Specs Strip -->
                         <div class="d-flex align-items-center justify-content-between text-muted fs-11 mb-2 pb-2 border-bottom">
-                            <span>Code: <code class="text-primary fw-bold">{{ $item->purchase_code }}</code></span>
+                            <span>License: <code class="text-primary fw-bold">{{ $item->license_key ?: $item->purchase_code }}</code></span>
                             <span>{{ showDateTime($item->created_at, 'd M, Y') }}</span>
                         </div>
 
@@ -135,21 +135,22 @@
                                 <i class="las la-check text-success"></i>
                                 <span>Complete Master Package (.ZIP)</span>
                             </div>
-                            @if(!empty($item->software_name))
-                                <div class="d-flex align-items-center gap-1 text-dark fw-semibold">
-                                    <i class="las la-key text-warning"></i>
-                                    <span>{{ $item->software_name }} license included</span>
-                                </div>
-                            @endif
+                            <div class="d-flex align-items-center gap-1 text-dark fw-semibold">
+                                <i class="las la-certificate text-warning"></i>
+                                <span>One-Time Lifetime License & Official Purchase Certificate</span>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="pt-2 d-flex gap-2">
+                    <div class="pt-2 d-flex flex-wrap gap-2">
                         <a href="{{ route('user.author.product.download', $item->purchase_code) }}" class="btn btn-sm btn--base flex-grow-1 text-center rounded-pill py-1-5 fw-semibold fs-12">
                             <i class="las la-download me-1"></i> Download .ZIP
                         </a>
-                        <a href="{{ route('product.details', $item->product_slug) }}" class="btn btn-sm btn-outline-dark rounded-pill px-3 py-1-5 fs-12" title="View Course Details">
+                        <a href="{{ route('user.certificate', $item->certificate_number ?: $item->purchase_code) }}" target="_blank" class="btn btn-sm btn-outline-warning rounded-pill px-2 py-1-5 fs-12 text-dark fw-bold" title="Official Certificate & License">
+                            <i class="las la-award me-1"></i> Certificate
+                        </a>
+                        <a href="{{ route('product.details', $item->product_slug) }}" class="btn btn-sm btn-outline-dark rounded-pill px-2 py-1-5 fs-12" title="View Course Details">
                             <i class="las la-external-link-alt"></i>
                         </a>
                     </div>
@@ -187,8 +188,9 @@
                 <tr class="fs-12 text-muted text-uppercase">
                     <th class="ps-3 py-2">Software Package</th>
                     <th class="py-2">Associated Course</th>
+                    <th class="py-2">One-Time License Key</th>
                     <th class="py-2">License Status</th>
-                    <th class="pe-3 py-2 text-end">Activation Delivery</th>
+                    <th class="pe-3 py-2 text-end">Certificate</th>
                 </tr>
             </thead>
             <tbody class="fs-13">
@@ -196,18 +198,28 @@
                     <tr>
                         <td class="ps-3 py-2-5">
                             <div class="fw-bold text-dark">{{ $lic->product_name }}</div>
-                            <span class="text-muted fs-11">{{ $lic->edition ?: 'Full Commercial Edition' }}</span>
+                            <span class="text-muted fs-11">{{ $lic->edition ?: 'Perpetual Commercial Edition' }}</span>
                         </td>
                         <td class="py-2-5">
                             <span class="text-secondary">{{ $lic->course_title }}</span>
                         </td>
                         <td class="py-2-5">
+                            <div class="d-flex align-items-center gap-1 font-monospace fs-11 bg-light px-2 py-1 rounded border d-inline-flex">
+                                <span>{{ $lic->license_key }}</span>
+                                <button type="button" class="btn btn-link p-0 text-muted fs-14 copy-btn" onclick="navigator.clipboard.writeText('{{ $lic->license_key }}'); if(typeof notify==='function') { notify('success', 'License key copied!'); } else { alert('License key copied!'); }" title="Copy License Key">
+                                    <i class="las la-copy"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="py-2-5">
                             <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill fs-11">
-                                <i class="las la-check me-1"></i> Included with Course
+                                <i class="las la-check me-1"></i> Lifetime Perpetual
                             </span>
                         </td>
-                        <td class="pe-3 py-2-5 text-end text-muted fs-12">
-                            <i class="las la-archive text-warning me-1"></i> Inside course .ZIP bundle
+                        <td class="pe-3 py-2-5 text-end">
+                            <a href="{{ $lic->certificate_url }}" target="_blank" class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 fs-11 fw-bold text-dark">
+                                <i class="las la-award me-1"></i> Purchase Certificate
+                            </a>
                         </td>
                     </tr>
                 @endforeach
