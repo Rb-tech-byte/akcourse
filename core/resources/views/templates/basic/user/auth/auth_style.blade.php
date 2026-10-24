@@ -2,6 +2,7 @@
 /* ==========================================================================
    MAARIFA23 USER AUTHENTICATION PAGES (LOGIN & REGISTER)
    Clean, Modern, Dark Luxury Studio Theme - Aligned with Asset 3.png
+   Responsive Mobile-First Architecture
    ========================================================================== */
 
 :root {
@@ -14,7 +15,7 @@
 .ak23-auth-section {
   position: relative;
   min-height: calc(100vh - 160px);
-  padding: 60px 0 100px;
+  padding: 50px 0 80px;
   background-color: var(--ak23-bg-main, #0C0D10);
   overflow: hidden;
   display: flex;
@@ -56,12 +57,12 @@
 }
 
 /* --------------------------------------------------------------------------
-   Left Showcase Column
+   Left Showcase Column (Desktop)
    -------------------------------------------------------------------------- */
 .ak23-auth-showcase {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
 }
 
 .ak23-auth-badge {
@@ -78,6 +79,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   width: fit-content;
+  white-space: nowrap;
 }
 
 .ak23-auth-badge-dot {
@@ -86,6 +88,7 @@
   border-radius: 50%;
   background-color: #FBAF43;
   box-shadow: 0 0 8px #FBAF43;
+  flex-shrink: 0;
 }
 
 .ak23-auth-hero-title {
@@ -105,7 +108,7 @@
 }
 
 .ak23-auth-hero-sub {
-  font-size: 15.5px;
+  font-size: 15px;
   line-height: 1.6;
   color: var(--ak23-text-muted, #9E9EB2);
   margin: 0;
@@ -116,7 +119,7 @@
 .ak23-auth-features {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .ak23-auth-feature-item {
@@ -124,7 +127,7 @@
   align-items: flex-start;
   gap: 16px;
   padding: 16px 18px;
-  background: rgba(20, 21, 26, 0.55);
+  background: rgba(20, 21, 26, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.07);
   border-radius: 14px;
   backdrop-filter: blur(8px);
@@ -132,7 +135,7 @@
 }
 
 .ak23-auth-feature-item:hover {
-  background: rgba(26, 27, 34, 0.75);
+  background: rgba(26, 27, 34, 0.8);
   border-color: rgba(251, 175, 67, 0.3);
   transform: translateY(-2px);
 }
@@ -191,6 +194,7 @@
   align-items: flex-end;
   gap: 3px;
   height: 20px;
+  flex-shrink: 0;
 }
 
 .ak23-eq-bar {
@@ -221,16 +225,22 @@
 }
 
 /* --------------------------------------------------------------------------
-   Right Auth Card
+   Auth Card Column & Container
    -------------------------------------------------------------------------- */
+.ak23-auth-card-col {
+  width: 100%;
+}
+
 .ak23-auth-card {
   background: linear-gradient(180deg, #15161C 0%, #0F1014 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 22px;
-  padding: 40px 36px;
+  padding: 38px 34px;
   box-shadow: 0 24px 60px -10px rgba(0, 0, 0, 0.65), 0 0 40px rgba(251, 175, 67, 0.04);
   position: relative;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .ak23-auth-card::before {
@@ -241,32 +251,33 @@
   right: 0;
   height: 2px;
   background: linear-gradient(90deg, transparent, #FBAF43, #E29828, transparent);
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .ak23-auth-card-header {
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 
-.ak23-auth-card-topmark {
-  display: flex;
+/* Modern Card Badge Chip */
+.ak23-auth-card-badge {
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.ak23-auth-mark-icon {
-  height: 30px;
-  display: flex;
-  align-items: center;
-}
-
-.ak23-auth-mark-label {
+  gap: 7px;
+  background: rgba(251, 175, 67, 0.1);
+  border: 1px solid rgba(251, 175, 67, 0.25);
+  border-radius: 999px;
+  padding: 5px 12px;
+  color: #FBAF43;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #FBAF43;
+  margin-bottom: 12px;
+  white-space: nowrap;
+}
+
+.ak23-auth-card-badge i {
+  font-size: 14px;
 }
 
 .ak23-auth-card-title {
@@ -276,6 +287,7 @@
   color: #FFFFFF;
   margin: 0 0 6px 0;
   letter-spacing: -0.02em;
+  line-height: 1.25;
 }
 
 .ak23-auth-card-sub {
@@ -289,24 +301,26 @@
 .ak23-social-grid {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .ak23-social-btn {
   flex: 1;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: #191B22;
+  background: #181920;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
+  border-radius: 11px;
   padding: 10px 14px;
   color: #FFFFFF !important;
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
   text-decoration: none !important;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .ak23-social-btn:hover {
@@ -324,7 +338,7 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .ak23-auth-divider::before,
@@ -336,59 +350,92 @@
 }
 
 .ak23-auth-divider span {
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #64748B;
+  white-space: nowrap;
 }
 
-/* Form inputs */
+/* Form inputs & Groups */
 .ak23-form-group {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
-.ak23-input-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
+.ak23-form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  gap: 8px;
+  width: 100%;
+}
+
+.ak23-form-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
   color: #CBD5E1;
   margin-bottom: 7px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+}
+
+.ak23-form-label-row .ak23-form-label {
+  margin-bottom: 0;
+}
+
+.ak23-req-star {
+  color: #FBAF43;
+  margin-left: 2px;
+  font-weight: 700;
 }
 
 .ak23-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .ak23-input-icon {
   position: absolute;
-  left: 14px;
-  font-size: 17px;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
   color: #64748B;
   pointer-events: none;
   transition: color 0.2s ease;
+  z-index: 2;
 }
 
 .ak23-input {
-  width: 100%;
-  background: #0D0E12 !important;
+  width: 100% !important;
+  height: 48px !important;
+  background: #0E0F14 !important;
   border: 1px solid #23252E !important;
-  border-radius: 10px !important;
+  border-radius: 11px !important;
   color: #FFFFFF !important;
-  padding: 12px 16px 12px 42px !important;
-  font-size: 13.5px !important;
-  font-family: var(--ak23-font-body, 'Inter', sans-serif) !important;
+  padding: 0 16px 0 44px !important;
+  font-size: 16px !important; /* 16px prevents iOS Safari auto-zoom */
+  font-family: inherit !important;
+  box-sizing: border-box !important;
   transition: all 0.2s ease !important;
 }
 
 .ak23-input:focus {
   border-color: #FBAF43 !important;
-  box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.2) !important;
-  background: #121318 !important;
+  box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.18) !important;
+  background: #13141A !important;
   outline: none !important;
+}
+
+.ak23-input::placeholder {
+  color: #475569 !important;
+  font-size: 13.5px !important;
 }
 
 .ak23-input:-webkit-autofill,
@@ -396,7 +443,7 @@
 .ak23-input:-webkit-autofill:focus,
 .ak23-input:-webkit-autofill:active {
   -webkit-text-fill-color: #FFFFFF !important;
-  -webkit-box-shadow: 0 0 0 1000px #0D0E12 inset !important;
+  -webkit-box-shadow: 0 0 0 1000px #0E0F14 inset !important;
   transition: background-color 5000s ease-in-out 0s !important;
 }
 
@@ -405,28 +452,33 @@
 }
 
 .ak23-input-pw {
-  padding-right: 44px !important;
+  padding-right: 48px !important;
 }
 
 .ak23-pw-toggle {
   position: absolute;
-  right: 12px;
+  right: 8px;
   top: 50%;
   transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
   background: transparent;
   border: none;
   color: #64748B;
-  font-size: 18px;
+  font-size: 19px;
   cursor: pointer;
-  padding: 4px;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s ease;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  z-index: 2;
 }
 
 .ak23-pw-toggle:hover {
   color: #FBAF43;
+  background: rgba(251, 175, 67, 0.08);
 }
 
 /* Row elements (Remember, forgot pass) */
@@ -434,34 +486,39 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 2px;
+  margin: 12px 0 18px;
+  gap: 8px;
 }
 
 .ak23-checkbox-label {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   color: #94A3B8;
   font-size: 13px;
   cursor: pointer;
   user-select: none;
   margin: 0;
+  line-height: 1.4;
 }
 
 .ak23-checkbox {
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
+  min-width: 17px;
   accent-color: #FBAF43;
   cursor: pointer;
   border-radius: 4px;
+  margin: 0;
 }
 
 .ak23-auth-forgot {
   color: #FBAF43 !important;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   text-decoration: none !important;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .ak23-auth-forgot:hover {
@@ -472,30 +529,32 @@
 /* Submit Button */
 .ak23-auth-submit-btn {
   width: 100%;
-  background: linear-gradient(135deg, #FBAF43 0%, #E29828 100%);
-  color: #121316 !important;
+  min-height: 48px;
+  background: linear-gradient(135deg, #FFBE5C 0%, #FBAF43 50%, #E29828 100%);
+  color: #0E0F13 !important;
   font-family: var(--ak23-font-heading, 'Plus Jakarta Sans', sans-serif);
   font-weight: 800;
   font-size: 15px;
-  border-radius: 11px;
+  border-radius: 12px;
   border: none;
-  padding: 14px 20px;
+  padding: 12px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 8px 24px rgba(251, 175, 67, 0.32);
+  box-shadow: 0 6px 20px rgba(251, 175, 67, 0.28);
   letter-spacing: 0.01em;
-  margin-top: 6px;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .ak23-auth-submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(251, 175, 67, 0.45);
-  background: linear-gradient(135deg, #FFBE5C 0%, #FBAF43 100%);
-  color: #121316 !important;
+  box-shadow: 0 10px 26px rgba(251, 175, 67, 0.42);
+  background: linear-gradient(135deg, #FFC46A 0%, #FBAF43 100%);
+  color: #0E0F13 !important;
 }
 
 .ak23-auth-submit-btn:active {
@@ -504,27 +563,33 @@
 
 /* Footer Switcher */
 .ak23-auth-footer {
-  margin-top: 24px;
-  padding-top: 20px;
+  margin-top: 22px;
+  padding-top: 18px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
   text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  align-items: center;
 }
 
 .ak23-auth-switch-text {
   font-size: 13.5px;
   color: #94A3B8;
   margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .ak23-auth-switch-link {
   color: #FBAF43 !important;
   font-weight: 700;
   text-decoration: none !important;
-  margin-left: 4px;
   transition: color 0.2s ease;
+  white-space: nowrap;
 }
 
 .ak23-auth-switch-link:hover {
@@ -542,6 +607,7 @@
   font-weight: 600;
   text-decoration: none !important;
   transition: color 0.2s ease;
+  margin-top: 2px;
 }
 
 .ak23-auth-back-link:hover {
@@ -580,7 +646,7 @@
   border: 1px solid rgba(251, 175, 67, 0.25);
   border-radius: 12px;
   padding: 12px 16px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .ak23-referral-icon {
@@ -620,36 +686,159 @@
   color: #FFFFFF;
 }
 
-/* Responsive adjustments */
-@media (max-width: 991px) {
-  .ak23-auth-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
+/* ==========================================================================
+   RESPONSIVE DESIGN RULES (MOBILE-FIRST ADAPTATIONS)
+   ========================================================================== */
+
+/* Tablet & Mobile Screens (< 992px) */
+@media (max-width: 991.98px) {
+  .ak23-auth-section {
+    padding: 30px 0 60px;
+    min-height: auto;
   }
+
+  .ak23-auth-container {
+    max-width: 520px;
+    padding: 0 16px;
+  }
+
+  .ak23-auth-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* CRITICAL MOBILE UX: Card is at the top (order: 1), Showcase below (order: 2) */
+  .ak23-auth-card-col {
+    order: 1;
+    width: 100%;
+  }
+
   .ak23-auth-showcase {
+    order: 2;
     text-align: center;
     align-items: center;
+    gap: 18px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
   }
+
   .ak23-auth-hero-title {
-    font-size: 32px;
+    font-size: 24px;
+    text-align: center;
   }
+
+  .ak23-auth-hero-sub {
+    font-size: 13.5px;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .ak23-auth-features {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .ak23-auth-feature-item {
+    text-align: left;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .ak23-auth-feature-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+
+  .ak23-auth-feature-content h6 {
+    font-size: 13.5px;
+  }
+
+  .ak23-auth-feature-content p {
+    font-size: 12px;
+  }
+
+  .ak23-auth-eq-strip {
+    justify-content: center;
+    width: 100%;
+  }
+
   .ak23-auth-card {
-    padding: 32px 24px;
+    padding: 28px 22px;
+    border-radius: 18px;
   }
+
   .ak23-form-grid-2 {
     grid-template-columns: 1fr;
+    gap: 0;
   }
 }
 
-@media (max-width: 575px) {
+/* Small Smartphone Devices (< 576px) */
+@media (max-width: 575.98px) {
   .ak23-auth-section {
-    padding: 40px 0 60px;
+    padding: 20px 0 50px;
   }
+
+  .ak23-auth-container {
+    padding: 0 14px;
+  }
+
+  .ak23-auth-card {
+    padding: 24px 18px;
+    border-radius: 16px;
+  }
+
+  .ak23-auth-card-title {
+    font-size: 22px;
+  }
+
+  .ak23-auth-card-sub {
+    font-size: 13px;
+  }
+
   .ak23-social-grid {
     flex-direction: column;
+    gap: 8px;
   }
-  .ak23-auth-hero-title {
-    font-size: 26px;
+
+  .ak23-auth-submit-btn {
+    font-size: 14.5px;
+    padding: 12px 16px;
+  }
+
+  .ak23-auth-switch-text {
+    font-size: 13px;
+  }
+}
+
+/* Extra Small Devices (< 375px, e.g. iPhone SE 320px) */
+@media (max-width: 374.98px) {
+  .ak23-auth-container {
+    padding: 0 10px;
+  }
+
+  .ak23-auth-card {
+    padding: 20px 14px;
+  }
+
+  .ak23-input {
+    padding: 0 12px 0 38px !important;
+  }
+
+  .ak23-input-icon {
+    left: 12px;
+    font-size: 16px;
+  }
+
+  .ak23-auth-submit-btn {
+    font-size: 14px;
+    gap: 8px;
+  }
+
+  .ak23-auth-forgot {
+    font-size: 12px;
   }
 }
 </style>

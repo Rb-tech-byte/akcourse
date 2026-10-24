@@ -10,12 +10,11 @@
 
     <section class="ak23-auth-section">
         <!-- Ambient Studio Glows -->
-        <div class="ak23-auth-glow ak23-auth-glow-green"></div>
-        <div class="ak23-auth-glow-gold"></div>
+        <div class="ak23-auth-glow ak23-auth-glow-gold"></div>
 
         <div class="ak23-auth-container">
             <div class="ak23-auth-grid">
-                <!-- Left Column: Studio Showcase -->
+                <!-- Studio Showcase (Desktop: Left | Mobile: Bottom) -->
                 <div class="ak23-auth-showcase">
                     <div class="ak23-auth-badge">
                         <span class="ak23-auth-badge-dot"></span>
@@ -79,18 +78,16 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Modern Registration Card -->
-                <div>
+                <!-- Clean Responsive Registration Card (Desktop: Right | Mobile: Top) -->
+                <div class="ak23-auth-card-col">
                     <div class="ak23-auth-card">
                         <div class="ak23-auth-card-header">
-                            <div class="ak23-auth-card-topmark">
-                                <div class="ak23-auth-mark-icon">
-                                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 150px; object-fit: contain;">
-                                </div>
-                                <span class="ak23-auth-mark-label">Student Registration</span>
+                            <div class="ak23-auth-card-badge">
+                                <i class="las la-user-plus"></i>
+                                <span>@lang('Student Registration')</span>
                             </div>
-                            <h2 class="ak23-auth-card-title">Create Student Account</h2>
-                            <p class="ak23-auth-card-sub">Fill in your information below to get instant access to studio kits.</p>
+                            <h2 class="ak23-auth-card-title">@lang('Create Student Account')</h2>
+                            <p class="ak23-auth-card-sub">@lang('Fill in your information below to get instant access to studio kits.')</p>
                         </div>
 
                         {{-- Referral Banner if present --}}
@@ -130,8 +127,8 @@
                                     </a>
                                 @endif
                             </div>
-                            <div class="ak23-social-divider">
-                                <span>or register with email</span>
+                            <div class="ak23-auth-divider">
+                                <span>@lang('or register with email')</span>
                             </div>
                         @endif
 
@@ -142,25 +139,27 @@
                             <div class="ak23-form-grid-2">
                                 <div class="ak23-form-group">
                                     <label for="firstname" class="ak23-form-label">
-                                        <span>@lang('First Name') <span class="ak23-req-star">*</span></span>
+                                        <span>@lang('First Name')</span>
+                                        <span class="ak23-req-star">*</span>
                                     </label>
                                     <div class="ak23-input-wrapper">
                                         <i class="las la-user ak23-input-icon"></i>
                                         <input type="text" id="firstname" name="firstname" 
                                                value="{{ old('firstname', @$user->firstname) }}" 
-                                               class="ak23-input" placeholder="e.g. Amina" required>
+                                               class="ak23-input" placeholder="e.g. Amina" required autocomplete="given-name">
                                     </div>
                                 </div>
 
                                 <div class="ak23-form-group">
                                     <label for="lastname" class="ak23-form-label">
-                                        <span>@lang('Last Name') <span class="ak23-req-star">*</span></span>
+                                        <span>@lang('Last Name')</span>
+                                        <span class="ak23-req-star">*</span>
                                     </label>
                                     <div class="ak23-input-wrapper">
                                         <i class="las la-user ak23-input-icon"></i>
                                         <input type="text" id="lastname" name="lastname" 
                                                value="{{ old('lastname', @$user->lastname) }}" 
-                                               class="ak23-input" placeholder="e.g. Mushi" required>
+                                               class="ak23-input" placeholder="e.g. Mushi" required autocomplete="family-name">
                                     </div>
                                 </div>
                             </div>
@@ -168,12 +167,13 @@
                             <!-- Email Address -->
                             <div class="ak23-form-group">
                                 <label for="email" class="ak23-form-label">
-                                    <span>@lang('E-Mail Address') <span class="ak23-req-star">*</span></span>
+                                    <span>@lang('E-Mail Address')</span>
+                                    <span class="ak23-req-star">*</span>
                                 </label>
                                 <div class="ak23-input-wrapper">
                                     <i class="las la-envelope ak23-input-icon"></i>
                                     <input type="email" id="email" name="email" value="{{ old('email') }}" 
-                                           class="ak23-input checkUser" placeholder="e.g. amina@example.com" required>
+                                           class="ak23-input checkUser" placeholder="e.g. amina@example.com" required autocomplete="email">
                                 </div>
                             </div>
 
@@ -181,12 +181,13 @@
                             <div class="ak23-form-grid-2">
                                 <div class="ak23-form-group">
                                     <label for="password" class="ak23-form-label">
-                                        <span>@lang('Password') <span class="ak23-req-star">*</span></span>
+                                        <span>@lang('Password')</span>
+                                        <span class="ak23-req-star">*</span>
                                     </label>
                                     <div class="ak23-input-wrapper">
                                         <i class="las la-lock ak23-input-icon"></i>
                                         <input type="password" id="password" name="password" 
-                                               class="ak23-input ak23-input-pw" placeholder="••••••••" required>
+                                               class="ak23-input ak23-input-pw" placeholder="••••••••" required autocomplete="new-password">
                                         <button type="button" class="ak23-pw-toggle" aria-label="Toggle password visibility">
                                             <i class="las la-eye"></i>
                                         </button>
@@ -195,12 +196,13 @@
 
                                 <div class="ak23-form-group">
                                     <label for="password_confirmation" class="ak23-form-label">
-                                        <span>@lang('Confirm Password') <span class="ak23-req-star">*</span></span>
+                                        <span>@lang('Confirm Password')</span>
+                                        <span class="ak23-req-star">*</span>
                                     </label>
                                     <div class="ak23-input-wrapper">
                                         <i class="las la-shield-alt ak23-input-icon"></i>
                                         <input type="password" id="password_confirmation" name="password_confirmation" 
-                                               class="ak23-input ak23-input-pw" placeholder="••••••••" required>
+                                               class="ak23-input ak23-input-pw" placeholder="••••••••" required autocomplete="new-password">
                                         <button type="button" class="ak23-pw-toggle" aria-label="Toggle password visibility">
                                             <i class="las la-eye"></i>
                                         </button>
@@ -237,12 +239,12 @@
 
                             <!-- Switch to Login -->
                             <div class="ak23-auth-footer">
-                                <p class="ak23-auth-switch-text">
-                                    @lang('Already have a student account?')
+                                <div class="ak23-auth-switch-text">
+                                    <span>@lang('Already have a student account?')</span>
                                     <a href="{{ route('user.login') }}" class="ak23-auth-switch-link">
                                         @lang('Sign In here')
                                     </a>
-                                </p>
+                                </div>
                                 <a href="{{ route('products') }}" class="ak23-auth-back-link">
                                     <i class="las la-arrow-left"></i>
                                     <span>@lang('Browse Studio Catalog')</span>

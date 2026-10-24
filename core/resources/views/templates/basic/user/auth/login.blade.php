@@ -9,12 +9,11 @@
 
     <section class="ak23-auth-section">
         <!-- Ambient Studio Glows -->
-        <div class="ak23-auth-glow ak23-auth-glow-green"></div>
-        <div class="ak23-auth-glow-gold"></div>
+        <div class="ak23-auth-glow ak23-auth-glow-gold"></div>
 
         <div class="ak23-auth-container">
             <div class="ak23-auth-grid">
-                <!-- Left Column: Studio Showcase -->
+                <!-- Studio Showcase (Desktop: Left | Mobile: Bottom) -->
                 <div class="ak23-auth-showcase">
                     <div class="ak23-auth-badge">
                         <span class="ak23-auth-badge-dot"></span>
@@ -78,18 +77,16 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Modern Dark Auth Card -->
-                <div>
+                <!-- Clean Responsive Auth Card (Desktop: Right | Mobile: Top) -->
+                <div class="ak23-auth-card-col">
                     <div class="ak23-auth-card">
                         <div class="ak23-auth-card-header">
-                            <div class="ak23-auth-card-topmark">
-                                <div class="ak23-auth-mark-icon">
-                                    <img src="{{ siteLogo('dark') }}" alt="{{ gs('site_name') }}" style="height: 28px; max-width: 150px; object-fit: contain;">
-                                </div>
-                                <span class="ak23-auth-mark-label">Student Authentication</span>
+                            <div class="ak23-auth-card-badge">
+                                <i class="las la-shield-alt"></i>
+                                <span>@lang('Student Authentication')</span>
                             </div>
-                            <h2 class="ak23-auth-card-title">Welcome Back</h2>
-                            <p class="ak23-auth-card-sub">Enter your credentials to access your courses, kits and downloads.</p>
+                            <h2 class="ak23-auth-card-title">@lang('Welcome Back')</h2>
+                            <p class="ak23-auth-card-sub">@lang('Enter your credentials to access your courses, kits and downloads.')</p>
                         </div>
 
                         {{-- Social Login (if enabled) --}}
@@ -114,8 +111,8 @@
                                     </a>
                                 @endif
                             </div>
-                            <div class="ak23-social-divider">
-                                <span>or continue with email</span>
+                            <div class="ak23-auth-divider">
+                                <span>@lang('or continue with email')</span>
                             </div>
                         @endif
 
@@ -125,19 +122,24 @@
                             <!-- Username or Email -->
                             <div class="ak23-form-group">
                                 <label for="username" class="ak23-form-label">
-                                    <span>@lang('Username or Email') <span class="ak23-req-star">*</span></span>
+                                    <span>@lang('Username or Email')</span>
+                                    <span class="ak23-req-star">*</span>
                                 </label>
                                 <div class="ak23-input-wrapper">
                                     <i class="las la-user ak23-input-icon"></i>
                                     <input type="text" id="username" name="username" value="{{ old('username') }}" 
-                                           class="ak23-input" placeholder="e.g. amina@example.com or amina" required autofocus>
+                                           class="ak23-input" placeholder="e.g. producer@example.com or username" 
+                                           required autofocus autocomplete="username">
                                 </div>
                             </div>
 
                             <!-- Password -->
                             <div class="ak23-form-group">
-                                <div class="ak23-form-label">
-                                    <span>@lang('Password') <span class="ak23-req-star">*</span></span>
+                                <div class="ak23-form-label-row">
+                                    <label for="password" class="ak23-form-label">
+                                        <span>@lang('Password')</span>
+                                        <span class="ak23-req-star">*</span>
+                                    </label>
                                     <a href="{{ route('user.password.request') }}" class="ak23-auth-forgot">
                                         @lang('Forgot password?')
                                     </a>
@@ -145,7 +147,8 @@
                                 <div class="ak23-input-wrapper">
                                     <i class="las la-lock ak23-input-icon"></i>
                                     <input type="password" id="password" name="password" 
-                                           class="ak23-input ak23-input-pw" placeholder="••••••••" required>
+                                           class="ak23-input ak23-input-pw" placeholder="••••••••" 
+                                           required autocomplete="current-password">
                                     <button type="button" class="ak23-pw-toggle" aria-label="Toggle password visibility">
                                         <i class="las la-eye"></i>
                                     </button>
@@ -165,18 +168,18 @@
 
                             <!-- Submit Button -->
                             <button type="submit" class="ak23-auth-submit-btn" id="recaptcha">
-                                <span>@lang('Sign In to Student Portal')</span>
+                                <span>@lang('Sign In to Account')</span>
                                 <i class="las la-arrow-right"></i>
                             </button>
 
                             <!-- Switch to Register -->
                             <div class="ak23-auth-footer">
-                                <p class="ak23-auth-switch-text">
-                                    @lang('New to AK23 Studio Kits?')
+                                <div class="ak23-auth-switch-text">
+                                    <span>@lang('New to Maarifa23?')</span>
                                     <a href="{{ route('user.register') }}" class="ak23-auth-switch-link">
                                         @lang('Create a student account')
                                     </a>
-                                </p>
+                                </div>
                                 <a href="{{ route('products') }}" class="ak23-auth-back-link">
                                     <i class="las la-arrow-left"></i>
                                     <span>@lang('Browse Studio Catalog')</span>
