@@ -47,5 +47,6 @@ Thumbs.db
 # Local scratch and temporary scripts
 scratch/
 *.sql
+!core/database/*.sql
 *.tar.gz
 *.zip
