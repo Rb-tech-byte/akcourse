@@ -393,7 +393,11 @@ $(document).ready(function() {
                     }
 
                     // Sync Global Navbar Badges
-                    $('.ak23-cart-count, .cart-button__qty').text(res.cart_count);
+                    if (typeof window.updateAk23CartCount === 'function') {
+                        window.updateAk23CartCount(res.cart_count);
+                    } else {
+                        $('.ak23-cart-count, .cart-button__qty').text(res.cart_count);
+                    }
 
                     notify('success', res.message);
 

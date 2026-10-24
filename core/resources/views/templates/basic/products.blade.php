@@ -1413,7 +1413,11 @@
                     setTimeout(() => { btn.html(originalHtml); }, 2200);
                     notify(res.status || 'success', res.message);
                     if (res.cart_count !== undefined) {
-                        $('.ak23-cart-count').text(res.cart_count);
+                        if (typeof window.updateAk23CartCount === 'function') {
+                            window.updateAk23CartCount(res.cart_count);
+                        } else {
+                            $('.ak23-cart-count').text(res.cart_count);
+                        }
                     }
                 },
                 error: function(xhr) {

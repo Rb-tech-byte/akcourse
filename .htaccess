@@ -17,6 +17,9 @@
     # Block direct web access to sensitive directories
     RewriteRule ^(core|deploy|scratch|\.git) - [F,L,NC]
 
+    # Handle Cloudflare edge telemetry (/cdn-cgi/*)
+    RewriteRule ^cdn-cgi/.* - [R=204,L]
+
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f

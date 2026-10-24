@@ -16,9 +16,9 @@
                 </div>
 
                 <h1 class="ak23-hero-title">
-                    Learn to Mix<br>
-                    Vocals.<br>
-                    <span class="ak23-text-gold">One Plugin at a<br>Time.</span>
+                    Learn to Mix <br class="d-none d-md-inline">
+                    Vocals. <br class="d-none d-md-inline">
+                    <span class="ak23-text-gold">One Plugin at a <br class="d-none d-md-inline">Time.</span>
                 </h1>
 
                 <p class="ak23-hero-subtitle">

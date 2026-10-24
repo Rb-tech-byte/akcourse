@@ -8,6 +8,11 @@ Route::get('/clear', function(){
 
 Route::get('cron', 'CronController@cron')->name('cron');
 
+// Gracefully handle Cloudflare RUM (Real User Monitoring) / Web Analytics beacon pings
+Route::any('cdn-cgi/{any}', function () {
+    return response('', 204);
+})->where('any', '.*');
+
 // User Support Ticket
 Route::controller('TicketController')->prefix('ticket')->name('ticket.')->group(function () {
     Route::get('/', 'supportTicket')->name('index');

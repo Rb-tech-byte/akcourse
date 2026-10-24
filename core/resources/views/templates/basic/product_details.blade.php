@@ -612,7 +612,11 @@
                 setTimeout(() => { btn.html(originalText); }, 2000);
 
                 if (resp && resp.cart_count !== undefined) {
-                    $('.ak23-cart-count').text(resp.cart_count);
+                    if (typeof window.updateAk23CartCount === 'function') {
+                        window.updateAk23CartCount(resp.cart_count);
+                    } else {
+                        $('.ak23-cart-count').text(resp.cart_count);
+                    }
                 }
                 notify(resp.status || 'success', resp.message || 'Added to cart!');
             },
