@@ -80,22 +80,26 @@ class AdminController extends Controller {
             'licenses_pending' => 47,
         ];
 
-        // Fetch Recent Transactions from ak23 database
-        $ak23Transactions = \Illuminate\Support\Facades\DB::connection('ak23')->select('
-            SELECT 
-                o.order_number,
-                oi.product_name,
-                o.total_minor,
-                o.status,
-                o.customer_email,
-                o.created_at,
-                p.display_name as customer_name
-            FROM orders o
-            JOIN order_items oi ON oi.order_id = o.id
-            LEFT JOIN profiles p ON p.email = o.customer_email
-            ORDER BY o.created_at DESC
-            LIMIT 6
-        ');
+        // Fetch Recent Transactions from ak23 database (with graceful fallback)
+        try {
+            $ak23Transactions = \Illuminate\Support\Facades\DB::connection('ak23')->select('
+                SELECT 
+                    o.order_number,
+                    oi.product_name,
+                    o.total_minor,
+                    o.status,
+                    o.customer_email,
+                    o.created_at,
+                    p.display_name as customer_name
+                FROM orders o
+                JOIN order_items oi ON oi.order_id = o.id
+                LEFT JOIN profiles p ON p.email = o.customer_email
+                ORDER BY o.created_at DESC
+                LIMIT 6
+            ');
+        } catch (\Throwable $e) {
+            $ak23Transactions = [];
+        }
 
         // Clean customer names and dates
         foreach ($ak23Transactions as $t) {

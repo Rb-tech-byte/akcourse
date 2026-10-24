@@ -47,9 +47,13 @@ class AuthorizationController extends Controller
             $user->ver_code = verificationCode(6);
             $user->ver_code_send_at = Carbon::now();
             $user->save();
-            notify($user, $notifyTemplate, [
-                'code' => $user->ver_code
-            ],[$type]);
+            try {
+                notify($user, $notifyTemplate, [
+                    'code' => $user->ver_code
+                ],[$type]);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('Verification notification error: ' . $e->getMessage());
+            }
         }
 
         return view('Template::user.auth.authorization.'.$type, compact('user', 'pageTitle'));

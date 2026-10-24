@@ -190,33 +190,36 @@ class SocialLogin
 
     private function loginLog($user)
     {
-        //Login Log Create
-        $ip = getRealIP();
-        $exist = UserLogin::where('user_ip', $ip)->first();
-        $userLogin = new UserLogin();
+        try {
+            $ip = getRealIP();
+            $exist = UserLogin::where('user_ip', $ip)->first();
+            $userLogin = new UserLogin();
 
-        //Check exist or not
-        if ($exist) {
-            $userLogin->longitude =  $exist->longitude;
-            $userLogin->latitude =  $exist->latitude;
-            $userLogin->city =  $exist->city;
-            $userLogin->country_code = $exist->country_code;
-            $userLogin->country =  $exist->country;
-        } else {
-            $info = json_decode(json_encode(getIpInfo()), true);
-            $userLogin->longitude =  @implode(',', $info['long']);
-            $userLogin->latitude =  @implode(',', $info['lat']);
-            $userLogin->city =  @implode(',', $info['city']);
-            $userLogin->country_code = @implode(',', $info['code']);
-            $userLogin->country =  @implode(',', $info['country']);
+            //Check exist or not
+            if ($exist) {
+                $userLogin->longitude =  $exist->longitude;
+                $userLogin->latitude =  $exist->latitude;
+                $userLogin->city =  $exist->city;
+                $userLogin->country_code = $exist->country_code;
+                $userLogin->country =  $exist->country;
+            } else {
+                $info = json_decode(json_encode(getIpInfo()), true);
+                $userLogin->longitude =  is_array(@$info['long']) ? implode(',', $info['long']) : (string)(@$info['long'] ?? '');
+                $userLogin->latitude =  is_array(@$info['lat']) ? implode(',', $info['lat']) : (string)(@$info['lat'] ?? '');
+                $userLogin->city =  is_array(@$info['city']) ? implode(',', $info['city']) : (string)(@$info['city'] ?? '');
+                $userLogin->country_code = is_array(@$info['code']) ? implode(',', $info['code']) : (string)(@$info['code'] ?? '');
+                $userLogin->country =  is_array(@$info['country']) ? implode(',', $info['country']) : (string)(@$info['country'] ?? '');
+            }
+
+            $userAgent = osBrowser();
+            $userLogin->user_id = $user->id;
+            $userLogin->user_ip =  $ip;
+
+            $userLogin->browser = @$userAgent['browser'];
+            $userLogin->os = @$userAgent['os_platform'];
+            $userLogin->save();
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('UserLogin tracking error in social login: ' . $e->getMessage());
         }
-
-        $userAgent = osBrowser();
-        $userLogin->user_id = $user->id;
-        $userLogin->user_ip =  $ip;
-
-        $userLogin->browser = @$userAgent['browser'];
-        $userLogin->os = @$userAgent['os_platform'];
-        $userLogin->save();
     }
 }
