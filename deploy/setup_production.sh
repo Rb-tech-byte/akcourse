@@ -70,6 +70,8 @@ mkdir -p "$CORE_DIR/storage/framework/cache" \
 
 chmod -R 775 "$CORE_DIR/storage" "$CORE_DIR/bootstrap/cache" "$APP_DIR/assets"
 chmod 600 "$CORE_DIR/.env"
+chmod 644 "$APP_DIR/index.php" "$APP_DIR/.htaccess"
+chmod 755 "$APP_DIR"
 
 # Auto-detect website system user and set ownership
 if [ -d "$APP_DIR" ]; then
@@ -78,6 +80,12 @@ if [ -d "$APP_DIR" ]; then
         echo "👤 Restoring site ownership to user: $SITE_USER"
         chown -R "${SITE_USER}:${SITE_USER}" "$APP_DIR"
     fi
+fi
+
+# Reload OpenLiteSpeed web server if installed to read updated .htaccess rules
+if command -v systemctl &> /dev/null && systemctl is-active --quiet lsws; then
+    echo "🔄 Reloading OpenLiteSpeed web server (lsws)..."
+    systemctl reload lsws 2>/dev/null || systemctl restart lsws 2>/dev/null || true
 fi
 
 echo "======================================================================"
