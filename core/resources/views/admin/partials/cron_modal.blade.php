@@ -137,11 +137,14 @@
                 $lastCron = Carbon\Carbon::parse(gs('last_cron'))->diffInSeconds();
             @endphp
             
+            {{-- Cron modal auto-popup disabled: configure a real cron job on the server.
+                 Use the 'Cron Setup' button in the dashboard breadcrumb to open manually.
             @if ($lastCron >= 900)
                 setTimeout(() => {
                     $('#cronModal').modal('show');
                 }, 1000);
             @endif
+            --}}
 
         })(jQuery)
     </script>
