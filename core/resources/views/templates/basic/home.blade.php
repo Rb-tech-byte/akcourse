@@ -122,6 +122,7 @@
 
 
 <!-- =========================================================================
+<!-- =========================================================================
      COURSE SELECTION AREA ("CHOOSE YOUR COURSE")
      ========================================================================= -->
 <section class="ak23-courses-section" id="courses">
@@ -137,172 +138,146 @@
         <div class="ak23-start-here-banner">
             <span class="ak23-start-here-tag">START HERE</span>
             <p class="ak23-start-here-text">
-                <strong>New to vocal mixing?</strong> Begin with Tuned Plugins to build a simple workflow, then move through the series in order.
+                <strong>New to vocal mixing or beat production?</strong> Choose any individual course or get the complete series bundle with software license included.
             </p>
         </div>
 
-        <!-- Course Cards Grid -->
-        <div class="ak23-course-grid">
-            @forelse($akCourses as $course)
+        <!-- Series Filter Pills -->
+        <div class="ak23-series-pills d-flex flex-wrap align-items-center gap-2 mb-4" id="homeSeriesPills">
+            <button type="button" class="ak23-filter-btn active" data-series="all">
+                <span>All Courses ({{ $allCourses->count() }})</span>
+            </button>
+            @foreach($catalog as $cItem)
+                <button type="button" class="ak23-filter-btn" data-series="{{ $cItem['series']->slug }}">
+                    <span>{{ $cItem['series']->name }} ({{ $cItem['courses']->count() }})</span>
+                </button>
+            @endforeach
+            <button type="button" class="ak23-filter-btn" data-series="bundles">
+                <span>Series Bundles ({{ $allBundles->count() }})</span>
+            </button>
+        </div>
+
+        <!-- Course Cards Grid: 4 Columns per Row, matching sample -->
+        <div class="ak23-course-grid-4" id="homeCourseGrid">
+            @foreach($catalog as $cItem)
                 @php
-                    $seqPadded = str_pad($course->sequence_no, 2, '0', STR_PAD_LEFT);
-                    $stageClass = match($course->sequence_no) {
-                        1 => 'stage-getting-started',
-                        2 => 'stage-beginner',
-                        3 => 'stage-developing',
-                        4 => 'stage-intermediate',
-                        5 => 'stage-advanced',
-                        default => 'stage-beginner',
-                    };
-                    $accentColor = $course->accent_color ?: '#F0A62F';
+                    $series = $cItem['series'];
+                    $courses = $cItem['courses'];
                 @endphp
-                <div class="ak23-course-card">
-                    <!-- Visual Mockup Top -->
-                    <div class="ak23-course-visual">
-                        <span class="ak23-seq-circle">{{ $seqPadded }}</span>
-                        <span class="ak23-stage-badge {{ $stageClass }}">{{ $course->stage_label }}</span>
+                @foreach($courses as $course)
+                    @php
+                        $courseTitle = $course->title ?: $course->name;
+                        $coursePrice = (float)$course->price;
+                        $courseSku = $course->sku ?: ('AK23-COURSE-' . $course->id);
+                        $lessonCount = $course->lesson_count ?: 8;
+                        $detailUrl = route('product.details', $course->slug);
+                        $swName = $course->software_name ?: ($series->name ?: 'MACOS');
+                    @endphp
 
-                        <!-- SVG Plugin Graphic Matching Mockup -->
-                        @if($course->sequence_no == 1)
-                            <!-- Tuned Plugins SVG -->
-                            <svg width="270" height="135" viewBox="0 0 270 135" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535" stroke-width="1"/>
-                                <text x="30" y="34" fill="#D9A742" font-size="9" font-weight="800" letter-spacing="1">TUNED // PITCH ENGINE</text>
-                                <line x1="30" y1="42" x2="240" y2="42" stroke="#252535" stroke-width="1"/>
-                                <!-- Grid lines -->
-                                <line x1="30" y1="60" x2="240" y2="60" stroke="#1C1C28" stroke-dasharray="2 2"/>
-                                <line x1="30" y1="80" x2="240" y2="80" stroke="#1C1C28" stroke-dasharray="2 2"/>
-                                <!-- Wave curve -->
-                                <path d="M30 75 Q60 45 90 65 T150 55 T210 70 T240 50" fill="none" stroke="#D9A742" stroke-width="2"/>
-                                <!-- Knobs -->
-                                <circle cx="55" cy="100" r="10" fill="#191924" stroke="#D9A742" stroke-width="1.5"/>
-                                <circle cx="115" cy="100" r="10" fill="#191924" stroke="#D9A742" stroke-width="1.5"/>
-                                <circle cx="175" cy="100" r="10" fill="#191924" stroke="#D9A742" stroke-width="1.5"/>
-                                <circle cx="225" cy="100" r="8" fill="#191924" stroke="#2F2F40" stroke-width="1.5"/>
-                            </svg>
-                        @elseif($course->sequence_no == 2)
-                            <!-- Cymatics Voxity SVG -->
-                            <svg width="270" height="135" viewBox="0 0 270 135" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535" stroke-width="1"/>
-                                <text x="30" y="34" fill="#DE784D" font-size="9" font-weight="800" letter-spacing="1">VOXITY // MULTI-FX UNIT</text>
-                                <line x1="30" y1="42" x2="240" y2="42" stroke="#252535" stroke-width="1"/>
-                                <!-- Circular visualizer -->
-                                <circle cx="135" cy="72" r="22" fill="#171724" stroke="#DE784D" stroke-width="1.5" stroke-dasharray="3 2"/>
-                                <circle cx="135" cy="72" r="12" fill="#DE784D" fill-opacity="0.2"/>
-                                <!-- Sliders & knobs -->
-                                <rect x="40" y="55" width="12" height="35" rx="2" fill="#191926" stroke="#28283C"/>
-                                <rect x="42" y="65" width="8" height="6" rx="1" fill="#DE784D"/>
-                                <rect x="70" y="55" width="12" height="35" rx="2" fill="#191926" stroke="#28283C"/>
-                                <rect x="72" y="72" width="8" height="6" rx="1" fill="#DE784D"/>
-                                <circle cx="195" cy="72" r="12" fill="#191924" stroke="#DE784D" stroke-width="1.5"/>
-                                <circle cx="230" cy="72" r="10" fill="#191924" stroke="#2F2F40" stroke-width="1.5"/>
-                            </svg>
-                        @elseif($course->sequence_no == 3)
-                            <!-- Nuro Audio Xvox Pro SVG -->
-                            <svg width="270" height="135" viewBox="0 0 270 135" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535" stroke-width="1"/>
-                                <text x="30" y="34" fill="#9B77D2" font-size="9" font-weight="800" letter-spacing="1">XVOX PRO // VOCAL STRIP</text>
-                                <line x1="30" y1="42" x2="240" y2="42" stroke="#252535" stroke-width="1"/>
-                                <!-- Module blocks -->
-                                <rect x="30" y="52" width="38" height="42" rx="3" fill="#181826" stroke="#2E2840"/>
-                                <rect x="74" y="52" width="38" height="42" rx="3" fill="#181826" stroke="#2E2840"/>
-                                <rect x="118" y="52" width="38" height="42" rx="3" fill="#181826" stroke="#9B77D2" stroke-width="1.5"/>
-                                <rect x="162" y="52" width="38" height="42" rx="3" fill="#181826" stroke="#2E2840"/>
-                                <rect x="206" y="52" width="34" height="42" rx="3" fill="#181826" stroke="#2E2840"/>
-                                <!-- VU Bars -->
-                                <rect x="36" y="60" width="26" height="3" fill="#9B77D2"/>
-                                <rect x="80" y="68" width="26" height="3" fill="#9B77D2"/>
-                                <rect x="124" y="62" width="26" height="4" fill="#9B77D2"/>
-                                <text x="124" y="85" fill="#9B77D2" font-size="7" font-weight="700">COMP</text>
-                            </svg>
-                        @elseif($course->sequence_no == 4)
-                            <!-- iZotope Nectar 4 SVG -->
-                            <svg width="270" height="135" viewBox="0 0 270 135" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535" stroke-width="1"/>
-                                <text x="30" y="34" fill="#ED7C66" font-size="9" font-weight="800" letter-spacing="1">NECTAR 4 // VOCAL ASSISTANT</text>
-                                <line x1="30" y1="42" x2="240" y2="42" stroke="#252535" stroke-width="1"/>
-                                <!-- Dynamic EQ curve -->
-                                <path d="M30 78 Q75 40 120 75 T190 60 T240 82" fill="none" stroke="#ED7C66" stroke-width="2"/>
-                                <circle cx="85" cy="52" r="4" fill="#ED7C66"/>
-                                <circle cx="160" cy="68" r="4" fill="#ED7C66"/>
-                                <circle cx="210" cy="74" r="4" fill="#ED7C66"/>
-                                <!-- Bottom buttons -->
-                                <rect x="30" y="94" width="45" height="14" rx="2" fill="#1D1D2C"/>
-                                <rect x="82" y="94" width="45" height="14" rx="2" fill="#1D1D2C"/>
-                                <rect x="134" y="94" width="45" height="14" rx="2" fill="#1D1D2C"/>
-                                <rect x="186" y="94" width="54" height="14" rx="2" fill="#ED7C66" fill-opacity="0.2" stroke="#ED7C66" stroke-width="0.8"/>
-                            </svg>
-                        @else
-                            <!-- Waves Ultimate 17 SVG -->
-                            <svg width="270" height="135" viewBox="0 0 270 135" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="15" y="15" width="240" height="105" rx="6" fill="#13131D" stroke="#252535" stroke-width="1"/>
-                                <text x="30" y="34" fill="#4FA6C9" font-size="9" font-weight="800" letter-spacing="1">WAVES 17 // STUDIO RACK</text>
-                                <line x1="30" y1="42" x2="240" y2="42" stroke="#252535" stroke-width="1"/>
-                                <!-- Analog VU meter -->
-                                <rect x="30" y="52" width="80" height="40" rx="3" fill="#0E171C" stroke="#1D303B"/>
-                                <path d="M45 82 Q70 60 95 82" fill="none" stroke="#284858"/>
-                                <line x1="70" y1="84" x2="80" y2="62" stroke="#4FA6C9" stroke-width="1.5"/>
-                                <!-- Rack screws & knobs -->
-                                <circle cx="135" cy="65" r="10" fill="#18232A" stroke="#4FA6C9" stroke-width="1.5"/>
-                                <circle cx="170" cy="65" r="10" fill="#18232A" stroke="#4FA6C9" stroke-width="1.5"/>
-                                <circle cx="205" cy="65" r="10" fill="#18232A" stroke="#4FA6C9" stroke-width="1.5"/>
-                                <circle cx="232" cy="65" r="7" fill="#131A1F" stroke="#25353F"/>
-                                <line x1="125" y1="95" x2="240" y2="95" stroke="#1D303B" stroke-dasharray="3 3"/>
-                            </svg>
-                        @endif
-                    </div>
+                    <div class="ak23-card-sample ak23-home-course-item"
+                         data-url="{{ $detailUrl }}"
+                         data-series="{{ $series->slug }}"
+                         data-category-id="{{ $series->id }}"
+                         data-title="{{ strtolower($courseTitle) }}"
+                         data-price="{{ $coursePrice }}"
+                         tabindex="0"
+                         role="link"
+                         aria-label="{{ $courseTitle }}">
 
-                    <!-- Card Body -->
-                    <div class="ak23-course-body">
-                        <h3 class="ak23-course-title">{{ $course->title }}</h3>
-                        <p class="ak23-course-outcome">{{ $course->learning_outcome }}</p>
-
-                        <div class="ak23-course-meta">
-                            {{ $course->lesson_count ? $course->lesson_count . ' LESSONS' : '[LESSON COUNT]' }} &bull; {{ $course->video_duration_seconds ? round($course->video_duration_seconds / 60) . ' MIN' : '[VIDEO DURATION]' }}
+                        <!-- Thumbnail Area with Floating Top-Right Cart Button -->
+                        <div class="ak23-sample-thumb-wrap">
+                            <a href="{{ $detailUrl }}" class="ak23-thumb-link">
+                                <img src="{{ $course->thumbnail_url }}" alt="{{ $courseTitle }}" class="ak23-sample-thumb-img" loading="lazy">
+                            </a>
+                            <button type="button" 
+                                    class="ak23-sample-cart-btn ak23-btn-add-cart" 
+                                    data-sku="{{ $courseSku }}" 
+                                    title="Add to Cart">
+                                <i class="las la-cart-plus"></i>
+                            </button>
                         </div>
 
-                        <a href="javascript:void(0)" class="ak23-preview-link" data-bs-toggle="modal" data-bs-target="#previewModal">
-                            <i class="las la-play"></i>
-                            <span>PREVIEW COURSE</span>
-                        </a>
+                        <!-- Card Body matching provided sample image -->
+                        <div class="ak23-sample-card-body">
+                            <h3 class="ak23-sample-card-title" title="{{ $courseTitle }}">
+                                <a href="{{ $detailUrl }}" class="text-decoration-none">
+                                    {{ $courseTitle }}
+                                </a>
+                            </h3>
 
-                        <div class="ak23-license-pill">
-                            <i class="las la-shield-alt"></i>
-                            <span>PLUGIN LICENSE INCLUDED</span>
-                        </div>
-
-                        <div class="ak23-software-section">
-                            <div class="ak23-software-tag">LICENSED SOFTWARE INCLUDED</div>
-                            <p class="ak23-software-name">{{ $course->title }} &mdash; {{ $course->software_edition }}</p>
-                        </div>
-
-                        <!-- Card Footer -->
-                        <div class="ak23-course-card-footer">
-                            <div class="ak23-price-group">
-                                <span class="ak23-price-val">
-                                    {{ $course->price_minor ? 'TSH ' . number_format($course->price_minor) : 'TSH [PRICE]' }}
-                                </span>
-                                <span class="ak23-price-label">TOTAL PACKAGE PRICE</span>
+                            <div class="ak23-sample-card-price">
+                                @if($course->is_free)
+                                    <span class="text-success">FREE</span>
+                                @else
+                                    <span>TSH {{ number_format($coursePrice) }}</span>
+                                @endif
                             </div>
 
-                            <a href="{{ route('cart.index') }}" class="ak23-card-btn">
-                                <span>Get course + software</span>
-                                <i class="las la-arrow-right"></i>
+                            <div class="ak23-sample-card-meta">
+                                <span class="ak23-meta-tag">{{ strtoupper($swName) }}</span>
+                                <span class="ak23-meta-sep">&middot;</span>
+                                <span class="ak23-meta-date">{{ $course->lesson_count ? $course->lesson_count . ' LESSONS' : ($course->updated_at ? $course->updated_at->format('M d, Y') : 'Sep 17, 2026') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endforeach
+        </div>
+
+        <!-- Series Bundles Grid (shown when Bundles filter is selected) -->
+        <div class="ak23-course-grid-4 d-none" id="homeBundlesGrid">
+            @foreach($allBundles as $b)
+                @php
+                    $bTitle = $b->title ?: ($b->name ?? 'Complete Series');
+                    $bPrice = (float)($b->price ?: 480000);
+                    $bSku = $b->sku ?: ('AK23-BUNDLE-' . $b->id);
+                    $bUrl = route('product.details', $b->slug);
+                @endphp
+                <div class="ak23-card-sample ak23-bundle-card-item"
+                     data-url="{{ $bUrl }}"
+                     tabindex="0"
+                     role="link"
+                     aria-label="{{ $bTitle }}">
+
+                    <!-- Thumbnail Area with Floating Top-Right Cart Button -->
+                    <div class="ak23-sample-thumb-wrap">
+                        <a href="{{ $bUrl }}" class="ak23-thumb-link">
+                            <img src="{{ $b->thumbnail_url }}" alt="{{ $bTitle }}" class="ak23-sample-thumb-img" loading="lazy">
+                        </a>
+                        <button type="button" 
+                                class="ak23-sample-cart-btn ak23-btn-add-cart" 
+                                data-sku="{{ $bSku }}" 
+                                title="Add Bundle to Cart">
+                            <i class="las la-cart-plus"></i>
+                        </button>
+                    </div>
+
+                    <div class="ak23-sample-card-body">
+                        <h3 class="ak23-sample-card-title" title="{{ $bTitle }}">
+                            <a href="{{ $bUrl }}" class="text-decoration-none">
+                                {{ $bTitle }}
                             </a>
+                        </h3>
+
+                        <div class="ak23-sample-card-price">
+                            <span>TSH {{ number_format($bPrice) }}</span>
+                        </div>
+
+                        <div class="ak23-sample-card-meta">
+                            <span class="ak23-meta-tag">{{ strtoupper($b->category ? $b->category->name : 'ALL-IN-ONE') }}</span>
+                            <span class="ak23-meta-sep">&middot;</span>
+                            <span class="ak23-meta-date">COMPLETE BUNDLE</span>
                         </div>
                     </div>
                 </div>
-            @empty
-                <div class="col-12 text-center py-5">
-                    <p class="text-muted">Courses are currently being updated.</p>
-                </div>
-            @endforelse
+            @endforeach
         </div>
 
         <!-- =========================================================================
              COMPLETE SERIES BUNDLE CARD ("BEST FOR THE FULL JOURNEY")
              ========================================================================= -->
-        <div class="ak23-bundle-card">
+        @if($akBundle)
+        <div class="ak23-bundle-card mt-5" id="homeBundleSpotlight">
             <div class="row g-4 align-items-center">
                 <!-- Left Bundle Column -->
                 <div class="col-lg-7">
@@ -313,19 +288,19 @@
 
                     <h3 class="ak23-bundle-title">
                         Get the Complete<br>
-                        <span class="ak23-text-gold">Vocal Mixing Series</span>
+                        <span class="ak23-text-gold">{{ $akBundle->title }}</span>
                     </h3>
 
                     <p class="ak23-bundle-desc">
-                        Follow the full sequence from your first vocal workflow to a complete multi-plugin chain—without needing to add any individual course packages.
+                        Follow the full sequence from your first vocal workflow to a complete multi-plugin chain—without needing to add separate individual course packages.
                     </p>
 
-                    <!-- 5 Courses Checklist Box -->
+                    <!-- Courses Checklist Box -->
                     <div class="ak23-bundle-checklist-box">
                         @foreach($akCourses as $bc)
                             <div class="ak23-bundle-course-row">
                                 <div class="ak23-bundle-course-left">
-                                    <span class="ak23-bundle-course-seq">{{ str_pad($bc->sequence_no, 2, '0', STR_PAD_LEFT) }}</span>
+                                    <span class="ak23-bundle-course-seq">{{ str_pad($bc->sequence_no ?: ($loop->index + 1), 2, '0', STR_PAD_LEFT) }}</span>
                                     <div>
                                         <span class="ak23-bundle-course-name">{{ $bc->title }}</span>
                                         <span class="ak23-bundle-course-stage ms-2">{{ $bc->stage_label }}</span>
@@ -341,29 +316,29 @@
                 <div class="col-lg-5">
                     <div class="ak23-bundle-right ps-lg-4">
                         <div>
-                            <div class="ak23-bundle-price-header">COMPLETE SERIES TOTAL</div>
+                            <div class="ak23-bundle-price-header">COMPLETE PACKAGE TOTAL</div>
                             <div class="ak23-bundle-price-val">
-                                {{ @$akBundle->price_minor ? 'TSH ' . number_format($akBundle->price_minor) : 'TSH [SERIES PRICE]' }}
+                                TSH {{ number_format($akBundle->price) }}
                             </div>
-                            <div class="ak23-bundle-price-sub">ONE PACKAGE &middot; NO DUPLICATE ADD-ONS NEEDED</div>
+                            <div class="ak23-bundle-price-sub">ONE PACKAGE &middot; ALL COURSES &amp; SOFTWARE LICENSES INCLUDED</div>
 
                             <div class="ak23-included-title">Everything included</div>
                             <ul class="ak23-included-list">
                                 <li class="ak23-included-item">
                                     <i class="las la-check"></i>
-                                    <span>All five downloadable video courses</span>
+                                    <span>All {{ $akCourses->count() }} downloadable studio video courses</span>
                                 </li>
                                 <li class="ak23-included-item">
                                     <i class="las la-check"></i>
-                                    <span>Five corresponding licensed software packages</span>
+                                    <span>{{ $akCourses->count() }} corresponding genuine licensed software packages</span>
                                 </li>
                                 <li class="ak23-included-item">
                                     <i class="las la-check"></i>
-                                    <span>[Confirmed practice files and resources]</span>
+                                    <span>Multitrack studio practice stems and resources included</span>
                                 </li>
                                 <li class="ak23-included-item">
                                     <i class="las la-check"></i>
-                                    <span>Software installation and activation guidance</span>
+                                    <span>Step-by-step software installation and license activation guidance</span>
                                 </li>
                             </ul>
                         </div>
@@ -372,21 +347,31 @@
                             <div class="ak23-bundle-notice">
                                 <div class="ak23-bundle-notice-title">
                                     <i class="las la-shield-alt"></i>
-                                    <span>Licenses are included</span>
+                                    <span>Lifetime Licenses Included</span>
                                 </div>
                                 <p class="ak23-bundle-notice-text">
-                                    Exact editions and license terms will be shown before checkout.
+                                    Instant download access and genuine activation keys delivered immediately.
                                 </p>
                             </div>
 
-                            <a href="{{ route('cart.index') }}" class="ak23-bundle-cta-btn">
+                            <button type="button" 
+                                    class="ak23-bundle-cta-btn ak23-btn-add-cart w-100 justify-content-center border-0"
+                                    data-sku="{{ $akBundle->sku ?: 'AK23-BUNDLE-VOCAL' }}">
                                 <span>Get the complete series</span>
-                                <i class="las la-arrow-right"></i>
-                            </a>
+                                <i class="las la-cart-plus"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+        @endif
+
+        <!-- Explore Full Catalog CTA -->
+        <div class="text-center mt-5 pt-2">
+            <a href="{{ route('products') }}" class="btn btn-outline-warning rounded-pill px-4 py-2 fs-13 fw-bold">
+                <i class="las la-layer-group me-1"></i> Explore Full Catalog ({{ $allCourses->count() }} Courses &amp; Bundles)
+            </a>
         </div>
     </div>
 </section>
@@ -443,7 +428,7 @@
                 <p class="ak23-section-desc">
                     Use matched playback levels to focus on the changes in control, tone, and space—not just loudness.
                 </p>
-                <div class="ak23-audio-pill">AUDIO FILES [ADD CONFIRMED EXAMPLES]</div>
+                <div class="ak23-audio-pill"><i class="las la-volume-up me-1"></i> INTERACTIVE AUDIO DEMO &middot; REAL A/B COMPARISON</div>
             </div>
 
             <!-- Right Audio Players -->
@@ -666,6 +651,230 @@
 
 @endsection
 
+@push('style')
+<style>
+/* 4 Courses Per Row Grid - Exactly matching sample */
+.ak23-course-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    margin-bottom: 34px;
+}
+
+@media (max-width: 1200px) {
+    .ak23-course-grid-4 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 860px) {
+    .ak23-course-grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 540px) {
+    .ak23-course-grid-4 {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+/* Sample Card: Crisp White Card with Rounded Corners & Soft Shadow */
+.ak23-card-sample {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+}
+
+.ak23-card-sample:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(251, 175, 67, 0.25);
+    border-color: #FBAF43;
+}
+
+.ak23-card-sample:active {
+    transform: translateY(-2px);
+}
+
+/* Thumbnail Area with Aspect Ratio & Overflow Hidden */
+.ak23-sample-thumb-wrap {
+    position: relative;
+    width: 100%;
+    height: 185px;
+    overflow: hidden;
+    background: #0E0F16;
+}
+
+.ak23-thumb-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.ak23-sample-thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s ease;
+}
+
+.ak23-card-sample:hover .ak23-sample-thumb-img {
+    transform: scale(1.05);
+}
+
+/* Floating Circular Cart Button at Top-Right of thumbnail */
+.ak23-sample-cart-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #EA580C;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.ak23-sample-cart-btn:hover {
+    background: #EA580C;
+    color: #FFFFFF !important;
+    border-color: #EA580C;
+    transform: scale(1.12);
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4);
+}
+
+.ak23-sample-cart-btn:active {
+    transform: scale(0.96);
+}
+
+/* Card Body */
+.ak23-sample-card-body {
+    padding: 16px 18px 16px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: #FFFFFF;
+}
+
+/* Title: Clean, High Contrast, 2 Lines */
+.ak23-sample-card-title {
+    font-family: inherit;
+    font-size: 15.5px;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0 0 10px 0;
+    min-height: 42px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ak23-sample-card-title a {
+    color: #0F172A !important;
+    text-decoration: none;
+    transition: color 0.18s ease;
+}
+
+.ak23-sample-card-title a:hover {
+    color: #EA580C !important;
+}
+
+/* Price: Bright Amber/Orange */
+.ak23-sample-card-price {
+    font-size: 17.5px;
+    font-weight: 800;
+    color: #F59E0B; /* Bright golden amber matching sample */
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+    line-height: 1.2;
+}
+
+/* Meta: Subtle Gray Row */
+.ak23-sample-card-meta {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ak23-meta-tag {
+    color: #64748B;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+}
+
+.ak23-meta-sep {
+    color: #94A3B8;
+}
+
+.ak23-meta-date {
+    color: #94A3B8;
+    white-space: nowrap;
+}
+
+/* Series Filter Buttons on Home */
+.ak23-filter-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #A0A0B0 !important;
+    border-radius: 20px;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-decoration: none !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.ak23-filter-btn:hover {
+    background: rgba(251, 175, 67, 0.12);
+    border-color: rgba(251, 175, 67, 0.4);
+    color: #FBAF43 !important;
+}
+
+.ak23-filter-btn.active {
+    background: #FBAF43;
+    border-color: #FBAF43;
+    color: #0F0F14 !important;
+    font-weight: 700;
+}
+</style>
+@endpush
+
 @push('script')
 <script>
     // FAQ Accordion Toggle
@@ -687,8 +896,8 @@
         }
     }
 
-    // Interactive Demo Audio Player Simulation
     $(document).ready(function() {
+        // 1. Interactive Demo Audio Player Simulation
         $('.audio-demo-trigger').on('click', function() {
             const btn = $(this);
             const icon = btn.find('i');
@@ -696,7 +905,6 @@
             const waveformBox = btn.closest('.ak23-track-card').find('.ak23-track-waveform-box');
 
             if (icon.hasClass('la-play')) {
-                // Pause any other playing
                 $('.audio-demo-trigger i').removeClass('la-pause').addClass('la-play');
                 $('.ak23-track-waveform-box .bar').css('opacity', '0.7');
 
@@ -711,6 +919,110 @@
                 icon.removeClass('la-pause').addClass('la-play');
                 waveformBox.find('.bar').css('opacity', '0.7');
             }
+        });
+
+        // 2. Fully Clickable Course Card Navigation
+        $(document).on('click', '.ak23-card-sample', function(e) {
+            if ($(e.target).closest('.ak23-sample-cart-btn, .ak23-btn-add-cart, a, button, input').length) {
+                return;
+            }
+            const targetUrl = $(this).data('url');
+            if (targetUrl) {
+                window.location.href = targetUrl;
+            }
+        });
+
+        $(document).on('keydown', '.ak23-card-sample', function(e) {
+            if (e.key === 'Enter') {
+                if ($(e.target).closest('.ak23-sample-cart-btn, .ak23-btn-add-cart, a, button, input').length) {
+                    return;
+                }
+                const targetUrl = $(this).data('url');
+                if (targetUrl) {
+                    window.location.href = targetUrl;
+                }
+            }
+        });
+
+        // 3. Home Series Filter Pills Toggling
+        $('#homeSeriesPills .ak23-filter-btn').on('click', function(e) {
+            e.preventDefault();
+            $('#homeSeriesPills .ak23-filter-btn').removeClass('active');
+            $(this).addClass('active');
+
+            const selectedSeries = $(this).data('series');
+
+            if (selectedSeries === 'bundles') {
+                $('#homeCourseGrid').addClass('d-none');
+                $('#homeBundlesGrid').removeClass('d-none');
+            } else {
+                $('#homeBundlesGrid').addClass('d-none');
+                $('#homeCourseGrid').removeClass('d-none');
+
+                if (selectedSeries === 'all') {
+                    $('.ak23-home-course-item').removeClass('d-none');
+                } else {
+                    $('.ak23-home-course-item').each(function() {
+                        const itemSeries = $(this).data('series');
+                        if (itemSeries === selectedSeries) {
+                            $(this).removeClass('d-none');
+                        } else {
+                            $(this).addClass('d-none');
+                        }
+                    });
+                }
+            }
+        });
+
+        // 4. AJAX Quick Add to Cart
+        $(document).off('click', '.ak23-btn-add-cart').on('click', '.ak23-btn-add-cart', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const btn = $(this);
+            const sku = btn.data('sku');
+            const originalHtml = btn.html();
+            const token = $('meta[name="csrf-token"]').attr('content') || "{{ csrf_token() }}";
+
+            btn.prop('disabled', true).html('<i class="las la-spinner la-spin"></i>');
+
+            $.ajax({
+                url: "{{ route('cart.quick_add') }}",
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                data: {
+                    _token: token,
+                    sku: sku
+                },
+                success: function(res) {
+                    btn.prop('disabled', false).html('<i class="las la-check text-success"></i>');
+                    setTimeout(() => { btn.html(originalHtml); }, 2200);
+                    if (typeof notify === 'function') {
+                        notify(res.status || 'success', res.message);
+                    }
+                    if (res.cart_count !== undefined) {
+                        if (typeof window.updateAk23CartCount === 'function') {
+                            window.updateAk23CartCount(res.cart_count);
+                        } else {
+                            $('.ak23-cart-count').text(res.cart_count);
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false).html(originalHtml);
+                    let errMsg = 'Could not add product to cart.';
+                    if (xhr.status === 419) {
+                        errMsg = 'Session expired. Please refresh the page to continue.';
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errMsg = xhr.responseJSON.message;
+                    }
+                    if (typeof notify === 'function') {
+                        notify('error', errMsg);
+                    }
+                }
+            });
         });
     });
 </script>

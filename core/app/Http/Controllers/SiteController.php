@@ -37,82 +37,112 @@ class SiteController extends Controller
             session()->put('reference', $reference);
         }
 
-        $pageTitle   = 'AK23 Studio Kits - Learn Vocal Mixing';
+        $pageTitle   = 'AK23 Studio Kits - Learn Vocal Mixing & Audio Production';
         $sections    = Page::where('tempname', activeTemplate())->where('slug', '/')->first();
         $seoContents = @$sections->seo_content;
         $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
 
-        $akSeries = null;
-        $akCourses = collect();
-        $akBundle = null;
-        $akSiteContent = [];
+        $categories = Category::active()->with(['products' => function ($q) {
+            $q->approved()->orderBy('sequence_no', 'asc')->orderBy('id', 'asc');
+        }])->orderBy('id', 'asc')->get();
+
+        $catalog = [];
+        $allCourses = collect();
+        $allBundles = collect();
+
+        foreach ($categories as $cat) {
+            $courses = $cat->products->filter(function ($p) {
+                return $p->product_type === 'course' || empty($p->product_type);
+            })->values();
+
+            $bundle = $cat->products->firstWhere('product_type', 'bundle');
+            if ($bundle) {
+                $allBundles->push($bundle);
+            }
+
+            $allCourses = $allCourses->concat($courses);
+
+            $catalog[] = [
+                'series'  => $cat,
+                'courses' => $courses,
+                'bundle'  => $bundle,
+            ];
+        }
+
+        // Primary series for hero & bundle spotlight (Vocal Mixing or first active)
+        $primarySeriesItem = collect($catalog)->first(function ($item) {
+            return $item['series']->slug === 'vocal-mixing';
+        }) ?: ($catalog[0] ?? null);
+
+        $akSeries = $primarySeriesItem ? (object)[
+            'id'          => $primarySeriesItem['series']->id,
+            'slug'        => $primarySeriesItem['series']->slug,
+            'title'       => $primarySeriesItem['series']->name,
+            'description' => $primarySeriesItem['series']->name . ' - Hands-on studio workflows with genuine software licenses included.',
+        ] : null;
+
+        $akCourses = $primarySeriesItem ? $primarySeriesItem['courses'] : $allCourses;
+        $akBundle = $primarySeriesItem ? $primarySeriesItem['bundle'] : $allBundles->first();
+
+        // FAQs fallback
         $akFaqs = collect();
-
         try {
-            $akSeries = \Illuminate\Support\Facades\DB::connection('ak23')
-                ->table('series')
-                ->where('slug', 'vocal-mixing')
-                ->first(['id', 'title', 'short_description', 'description', 'audience_level', 'status']);
-
-            if ($akSeries) {
-                $akCourses = collect(\Illuminate\Support\Facades\DB::connection('ak23')->select('
-                    SELECT 
-                        c.sequence_no, 
-                        c.slug, 
-                        c.title, 
-                        c.short_name, 
-                        c.stage_label, 
-                        c.learning_outcome, 
-                        c.lesson_count, 
-                        c.video_duration_seconds, 
-                        c.accent_color, 
-                        sp.product_name as software_name, 
-                        sp.edition as software_edition, 
-                        p.sku, 
-                        p.price_minor, 
-                        p.currency, 
-                        BIN_TO_UUID(p.id, 1) as product_uuid 
-                    FROM courses c 
-                    JOIN course_software cs ON cs.course_id = c.id 
-                    JOIN software_packages sp ON sp.id = cs.software_package_id 
-                    LEFT JOIN products p ON p.course_id = c.id 
-                    WHERE c.series_id = ? 
-                    ORDER BY c.sequence_no ASC
-                ', [$akSeries->id]));
-
-                $akBundle = \Illuminate\Support\Facades\DB::connection('ak23')->selectOne('
-                    SELECT 
-                        p.sku, 
-                        p.name, 
-                        p.description, 
-                        p.price_minor, 
-                        p.currency, 
-                        BIN_TO_UUID(p.id, 1) as product_uuid 
-                    FROM products p 
-                    WHERE p.sku = ?
-                ', ['AK23-BUNDLE-VOCAL']);
-
-                $rawContent = \Illuminate\Support\Facades\DB::connection('ak23')
-                    ->table('site_content')
-                    ->where('series_id', $akSeries->id)
-                    ->where('content_key', 'sales_page')
-                    ->value('content');
-
-                if ($rawContent) {
-                    $akSiteContent = json_decode($rawContent, true) ?? [];
-                }
-
+            if (\Illuminate\Support\Facades\Schema::connection('ak23')->hasTable('faqs')) {
                 $akFaqs = \Illuminate\Support\Facades\DB::connection('ak23')
                     ->table('faqs')
-                    ->where('series_id', $akSeries->id)
                     ->orderBy('sequence_no', 'asc')
                     ->get(['sequence_no', 'question', 'answer']);
             }
         } catch (\Throwable $e) {
-            // fallback gracefully
+            // ignore
         }
 
-        return view('Template::home', compact('pageTitle', 'sections', 'seoContents', 'seoImage', 'akSeries', 'akCourses', 'akBundle', 'akSiteContent', 'akFaqs'));
+        if ($akFaqs->isEmpty()) {
+            $akFaqs = collect([
+                (object)[
+                    'question' => 'How do I access my course and software license?',
+                    'answer'   => 'Immediately after checkout, you receive instant access to your high-definition downloadable video lessons, stems, practice sessions, and unique genuine software license key.'
+                ],
+                (object)[
+                    'question' => 'Are plugin and software licenses permanent (lifetime)?',
+                    'answer'   => 'Yes. All course packages include 100% lifetime licenses with zero recurring subscriptions. You own the software and training permanently.'
+                ],
+                (object)[
+                    'question' => 'Which DAWs and operating systems are supported?',
+                    'answer'   => 'All major DAWs are supported (FL Studio, Logic Pro, Ableton Live, Cubase, Pro Tools, Studio One). Plugins are compatible with both macOS (Apple Silicon M1/M2/M3 and Intel) and Windows 10/11.'
+                ],
+                (object)[
+                    'question' => 'What payment methods can I use?',
+                    'answer'   => 'We accept instant local mobile money (M-Pesa, Airtel Money, Tigo Pesa, Halopesa) via Selcom as well as Visa, Mastercard, and international bank cards.'
+                ],
+                (object)[
+                    'question' => 'Can I buy individual courses or the complete series bundle?',
+                    'answer'   => 'You can purchase any single course or grab the Complete Series Bundle to get all 5 courses and all 5 matching software suites at a heavily discounted bundle price.'
+                ],
+                (object)[
+                    'question' => 'What if I need help installing or activating?',
+                    'answer'   => 'Each course comes with clear step-by-step video installation guides, and our dedicated WhatsApp technical support team is available 24/7 to assist you.'
+                ]
+            ]);
+        }
+
+        $akSiteContent = [];
+
+        return view('Template::home', compact(
+            'pageTitle', 
+            'sections', 
+            'seoContents', 
+            'seoImage', 
+            'akSeries', 
+            'akCourses', 
+            'akBundle', 
+            'akSiteContent', 
+            'akFaqs',
+            'catalog',
+            'categories',
+            'allCourses',
+            'allBundles'
+        ));
     }
 
     public function pages($slug = null)
