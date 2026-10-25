@@ -243,7 +243,7 @@
                                         <div class="image-upload-preview mb-2 d-flex align-items-center justify-content-center rounded bg-dark border" 
                                              style="height: 140px; overflow: hidden;">
                                             <img id="thumbPreview" 
-                                                 src="{{ getImage(getFilePath('productThumbnail') . '/' . productFilePath($product, 'thumbnail')) }}" 
+                                                 src="{{ $product->thumbnail_url }}" 
                                                  alt="{{ $product->title }}" 
                                                  style="max-height: 130px; max-width: 100%; object-fit: contain;">
                                         </div>
@@ -264,7 +264,7 @@
                                         <div class="image-upload-preview mb-2 d-flex align-items-center justify-content-center rounded bg-dark border" 
                                              style="height: 120px; overflow: hidden;">
                                             <img id="coverPreview" 
-                                                 src="{{ getImage(getFilePath('productPreview') . productFilePath($product, 'preview_image')) }}" 
+                                                 src="{{ $product->thumbnail_url }}" 
                                                  alt="{{ $product->title }} Cover" 
                                                  style="max-height: 110px; max-width: 100%; object-fit: cover;">
                                         </div>

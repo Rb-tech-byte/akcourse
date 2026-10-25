@@ -87,6 +87,9 @@ class ManageProductController extends Controller
                     getFileSize('productThumbnail'),
                     $product->thumbnail ?? null
                 );
+                if (!$request->hasFile('preview_image') && (empty($product->preview_image) || $product->preview_image === 'default.png')) {
+                    $product->preview_image = $product->thumbnail;
+                }
             } catch (\Exception $e) {
                 $notify[] = ['error', 'Could not upload thumbnail: ' . $e->getMessage()];
                 return back()->withInput()->withNotify($notify);
@@ -102,6 +105,9 @@ class ManageProductController extends Controller
                     getFileSize('productPreview'),
                     $product->preview_image ?? null
                 );
+                if (!$request->hasFile('thumbnail') && (empty($product->thumbnail) || $product->thumbnail === 'default.png')) {
+                    $product->thumbnail = $product->preview_image;
+                }
             } catch (\Exception $e) {
                 $notify[] = ['error', 'Could not upload preview banner: ' . $e->getMessage()];
                 return back()->withInput()->withNotify($notify);

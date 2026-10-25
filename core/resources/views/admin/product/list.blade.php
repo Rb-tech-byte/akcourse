@@ -134,7 +134,7 @@
                                         <td class="ps-3 py-2">
                                             <div class="d-flex align-items-center gap-2">
                                                 <div class="ak23-thumb-box rounded-2 overflow-hidden flex-shrink-0 bg-dark" style="width: 48px; height: 36px;">
-                                                    <img src="{{ getImage(getFilePath('productThumbnail') . '/' . productFilePath($product, 'thumbnail')) }}" alt="{{ $product->title }}" class="w-100 h-100" style="object-fit: cover;">
+                                                    <img src="{{ $product->thumbnail_url }}" alt="{{ $product->title }}" class="w-100 h-100" style="object-fit: cover;">
                                                 </div>
                                                 <div class="overflow-hidden">
                                                     <div class="d-flex align-items-center gap-1">

@@ -17,7 +17,7 @@
     $hasAudio = !empty($product->audio_temp_file) || (@$product->category->file_type === 'audio');
     $videoSrc = !empty($product->preview_video) ? getImage(getFilePath('previewVideo') . '/' . productFilePath($product, 'preview_video')) : ($product->demo_url ?: '');
     $audioSrc = !empty($product->audio_temp_file) ? asset(getFilePath('previewFile') . '/' . productFilePath($product, 'temp_audio_file') . '/' . $product->audio_temp_file) : '';
-    $posterImg = getImage(getFilePath('productPreview') . '/' . productFilePath($product, 'preview_image'), getFileSize('productPreview'));
+    $posterImg = $product->thumbnail_url ?: getImage(getFilePath('productPreview') . '/' . productFilePath($product, 'preview_image'), getFileSize('productPreview'));
 @endphp
 
 <div class="ak23-marketplace-product py-4 py-lg-5">

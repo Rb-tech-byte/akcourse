@@ -47,7 +47,7 @@
                     @forelse ($cartItems as $cartItem)
                         @php
                             $itemTotal = $cartItem->price + $cartItem->buyer_fee;
-                            $thumb = $cartItem->product ? getImage(getFilePath('productThumbnail') . productFilePath($cartItem->product, 'thumbnail')) : null;
+                            $thumb = $cartItem->product ? $cartItem->product->thumbnail_url : null;
                         @endphp
                         <div class="ak23-cart-item-card mb-3 p-3 p-sm-4 rounded-4 bg-white border shadow-sm" id="cart-item-row-{{ $cartItem->id }}" data-id="{{ $cartItem->id }}" data-price="{{ $itemTotal }}">
                             <div class="d-flex align-items-start gap-3">

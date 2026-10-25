@@ -27,6 +27,65 @@ class Product extends Model {
         return $this->attributes['title'] ?? ($this->attributes['name'] ?? '');
     }
 
+    public function getThumbnailUrlAttribute() {
+        $candidates = array_filter([
+            $this->preview_image,
+            $this->thumbnail,
+            $this->inline_preview_image,
+        ], function ($val) {
+            return !empty($val) && $val !== 'default.png';
+        });
+
+        foreach ($candidates as $cand) {
+            $candStr = trim((string)$cand);
+            if (empty($candStr)) {
+                continue;
+            }
+
+            // External URLs
+            if (str_starts_with($candStr, 'http://') || str_starts_with($candStr, 'https://')) {
+                return $candStr;
+            }
+
+            $candClean = ltrim($candStr, '/');
+
+            // Direct relative path containing assets/
+            if (str_starts_with($candClean, 'assets/')) {
+                if (file_exists($candClean) || file_exists(base_path('../' . $candClean))) {
+                    return asset($candClean);
+                }
+            }
+
+            // Path relative to product slug folder
+            if (!empty($this->slug)) {
+                $relSlug = 'assets/files/product/' . $this->slug . '/' . $candClean;
+                if (file_exists($relSlug) || file_exists(base_path('../' . $relSlug))) {
+                    return asset($relSlug);
+                }
+            }
+
+            // Direct in product root folder
+            $relDirect = 'assets/files/product/' . $candClean;
+            if (file_exists($relDirect) || file_exists(base_path('../' . $relDirect))) {
+                return asset($relDirect);
+            }
+        }
+
+        // Search directory for any valid image if no candidate was resolved
+        if (!empty($this->slug)) {
+            $relDir = 'assets/files/product/' . $this->slug;
+            $scanDir = file_exists($relDir) ? $relDir : (file_exists(base_path('../' . $relDir)) ? base_path('../' . $relDir) : null);
+            if ($scanDir && is_dir($scanDir)) {
+                $files = glob($scanDir . '/*.{png,jpg,jpeg,webp,PNG,JPG,JPEG,WEBP}', GLOB_BRACE);
+                if (!empty($files)) {
+                    return asset($relDir . '/' . basename($files[0]));
+                }
+            }
+        }
+
+        return asset('assets/images/default.png');
+    }
+
     public function scopeFeatured($query) {
         return $query->where('is_featured', Status::ENABLE);
     }

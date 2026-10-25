@@ -17,8 +17,8 @@
             </div>
         @else
             <a href="{{ route('product.details', $product->slug) }}" class="link" title="{{ __($product->title) }}">
-                <img src="{{ getImage(getFilePath('productInlinePreview') . productFilePath($product, 'inline_preview_image'), getFileSize('productInlinePreview')) }}"
-                     alt="@lang('Product Image')" class="product-image">
+                <img src="{{ $product->thumbnail_url }}"
+                     alt="{{ __($product->title) }}" class="product-image">
             </a>
         @endif
 

@@ -182,7 +182,7 @@
                 <h2 class="ak23-series-title mb-1">Complete Curriculum Bundles</h2>
                 <p class="ak23-series-desc mb-0">Get the full course track and included perpetual software licenses at a significant bundled discount.</p>
             </div>
-            <div class="ak23-course-grid-3">
+            <div class="ak23-course-grid-4">
                 @foreach($catalog as $item)
                     @php
                         $bundle = $item['bundle'];
@@ -193,9 +193,8 @@
                             $bPrice = (float)($bundle->price ?: 480000);
                             $bSku = $bundle->sku ?: ('AK23-BUNDLE-' . $bundle->id);
                             $bUrl = route('product.details', $bundle->slug);
-                            $bAccent = $bundle->accent_color ?: '#FBAF43';
                         @endphp
-                        <div class="ak23-card-minimal ak23-bundle-card-item"
+                        <div class="ak23-card-sample ak23-bundle-card-item"
                              data-url="{{ $bUrl }}"
                              data-title="{{ strtolower($bTitle) }}"
                              data-price="{{ $bPrice }}"
@@ -204,47 +203,34 @@
                              role="link"
                              aria-label="{{ $bTitle }}">
 
-                            <div class="ak23-card-visual-compact" style="height: 120px;">
-                                <span class="ak23-pill-stage" style="border-color: #FBAF4355; color: #FBAF43; background: rgba(251, 175, 67, 0.12);">
-                                    FULL TRACK BUNDLE
-                                </span>
-                                <svg viewBox="0 0 360 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="ak23-hardware-rack-svg" preserveAspectRatio="none">
-                                    <rect width="360" height="120" fill="#12131F"/>
-                                    <circle cx="180" cy="60" r="90" fill="{{ $bAccent }}" fill-opacity="0.12"/>
-                                    <line x1="20" y1="24" x2="340" y2="24" stroke="#222436" stroke-width="1"/>
-                                    <line x1="20" y1="96" x2="340" y2="96" stroke="#222436" stroke-width="1"/>
-                                    <text x="180" y="55" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle" letter-spacing="1">
-                                        {{ strtoupper($item['series']->title) }}
-                                    </text>
-                                    <text x="180" y="74" fill="{{ $bAccent }}" font-size="9" font-weight="700" text-anchor="middle" letter-spacing="1.5">
-                                        ALL COURSES &amp; SOFTWARE LICENSES INCLUDED
-                                    </text>
-                                </svg>
+                            <!-- Thumbnail Area with Floating Top-Right Cart Button -->
+                            <div class="ak23-sample-thumb-wrap">
+                                <a href="{{ $bUrl }}" class="ak23-thumb-link">
+                                    <img src="{{ $bundle->thumbnail_url }}" alt="{{ $bTitle }}" class="ak23-sample-thumb-img" loading="lazy">
+                                </a>
+                                <button type="button" 
+                                        class="ak23-sample-cart-btn ak23-btn-add-cart" 
+                                        data-sku="{{ $bSku }}" 
+                                        title="Add Bundle to Cart">
+                                    <i class="las la-cart-plus"></i>
+                                </button>
                             </div>
 
-                            <div class="ak23-card-body-compact">
-                                <h3 class="ak23-card-title-compact" title="{{ $bTitle }}">
-                                    <a href="{{ $bUrl }}" class="ak23-card-title-link stretched-link text-white text-decoration-none">
+                            <div class="ak23-sample-card-body">
+                                <h3 class="ak23-sample-card-title" title="{{ $bTitle }}">
+                                    <a href="{{ $bUrl }}" class="text-decoration-none">
                                         {{ $bTitle }}
                                     </a>
                                 </h3>
-                                <p class="ak23-card-outcome-compact">
-                                    {{ $bundle->description }}
-                                </p>
-                                <div class="ak23-card-footer-compact">
-                                    <div>
-                                        <span class="ak23-price-sub">BUNDLE SAVINGS</span>
-                                        <span class="ak23-price-tag">TSH {{ number_format($bPrice) }}</span>
-                                    </div>
-                                    <div class="d-flex align-items-center gap-1 ak23-card-actions-wrapper">
-                                        <button type="button" class="btn btn-sm btn-outline-warning ak23-btn-add-cart ak23-action-btn rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" data-sku="{{ $bSku }}" title="Add to Cart">
-                                            <i class="las la-cart-plus fs-16"></i>
-                                        </button>
-                                        <a href="{{ route('order.checkout', ['sku' => $bSku]) }}" class="btn btn-sm btn--base ak23-btn-enroll ak23-action-btn rounded-pill px-3 py-1 fs-12 fw-semibold d-inline-flex align-items-center gap-1">
-                                            <span>Enroll</span>
-                                            <i class="las la-arrow-right fs-10"></i>
-                                        </a>
-                                    </div>
+
+                                <div class="ak23-sample-card-price">
+                                    <span>TSH {{ number_format($bPrice) }}</span>
+                                </div>
+
+                                <div class="ak23-sample-card-meta">
+                                    <span class="ak23-meta-tag">{{ strtoupper($item['series']->title) }}</span>
+                                    <span class="ak23-meta-sep">&middot;</span>
+                                    <span class="ak23-meta-date">COMPLETE BUNDLE</span>
                                 </div>
                             </div>
                         </div>
@@ -253,8 +239,8 @@
             </div>
         </div>
 
-        <!-- Main Course Grid: Strictly 3 Columns per Row, 6 Courses per Page -->
-        <div class="ak23-course-grid-3" id="ak23CourseGrid">
+        <!-- Main Course Grid: 4 Columns per Row, matching sample -->
+        <div class="ak23-course-grid-4" id="ak23CourseGrid">
             @foreach($catalog as $cItem)
                 @php
                     $series = $cItem['series'];
@@ -267,14 +253,11 @@
                         $coursePrice = (float)$course->price;
                         $courseSku = $course->sku ?: ('AK23-COURSE-' . $course->id);
                         $lessonCount = $course->lesson_count ?: 8;
-                        $videoMin = $course->video_duration_seconds ? round($course->video_duration_seconds / 60) : 120;
-                        $accentColor = $course->accent_color ?: '#FBAF43';
-                        $hasCustomThumb = !empty($course->thumbnail) && $course->thumbnail !== 'default.png' && file_exists(public_path(getFilePath('productThumbnail') . '/' . productFilePath($course, 'thumbnail')));
                         $detailUrl = route('product.details', $course->slug);
                         $searchHaystack = strtolower($courseTitle . ' ' . $course->software_name . ' ' . $course->software_edition . ' ' . $course->stage_label . ' ' . $course->learning_outcome . ' ' . $courseSku . ' ' . $series->title . ' ' . $series->slug);
                     @endphp
 
-                    <div class="ak23-card-minimal ak23-course-item"
+                    <div class="ak23-card-sample ak23-course-item"
                          data-url="{{ $detailUrl }}"
                          data-search="{{ $searchHaystack }}"
                          data-title="{{ strtolower($courseTitle) }}"
@@ -289,135 +272,39 @@
                          role="link"
                          aria-label="{{ $courseTitle }}">
 
-                        <!-- Header Visual: Custom Image or Dynamic Studio Hardware Rack Vector -->
-                        <div class="ak23-card-visual-compact">
-                            <!-- Track & Series Identifier Badge (Human Copy) -->
-                            <span class="ak23-pill-category" style="color: {{ $accentColor }}; background: {{ $accentColor }}18; border-color: {{ $accentColor }}33;">
-                                {{ $series->title }}
-                            </span>
-                            <!-- Difficulty Level Badge -->
-                            <span class="ak23-pill-stage" style="border-color: {{ $accentColor }}44; color: {{ $accentColor }}; background: {{ $accentColor }}18;">
-                                {{ strtoupper($course->stage_label ?: 'COURSE') }}
-                            </span>
-
-                            @if($hasCustomThumb)
-                                <img src="{{ getImage(getFilePath('productThumbnail') . '/' . productFilePath($course, 'thumbnail')) }}" alt="{{ $courseTitle }}" class="ak23-card-img-compact">
-                            @else
-                                <!-- Dynamic Studio Audio Hardware Vector Graphic -->
-                                <svg viewBox="0 0 360 136" fill="none" xmlns="http://www.w3.org/2000/svg" class="ak23-hardware-rack-svg" preserveAspectRatio="none">
-                                    <rect width="360" height="136" fill="#10111A"/>
-                                    <defs>
-                                        <radialGradient id="glow-{{ $course->id }}" cx="50%" cy="50%" r="50%">
-                                            <stop offset="0%" stop-color="{{ $accentColor }}" stop-opacity="0.16"/>
-                                            <stop offset="100%" stop-color="{{ $accentColor }}" stop-opacity="0"/>
-                                        </radialGradient>
-                                        <linearGradient id="meter-{{ $course->id }}" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" stop-color="#20BF6B"/>
-                                            <stop offset="70%" stop-color="#FBAF43"/>
-                                            <stop offset="100%" stop-color="#EB3B5A"/>
-                                        </linearGradient>
-                                    </defs>
-                                    <rect width="360" height="136" fill="url(#glow-{{ $course->id }})"/>
-                                    <line x1="16" y1="28" x2="344" y2="28" stroke="#1D1F2D" stroke-width="1"/>
-                                    <line x1="16" y1="108" x2="344" y2="108" stroke="#1D1F2D" stroke-width="1"/>
-                                    <circle cx="12" cy="12" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
-                                    <circle cx="348" cy="12" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
-                                    <circle cx="12" cy="124" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
-                                    <circle cx="348" cy="124" r="3" fill="#1A1C28" stroke="#2A2C3E" stroke-width="1"/>
-                                    
-                                    <!-- Dynamic Software Screen -->
-                                    <rect x="24" y="38" width="180" height="26" rx="4" fill="#0C0D14" stroke="#222436"/>
-                                    <circle cx="34" cy="51" r="2.5" fill="{{ $accentColor }}"/>
-                                    <text x="44" y="55" fill="{{ $accentColor }}" font-size="9" font-family="monospace" font-weight="700" letter-spacing="1">
-                                        {{ strtoupper(Str::limit($course->software_name ?: 'STUDIO WORKSTATION', 22)) }}
-                                    </text>
-                                    
-                                    <!-- Waveform Spectrum Trace -->
-                                    <path d="M214 51 Q 230 36, 245 51 T 275 51 T 305 42 T 335 51" fill="none" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
-                                    
-                                    <!-- Studio Hardware Knobs -->
-                                    <g transform="translate(36, 76)">
-                                        <circle cx="14" cy="14" r="12" fill="#151724" stroke="#2A2C40" stroke-width="1.5"/>
-                                        <line x1="14" y1="4" x2="14" y2="10" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
-                                        <text x="14" y="35" fill="#6A6C7E" font-size="7.5" font-weight="700" text-anchor="middle">INPUT</text>
-                                    </g>
-                                    <g transform="translate(76, 76)">
-                                        <circle cx="14" cy="14" r="12" fill="#151724" stroke="#2A2C40" stroke-width="1.5"/>
-                                        <line x1="14" y1="4" x2="14" y2="10" stroke="{{ $accentColor }}" stroke-width="2" stroke-linecap="round"/>
-                                        <text x="14" y="35" fill="#6A6C7E" font-size="7.5" font-weight="700" text-anchor="middle">OUTPUT</text>
-                                    </g>
-                                    
-                                    <!-- Master VU Meter -->
-                                    <g transform="translate(136, 80)">
-                                        <rect width="110" height="12" rx="3" fill="#0C0D14" stroke="#222436"/>
-                                        <rect x="3" y="3" width="75" height="6" rx="1.5" fill="url(#meter-{{ $course->id }})"/>
-                                        <text x="55" y="24" fill="#6A6C7E" font-size="7" font-weight="700" text-anchor="middle">MASTER VU &middot; 48kHz</text>
-                                    </g>
-                                    
-                                    <!-- Studio Specs Badge -->
-                                    <g transform="translate(260, 80)">
-                                        <rect width="84" height="18" rx="4" fill="{{ $accentColor }}15" stroke="{{ $accentColor }}40"/>
-                                        <text x="302" y="92" fill="{{ $accentColor }}" font-size="8" font-weight="800" text-anchor="middle">24-BIT / 48kHz</text>
-                                    </g>
-                                </svg>
-                            @endif
+                        <!-- Thumbnail Area with Floating Top-Right Cart Button -->
+                        <div class="ak23-sample-thumb-wrap">
+                            <a href="{{ $detailUrl }}" class="ak23-thumb-link">
+                                <img src="{{ $course->thumbnail_url }}" alt="{{ $courseTitle }}" class="ak23-sample-thumb-img" loading="lazy">
+                            </a>
+                            <button type="button" 
+                                    class="ak23-sample-cart-btn ak23-btn-add-cart" 
+                                    data-sku="{{ $courseSku }}" 
+                                    title="Add to Cart">
+                                <i class="las la-cart-plus"></i>
+                            </button>
                         </div>
 
-                        <!-- Card Body -->
-                        <div class="ak23-card-body-compact">
-                            <!-- Title with Stretched Link for Full Clickability -->
-                            <h3 class="ak23-card-title-compact" title="{{ $courseTitle }}">
-                                <a href="{{ $detailUrl }}" class="ak23-card-title-link stretched-link text-white text-decoration-none">
+                        <!-- Card Body matching provided sample image -->
+                        <div class="ak23-sample-card-body">
+                            <h3 class="ak23-sample-card-title" title="{{ $courseTitle }}">
+                                <a href="{{ $detailUrl }}" class="text-decoration-none">
                                     {{ $courseTitle }}
                                 </a>
                             </h3>
 
-                            <!-- Included Software Tag & Lifetime License -->
-                            <div class="ak23-card-soft-pill text-truncate" title="{{ $course->software_name }} &bull; One-Time Lifetime License & Official Purchase Certificate Included">
-                                <i class="las la-certificate" style="color: {{ $accentColor }}; font-size: 13px;"></i>
-                                <span class="text-white fw-semibold text-truncate">{{ $course->software_name ?: 'Studio Software' }}</span>
-                                <span class="text-success fs-10 ms-auto text-truncate fw-semibold">Lifetime Lic + Purchase Cert</span>
+                            <div class="ak23-sample-card-price">
+                                @if($course->is_free)
+                                    <span class="text-success">FREE</span>
+                                @else
+                                    <span>TSH {{ number_format($coursePrice) }}</span>
+                                @endif
                             </div>
 
-                            <!-- Outcome / Brief Description -->
-                            <p class="ak23-card-outcome-compact">
-                                {{ $course->learning_outcome ?: $course->description }}
-                            </p>
-
-                            <!-- Specs Bar -->
-                            <div class="ak23-card-specs-bar">
-                                <span><i class="las la-play-circle text-warning me-1"></i>{{ $lessonCount }} Lessons</span>
-                                <span><i class="las la-clock text-warning me-1"></i>{{ $videoMin }} Min</span>
-                                <span class="text-success"><i class="las la-award me-1"></i>Lifetime License</span>
-                            </div>
-
-                            <!-- Card Footer: Price & Direct Actions -->
-                            <div class="ak23-card-footer-compact">
-                                <div>
-                                    <span class="ak23-price-sub">COURSE PRICE</span>
-                                    @if($course->is_free)
-                                        <span class="ak23-price-tag text-success">FREE</span>
-                                    @else
-                                        <span class="ak23-price-tag">
-                                            TSH {{ number_format($coursePrice) }}
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <div class="d-flex align-items-center gap-1 ak23-card-actions-wrapper">
-                                    <button type="button" 
-                                            class="btn btn-sm btn-outline-warning ak23-btn-add-cart ak23-action-btn rounded-circle p-0 d-inline-flex align-items-center justify-content-center" 
-                                            style="width: 32px; height: 32px;"
-                                            data-sku="{{ $courseSku }}" 
-                                            title="Add to Cart">
-                                        <i class="las la-cart-plus fs-16"></i>
-                                    </button>
-                                    <a href="{{ route('order.checkout', ['sku' => $courseSku]) }}" 
-                                       class="btn btn-sm btn--base ak23-btn-enroll ak23-action-btn rounded-pill px-3 py-1 fs-12 fw-semibold d-inline-flex align-items-center gap-1">
-                                        <span>Enroll</span>
-                                        <i class="las la-arrow-right fs-10"></i>
-                                    </a>
-                                </div>
+                            <div class="ak23-sample-card-meta">
+                                <span class="ak23-meta-tag">{{ strtoupper($course->software_name ?: ($series->title ?: 'MACOS')) }}</span>
+                                <span class="ak23-meta-sep">&middot;</span>
+                                <span class="ak23-meta-date">{{ $course->updated_at ? $course->updated_at->format('M d, Y') : ($course->created_at ? $course->created_at->format('M d, Y') : 'Sep 17, 2026') }}</span>
                             </div>
                         </div>
                     </div>
@@ -473,241 +360,203 @@
 
 .ak23-catalog-body {
     padding: 34px 0 64px;
-    background: #0A0B10;
+    background: #F1F5F9;
     min-height: 60vh;
 }
 
-/* 3 Courses Per Row Grid - Strictly 3 Columns on Desktop */
-.ak23-course-grid-3 {
+/* 4 Courses Per Row Grid - Exactly matching sample */
+.ak23-course-grid-3,
+.ak23-course-grid-4 {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 22px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+    margin-bottom: 34px;
 }
 
-@media (max-width: 991px) {
-    .ak23-course-grid-3 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
+@media (max-width: 1200px) {
+    .ak23-course-grid-3,
+    .ak23-course-grid-4 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
     }
 }
 
-@media (max-width: 640px) {
-    .ak23-course-grid-3 {
+@media (max-width: 860px) {
+    .ak23-course-grid-3,
+    .ak23-course-grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+
+@media (max-width: 540px) {
+    .ak23-course-grid-3,
+    .ak23-course-grid-4 {
         grid-template-columns: 1fr;
         gap: 16px;
     }
 }
 
-/* Clean, Minimal, Native Card with Simple Edge & Stretched Link */
-.ak23-card-minimal {
-    background: #12131D;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+/* Sample Card: Crisp White Card with Rounded Corners & Soft Shadow */
+.ak23-card-sample {
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
     transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
-                border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
-                box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-    cursor: pointer;
+                box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
+    cursor: pointer;
     user-select: none;
 }
 
-.ak23-card-minimal:hover {
-    transform: translateY(-4px);
-    border-color: rgba(251, 175, 67, 0.45);
-    box-shadow: 0 14px 32px -8px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(251, 175, 67, 0.18);
-}
-
-.ak23-card-minimal:active {
-    transform: translateY(-1px);
-}
-
-.ak23-card-minimal:focus-within {
+.ak23-card-sample:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(251, 175, 67, 0.25);
     border-color: #FBAF43;
-    box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.2);
 }
 
-/* Header Visual: 136px height */
-.ak23-card-visual-compact {
-    height: 136px;
-    background: linear-gradient(180deg, #161824 0%, #0E0F16 100%);
+.ak23-card-sample:active {
+    transform: translateY(-2px);
+}
+
+/* Thumbnail Area with Aspect Ratio & Overflow Hidden */
+.ak23-sample-thumb-wrap {
     position: relative;
+    width: 100%;
+    height: 185px;
     overflow: hidden;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #0E0F16;
 }
 
-.ak23-card-img-compact {
+.ak23-thumb-link {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.ak23-sample-thumb-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
     transition: transform 0.35s ease;
 }
 
-.ak23-card-minimal:hover .ak23-card-img-compact {
+.ak23-card-sample:hover .ak23-sample-thumb-img {
     transform: scale(1.05);
 }
 
-.ak23-hardware-rack-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-/* Badges on Visual Header */
-.ak23-pill-category {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 10px;
-    font-weight: 700;
-    backdrop-filter: blur(6px);
-    border: 1px solid transparent;
-    z-index: 2;
-    max-width: 55%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.ak23-pill-stage {
+/* Floating Circular Cart Button at Top-Right of thumbnail */
+.ak23-sample-cart-btn {
     position: absolute;
     top: 10px;
     right: 10px;
-    padding: 3px 9px;
-    border-radius: 20px;
-    font-size: 9.5px;
-    font-weight: 800;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    backdrop-filter: blur(6px);
-    border: 1px solid transparent;
-    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #EA580C;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.ak23-sample-cart-btn:hover {
+    background: #EA580C;
+    color: #FFFFFF !important;
+    border-color: #EA580C;
+    transform: scale(1.12);
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4);
+}
+
+.ak23-sample-cart-btn:active {
+    transform: scale(0.96);
 }
 
 /* Card Body */
-.ak23-card-body-compact {
-    padding: 16px 18px 14px;
+.ak23-sample-card-body {
+    padding: 16px 18px 16px;
     display: flex;
     flex-direction: column;
     flex: 1;
+    background: #FFFFFF;
 }
 
-.ak23-card-title-compact {
+/* Title: Clean, High Contrast, 2 Lines */
+.ak23-sample-card-title {
+    font-family: inherit;
     font-size: 15.5px;
     font-weight: 700;
-    color: #FFFFFF;
     line-height: 1.35;
-    margin-bottom: 8px;
+    margin: 0 0 10px 0;
+    min-height: 42px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 42px;
 }
 
-.ak23-card-title-link {
-    color: #FFFFFF !important;
+.ak23-sample-card-title a {
+    color: #0F172A !important;
+    text-decoration: none;
     transition: color 0.18s ease;
 }
 
-.ak23-card-minimal:hover .ak23-card-title-link {
-    color: #FBAF43 !important;
+.ak23-sample-card-title a:hover {
+    color: #EA580C !important;
 }
 
-/* Software Included Pill */
-.ak23-card-soft-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 11.5px;
-    margin-bottom: 8px;
-    color: #C0C0D0;
-    max-width: 100%;
-}
-
-.ak23-card-outcome-compact {
-    font-size: 12px;
-    line-height: 1.5;
-    color: #8C8D9E;
-    margin-bottom: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    min-height: 36px;
-}
-
-.ak23-card-specs-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 11px;
-    color: #A0A1B2;
-    padding: 6px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+/* Price: Bright Amber/Orange */
+.ak23-sample-card-price {
+    font-size: 17.5px;
+    font-weight: 800;
+    color: #F59E0B; /* Bright golden amber matching sample */
+    letter-spacing: -0.01em;
     margin-bottom: 14px;
+    line-height: 1.2;
 }
 
-/* Card Footer: Action buttons elevated above stretched-link */
-.ak23-card-footer-compact {
+/* Meta: Subtle Gray Row */
+.ak23-sample-card-meta {
     margin-top: auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.ak23-card-actions-wrapper {
-    position: relative;
-    z-index: 5;
-}
-
-.ak23-action-btn {
-    position: relative;
-    z-index: 5;
-}
-
-.ak23-price-tag {
-    font-size: 15.5px;
-    font-weight: 800;
-    color: #FBAF43;
-    letter-spacing: -0.01em;
-}
-
-.ak23-price-sub {
-    font-size: 9px;
-    font-weight: 700;
-    color: #6E7082;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #64748B;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    display: block;
-    line-height: 1;
-    margin-bottom: 2px;
+    letter-spacing: 0.04em;
 }
 
-/* Stretched Link native card clicking */
-.stretched-link::after {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1;
-    content: "";
+.ak23-meta-tag {
+    color: #64748B;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
+}
+
+.ak23-meta-sep {
+    color: #94A3B8;
+}
+
+.ak23-meta-date {
+    color: #94A3B8;
+    white-space: nowrap;
 }
 
 /* Live Search Box */
@@ -963,7 +812,7 @@
         let currentLevel = urlParams.get('level') || urlParams.get('stage') || 'all';
         let currentSort = urlParams.get('sort') || 'default';
         let currentPage = parseInt(urlParams.get('page')) || 1;
-        const itemsPerPage = 6; // At least 6 items per page (strictly 2 full rows of 3)
+        const itemsPerPage = 12; // 12 items per page (3 full rows of 4 cards on desktop)
 
         // Set initial values into controls
         if (currentSearch) {
@@ -982,8 +831,8 @@
         }
 
         // 1. Fully Clickable Card - Direct click navigation backup for non-interactive areas
-        $(document).on('click', '.ak23-card-minimal', function(e) {
-            if ($(e.target).closest('.ak23-action-btn, .ak23-card-actions-wrapper, a, button, input, select').length) {
+        $(document).on('click', '.ak23-card-sample, .ak23-card-minimal', function(e) {
+            if ($(e.target).closest('.ak23-sample-cart-btn, .ak23-btn-add-cart, a, button, input, select').length) {
                 return;
             }
             const targetUrl = $(this).data('url');
@@ -993,9 +842,9 @@
         });
 
         // Keyboard Enter navigation on focused card
-        $(document).on('keydown', '.ak23-card-minimal', function(e) {
+        $(document).on('keydown', '.ak23-card-sample, .ak23-card-minimal', function(e) {
             if (e.key === 'Enter') {
-                if ($(e.target).closest('.ak23-action-btn, .ak23-card-actions-wrapper, a, button, input, select').length) {
+                if ($(e.target).closest('.ak23-sample-cart-btn, .ak23-btn-add-cart, a, button, input, select').length) {
                     return;
                 }
                 const targetUrl = $(this).data('url');

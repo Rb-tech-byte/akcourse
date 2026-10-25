@@ -2,7 +2,7 @@
 @section('panel')
 
     @php
-        $previewSrc = $product->preview_image ? getImage(getFilePath('productPreview') . '/' . productFilePath($product, 'preview_image'), getFileSize('productPreview')) : ($product->thumbnail ? getImage(getFilePath('productThumbnail') . '/' . productFilePath($product, 'thumbnail'), getFileSize('productThumbnail')) : getImage(getFilePath('productPreview') . '/default.png'));
+        $previewSrc = $product->thumbnail_url ?: ($product->preview_image ? getImage(getFilePath('productPreview') . '/' . productFilePath($product, 'preview_image'), getFileSize('productPreview')) : getImage(getFilePath('productPreview') . '/default.png'));
     @endphp
 
     <div class="row gy-4">
