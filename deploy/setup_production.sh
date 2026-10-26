@@ -75,7 +75,7 @@ mkdir -p "$CORE_DIR/storage/framework/cache" \
          "$APP_DIR/assets"
 
 chmod -R 775 "$CORE_DIR/storage" "$CORE_DIR/bootstrap/cache" "$APP_DIR/assets"
-chmod 600 "$CORE_DIR/.env"
+chmod 644 "$CORE_DIR/.env"
 chmod 644 "$APP_DIR/index.php" "$APP_DIR/.htaccess"
 chmod 755 "$APP_DIR"
 

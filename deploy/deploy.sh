@@ -56,7 +56,7 @@ mkdir -p "$CORE_DIR/storage/framework/cache" \
 chmod -R 775 "$CORE_DIR/storage" "$CORE_DIR/bootstrap/cache" "$APP_DIR/assets"
 
 if [ -f "$CORE_DIR/.env" ]; then
-    chmod 600 "$CORE_DIR/.env"
+    chmod 644 "$CORE_DIR/.env"
 fi
 
 # 7. Restart background queues if configured
