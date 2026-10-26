@@ -103,10 +103,59 @@
             @endforelse
         </div>
 
-        <!-- Pagination Controls matching akdownloads -->
+        <!-- Pagination Controls (Aligned with Product Grid, Luxury Studio Theme) -->
         @if($products->hasPages())
-            <div class="d-flex justify-content-center mb-5">
-                {{ $products->links() }}
+            <div class="ak-pagination-wrapper my-4">
+                <div class="ak-pagination-info">
+                    @lang('Showing') <span class="ak-pagination-num">{{ $products->firstItem() }}</span> 
+                    @lang('to') <span class="ak-pagination-num">{{ $products->lastItem() }}</span> 
+                    @lang('of') <span class="ak-pagination-num">{{ $products->total() }}</span> @lang('results')
+                </div>
+
+                <div class="ak-pagination-nav">
+                    {{-- Previous Page Link --}}
+                    @if ($products->onFirstPage())
+                        <span class="ak-page-link disabled" aria-disabled="true">&lsaquo;</span>
+                    @else
+                        <a href="{{ $products->previousPageUrl() }}" class="ak-page-link" rel="prev" aria-label="@lang('Previous')">&lsaquo;</a>
+                    @endif
+
+                    @php
+                        $cur   = $products->currentPage();
+                        $last  = $products->lastPage();
+                        $start = max(1, $cur - 2);
+                        $end   = min($last, $cur + 2);
+                    @endphp
+
+                    @if ($start > 1)
+                        <a href="{{ $products->url(1) }}" class="ak-page-link">1</a>
+                        @if ($start > 2)
+                            <span class="ak-page-link dots">&hellip;</span>
+                        @endif
+                    @endif
+
+                    @for ($i = $start; $i <= $end; $i++)
+                        @if ($i == $cur)
+                            <span class="ak-page-link active" aria-current="page">{{ $i }}</span>
+                        @else
+                            <a href="{{ $products->url($i) }}" class="ak-page-link">{{ $i }}</a>
+                        @endif
+                    @endfor
+
+                    @if ($end < $last)
+                        @if ($end < $last - 1)
+                            <span class="ak-page-link dots">&hellip;</span>
+                        @endif
+                        <a href="{{ $products->url($last) }}" class="ak-page-link">{{ $last }}</a>
+                    @endif
+
+                    {{-- Next Page Link --}}
+                    @if ($products->hasMorePages())
+                        <a href="{{ $products->nextPageUrl() }}" class="ak-page-link" rel="next" aria-label="@lang('Next')">&rsaquo;</a>
+                    @else
+                        <span class="ak-page-link disabled" aria-disabled="true">&rsaquo;</span>
+                    @endif
+                </div>
             </div>
         @endif
 
@@ -156,79 +205,6 @@
                 @endforeach
             </div>
         @endif
-
-        <!-- =====================================================================
-             TOP CREATORS SECTION (MATCHING AKDOWNLOADS)
-             ===================================================================== -->
-        <div class="ak-section-header text-center mb-4 mt-5">
-            <h2 class="ak-section-title">Top Creators</h2>
-        </div>
-
-        <div class="row g-3 g-md-4 mb-5 justify-content-center">
-            @php
-                $creatorShowcase = [
-                    [
-                        'name' => 'O.Righty',
-                        'initials' => 'A&T',
-                        'products' => '2 Products',
-                        'bg' => 'linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%)',
-                        'url' => route('products') . '?search=O.Righty',
-                    ],
-                    [
-                        'name' => 'RENATUS KAYANDA',
-                        'initials' => 'RK',
-                        'products' => '1 Products',
-                        'bg' => 'linear-gradient(135deg, #065F46 0%, #10B981 100%)',
-                        'url' => route('products') . '?search=Renatus',
-                    ],
-                    [
-                        'name' => 'Wolinetrn',
-                        'initials' => 'WN',
-                        'products' => '1 Products',
-                        'bg' => 'linear-gradient(135deg, #7C2D12 0%, #F59E0B 100%)',
-                        'url' => route('products') . '?search=Wolinetrn',
-                    ],
-                    [
-                        'name' => 'Shortkeys Bosco',
-                        'initials' => 'S',
-                        'products' => '1 Products',
-                        'bg' => 'linear-gradient(135deg, #831843 0%, #EC4899 100%)',
-                        'url' => route('products') . '?search=Shortkeys',
-                    ]
-                ];
-            @endphp
-
-            @foreach($creatorShowcase as $creator)
-                <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="ak-creator-card">
-                        <!-- Circular Avatar -->
-                        <div class="ak-creator-avatar" style="background: {{ $creator['bg'] }};">
-                            <span>{{ $creator['initials'] }}</span>
-                        </div>
-
-                        <!-- Name -->
-                        <h4 class="ak-creator-name">{{ $creator['name'] }}</h4>
-
-                        <!-- Products Count -->
-                        <div class="ak-creator-meta">
-                            <i class="las la-music"></i>
-                            <span>{{ $creator['products'] }}</span>
-                        </div>
-
-                        <!-- Social Link Icon -->
-                        <div class="ak-creator-socials">
-                            <a href="{{ $creator['url'] }}" aria-label="Website"><i class="las la-globe"></i></a>
-                            <a href="{{ $creator['url'] }}" aria-label="Instagram"><i class="lab la-instagram"></i></a>
-                        </div>
-
-                        <!-- View Store Button -->
-                        <a href="{{ $creator['url'] }}" class="ak-creator-btn">
-                            View Store
-                        </a>
-                    </div>
-                </div>
-            @endforeach
-        </div>
 
     </div>
 </main>
@@ -522,81 +498,100 @@
     letter-spacing: -0.01em;
 }
 
-/* Creator Card (Matching akdownloads dark cards) */
-.ak-creator-card {
+
+/* ==========================================================================
+   PAGINATION STYLING (ALIGNED & CLEAR)
+   ========================================================================== */
+.ak-pagination-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 20px;
     background: #12141A;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 28px 20px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
-.ak-creator-card:hover {
-    transform: translateY(-3px);
-    border-color: rgba(251, 175, 67, 0.3);
-}
-.ak-creator-avatar {
-    width: 68px;
-    height: 68px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 800;
-    color: #FFFFFF;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-}
-.ak-creator-name {
-    font-size: 15px;
-    font-weight: 800;
-    color: #FFFFFF;
-    margin: 0 0 6px 0;
-}
-.ak-creator-meta {
-    font-size: 12px;
+.ak-pagination-info {
+    font-size: 13.5px;
+    font-weight: 500;
     color: #94A3B8;
     display: flex;
     align-items: center;
     gap: 4px;
-    margin-bottom: 12px;
 }
-.ak-creator-socials {
+.ak-pagination-num {
+    font-weight: 700;
+    color: #FFFFFF;
+}
+.ak-pagination-nav {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 18px;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
-.ak-creator-socials a {
-    color: #64748B;
-    font-size: 16px;
-    text-decoration: none;
-    transition: color 0.15s ease;
-}
-.ak-creator-socials a:hover {
-    color: #FBAF43;
-}
-.ak-creator-btn {
-    display: inline-block;
-    width: 100%;
-    padding: 8px 16px;
-    background: rgba(251, 175, 67, 0.1);
-    border: 1px solid rgba(251, 175, 67, 0.3);
+.ak-page-link {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    color: #FBAF43;
-    font-size: 12.5px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: all 0.2s ease;
+    color: #CBD5E1;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    user-select: none;
 }
-.ak-creator-btn:hover {
+.ak-page-link:hover {
+    background: rgba(251, 175, 67, 0.15);
+    border-color: #FBAF43;
+    color: #FBAF43;
+    transform: translateY(-1px);
+}
+.ak-page-link.active {
     background: #FBAF43;
-    color: #000000;
+    border-color: #FBAF43;
+    color: #0E0F13;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(251, 175, 67, 0.35);
+}
+.ak-page-link.disabled {
+    opacity: 0.35;
+    pointer-events: none;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+.ak-page-link.dots {
+    border-color: transparent;
+    background: transparent;
+    pointer-events: none;
+    color: #64748B;
+}
+@media (max-width: 575.98px) {
+    .ak-pagination-wrapper {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        gap: 12px;
+        padding: 14px;
+    }
+    .ak-pagination-info {
+        justify-content: center;
+    }
+    .ak-pagination-nav {
+        justify-content: center;
+        width: 100%;
+        flex-wrap: wrap;
+    }
 }
 </style>
 @endpush

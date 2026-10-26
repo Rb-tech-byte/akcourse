@@ -72,14 +72,6 @@ class SiteController extends Controller
             ->take(4)
             ->get();
 
-        // 3. Top Creators (matching akdownloads)
-        $creators = User::where('status', 1)
-            ->where(function($q) {
-                $q->where('is_author', 1)->orWhereNotNull('username');
-            })
-            ->take(4)
-            ->get();
-
         $catalog = [];
         $allCourses = collect();
         $allBundles = collect();
@@ -110,7 +102,6 @@ class SiteController extends Controller
             'seoImage', 
             'products',
             'trendingProducts',
-            'creators',
             'catalog',
             'categories',
             'allCourses',
