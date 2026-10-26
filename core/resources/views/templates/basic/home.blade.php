@@ -3,38 +3,17 @@
 @section('content')
 
 @php
-    $heroVideo = null;
-    $heroVideoTitle = 'Maarifa23 Academy · Vocal Mixing Series Preview';
-    if ($akBundle && $akBundle->video_embed_info) {
-        $heroVideo = $akBundle->video_embed_info;
-        $heroVideoTitle = $akBundle->title . ' · Walkthrough Preview';
-    } else {
-        $courseWithVid = $akCourses->first(function($c) {
-            return !empty($c->video_embed_info);
-        });
-        if ($courseWithVid) {
-            $heroVideo = $courseWithVid->video_embed_info;
-            $heroVideoTitle = $courseWithVid->title . ' · Video Preview';
-        }
-    }
-
-    if (!$heroVideo) {
-        $anyBundle = $allBundles->first(function($b) {
-            return !empty($b->video_embed_info);
-        });
-        if ($anyBundle) {
-            $heroVideo = $anyBundle->video_embed_info;
-            $heroVideoTitle = $anyBundle->title . ' · Walkthrough Preview';
-        } else {
-            $anyCourse = $allCourses->first(function($c) {
-                return !empty($c->video_embed_info);
-            });
-            if ($anyCourse) {
-                $heroVideo = $anyCourse->video_embed_info;
-                $heroVideoTitle = $anyCourse->title . ' · Video Preview';
-            }
-        }
-    }
+    $heroVideoId = 'se0PHXGCRJI';
+    $heroVideoTitle = 'Studio Tour & Equipment Guide';
+    $heroVideo = (object)[
+        'type'      => 'youtube',
+        'id'        => $heroVideoId,
+        'provider'  => 'YouTube',
+        'embed_url' => "https://www.youtube-nocookie.com/embed/{$heroVideoId}?autoplay=1&rel=0&modestbranding=1",
+        'raw_url'   => 'https://youtu.be/se0PHXGCRJI?si=7Jsic3gJXSlyY1ki',
+        'thumbnail' => asset('assets/templates/basic/images/hero_studio_tour_bg.jpg'),
+        'is_embed'  => true,
+    ];
 @endphp
 
 <!-- =========================================================================
@@ -91,66 +70,27 @@
                 </div>
             </div>
 
-            <!-- Hero Right Column: Video Preview Card -->
+            <!-- Hero Right Column: Video Preview Card Matching Sample Image 2 -->
             <div class="col-lg-6">
                 <div class="ak23-video-preview-card">
-                    <div class="ak23-video-screen">
-                        <div class="ak23-video-header-tag">
-                            MAARIFA23 ACADEMY / SERIES PREVIEW
+                    <div class="ak23-video-poster-screen btn-trigger-preview" 
+                         role="button"
+                         tabindex="0"
+                         data-bs-toggle="modal" 
+                         data-bs-target="#previewModal" 
+                         data-preview-url="{{ @$heroVideo->embed_url }}" 
+                         data-preview-type="{{ @$heroVideo->type }}" 
+                         data-preview-title="{{ $heroVideoTitle }}"
+                         aria-label="Watch {{ $heroVideoTitle }}">
+                        
+                        <!-- Center Circular Gradient Play Button Matching Image 2 -->
+                        <div class="ak23-hero-gradient-play-btn" aria-hidden="true">
+                            <i class="las la-play"></i>
                         </div>
 
-                        <!-- Waveform Centerpiece -->
-                        <div class="ak23-waveform-centerpiece" id="heroWaveformBox">
-                            @php
-                                $heights = [18, 28, 42, 60, 48, 75, 88, 55, 32, 68, 85, 95, 70, 50, 78, 90, 65, 45, 82, 98, 74, 52, 35, 60, 80, 65, 40, 22];
-                            @endphp
-                            @foreach($heights as $h)
-                                <div class="wf-bar" style="height: {{ $h }}%;"></div>
-                            @endforeach
-
-                            <button type="button" class="ak23-video-play-btn btn-trigger-preview" id="heroPlayBtn" 
-                                    data-bs-toggle="modal" data-bs-target="#previewModal" 
-                                    data-preview-url="{{ @$heroVideo->embed_url }}" 
-                                    data-preview-type="{{ @$heroVideo->type }}" 
-                                    data-preview-title="{{ $heroVideoTitle }}" 
-                                    aria-label="Play Preview">
-                                <i class="las la-play" style="margin-left: 3px;"></i>
-                            </button>
-                        </div>
-
-                        <!-- 4 DAW Channel Slots -->
-                        <div class="ak23-daw-slots">
-                            <div class="ak23-daw-slot">
-                                <div class="ak23-daw-slot-bar active"></div>
-                                <span style="font-size: 9px; color: #6D6D7E; font-weight: 700;">TUNER</span>
-                            </div>
-                            <div class="ak23-daw-slot">
-                                <div class="ak23-daw-slot-bar active"></div>
-                                <span style="font-size: 9px; color: #6D6D7E; font-weight: 700;">TONE</span>
-                            </div>
-                            <div class="ak23-daw-slot">
-                                <div class="ak23-daw-slot-bar active"></div>
-                                <span style="font-size: 9px; color: #6D6D7E; font-weight: 700;">DYN</span>
-                            </div>
-                            <div class="ak23-daw-slot">
-                                <div class="ak23-daw-slot-bar active"></div>
-                                <span style="font-size: 9px; color: #6D6D7E; font-weight: 700;">SPACE</span>
-                            </div>
-                        </div>
-
-                        <!-- Playback Bar -->
-                        <div class="ak23-video-controls-bar">
-                            <button type="button" class="ak23-ctrl-btn" aria-label="Play">
-                                <i class="las la-play"></i>
-                            </button>
-                            <div class="ak23-progress-container">
-                                <div class="ak23-progress-fill"></div>
-                            </div>
-                            <span class="ak23-time-text">00:00 / 02:18</span>
-                            <button type="button" class="ak23-ctrl-btn" aria-label="Volume">
-                                <i class="las la-volume-up"></i>
-                            </button>
-                            <span class="ak23-cc-pill">CC</span>
+                        <!-- Bottom-Left Title Exactly Matching Image 2 -->
+                        <div class="ak23-video-bottom-title">
+                            Studio Tour &amp; Equipment Guide
                         </div>
                     </div>
 
@@ -241,14 +181,16 @@
                             </button>
                             @if($course->video_embed_info)
                                 <button type="button" 
-                                        class="ak23-sample-preview-btn btn-trigger-preview" 
+                                        class="ak23-sample-preview-pill btn-trigger-preview" 
                                         data-bs-toggle="modal"
                                         data-bs-target="#previewModal"
                                         data-preview-url="{{ $course->video_embed_info->embed_url }}" 
                                         data-preview-type="{{ $course->video_embed_info->type }}" 
                                         data-preview-title="{{ $courseTitle }}" 
-                                        title="Watch Course Preview Video">
-                                    <i class="las la-play"></i>
+                                        title="Preview Available - Click to Play">
+                                    <span class="preview-pulse-dot"></span>
+                                    <i class="las {{ $course->video_embed_info->type === 'audio' || $course->video_embed_info->type === 'soundcloud' ? 'la-headphones' : 'la-play' }}"></i>
+                                    <span>{{ $course->video_embed_info->type === 'audio' || $course->video_embed_info->type === 'soundcloud' ? 'Audio Preview' : 'Preview' }}</span>
                                 </button>
                             @endif
                         </div>
@@ -308,14 +250,16 @@
                         </button>
                         @if($b->video_embed_info)
                             <button type="button" 
-                                    class="ak23-sample-preview-btn btn-trigger-preview" 
+                                    class="ak23-sample-preview-pill btn-trigger-preview" 
                                     data-bs-toggle="modal"
                                     data-bs-target="#previewModal"
                                     data-preview-url="{{ $b->video_embed_info->embed_url }}" 
                                     data-preview-type="{{ $b->video_embed_info->type }}" 
                                     data-preview-title="{{ $bTitle }}" 
-                                    title="Watch Bundle Preview Video">
-                                <i class="las la-play"></i>
+                                    title="Preview Available - Click to Play">
+                                <span class="preview-pulse-dot"></span>
+                                <i class="las {{ $b->video_embed_info->type === 'audio' || $b->video_embed_info->type === 'soundcloud' ? 'la-headphones' : 'la-play' }}"></i>
+                                <span>{{ $b->video_embed_info->type === 'audio' || $b->video_embed_info->type === 'soundcloud' ? 'Audio Preview' : 'Preview' }}</span>
                             </button>
                         @endif
                     </div>
@@ -698,30 +642,12 @@
             </div>
             <div class="modal-body p-0">
                 <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;" id="previewVideoContainer">
-                    @if($heroVideo && $heroVideo->is_embed)
-                        <iframe id="previewModalIframe" 
-                                style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border:0;" 
-                                src="{{ $heroVideo->embed_url }}" 
-                                title="{{ $heroVideoTitle }}" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                allowfullscreen>
-                        </iframe>
-                    @elseif($heroVideo && $heroVideo->type === 'audio')
-                        <div class="p-5 text-center" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <i class="las la-compact-disc text-warning mb-3" style="font-size: 56px;"></i>
-                            <audio controls class="w-100" style="max-width: 480px;"><source src="{{ $heroVideo->embed_url }}"></audio>
-                        </div>
-                    @elseif($heroVideo)
-                        <video id="previewModalVideo" controls playsinline style="position: absolute; top:0; left: 0; width: 100%; height: 100%; object-fit: contain;">
-                            <source src="{{ $heroVideo->embed_url }}" type="video/mp4">
-                        </video>
-                    @else
-                        <div class="d-flex flex-column align-items-center justify-content-center p-5 text-center text-muted" style="position: absolute; top:0; left: 0; width: 100%; height: 100%;">
-                            <i class="las la-play-circle text-warning mb-2" style="font-size: 48px;"></i>
-                            <h6 class="text-white mb-1">Preview Video Available in Course Details</h6>
-                            <p class="fs-12 text-muted mb-0">Select any course to view walkthrough and details.</p>
-                        </div>
-                    @endif
+                    <!-- Dynamic preview injected via JS only when user clicks a preview button -->
+                    <div class="d-flex flex-column align-items-center justify-content-center p-5 text-center text-muted" style="position: absolute; top:0; left: 0; width: 100%; height: 100%;">
+                        <i class="las la-play-circle text-warning mb-2" style="font-size: 48px;"></i>
+                        <h6 class="text-white mb-1">Click Any Course Preview to Play</h6>
+                        <p class="fs-12 text-muted mb-0">Select a course to view walkthrough or audio preview.</p>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer border-top border-secondary justify-content-between" style="border-color: #232332 !important; padding: 14px 20px;">
@@ -745,6 +671,97 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
     margin-bottom: 34px;
+}
+
+/* Hero Video Card - Image 2 Exact Replication */
+.ak23-video-preview-card {
+    background: #0E0F16;
+    border: 1px solid #1E1F2C;
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+    position: relative;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.ak23-video-poster-screen {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    min-height: 330px;
+    aspect-ratio: 16 / 9;
+    background-color: #0B0B11;
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.04) 45%, rgba(0, 0, 0, 0.88) 100%), 
+                      url('{{ asset('assets/templates/basic/images/hero_studio_tour_bg.jpg') }}');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 20px 22px;
+    user-select: none;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.ak23-video-poster-screen:hover {
+    border-color: rgba(96, 165, 250, 0.6);
+}
+
+.ak23-video-preview-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+    border-color: rgba(96, 165, 250, 0.35);
+}
+
+/* Center Gradient Play Button - Exactly Matching Sample Image 2 */
+.ak23-hero-gradient-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #64B5F6 0%, #818CF8 50%, #C084FC 100%);
+    box-shadow: 0 8px 30px rgba(96, 165, 250, 0.55), 0 0 45px rgba(192, 132, 252, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 28px;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 3;
+}
+
+.ak23-hero-gradient-play-btn i {
+    margin-left: 4px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.ak23-video-poster-screen:hover .ak23-hero-gradient-play-btn {
+    transform: translate(-50%, -50%) scale(1.12);
+    box-shadow: 0 14px 40px rgba(96, 165, 250, 0.75), 0 0 65px rgba(192, 132, 252, 0.65);
+}
+
+.ak23-hero-gradient-play-btn:active {
+    transform: translate(-50%, -50%) scale(0.96);
+}
+
+/* Bottom-Left Title Exactly Matching Sample Image 2 */
+.ak23-video-bottom-title {
+    position: relative;
+    z-index: 2;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.15px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+    line-height: 1.35;
+    margin-bottom: 2px;
 }
 
 @media (max-width: 1200px) {
@@ -857,7 +874,59 @@
     transform: scale(0.96);
 }
 
-/* Floating Circular Preview Video Play Button */
+/* Floating Preview Video/Audio Pill Badge */
+.ak23-sample-preview-pill {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    background: rgba(17, 17, 24, 0.92);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(251, 175, 67, 0.7);
+    color: #FBAF43;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    line-height: 1;
+}
+
+.ak23-sample-preview-pill:hover {
+    background: #FBAF43;
+    color: #0F0F14 !important;
+    border-color: #FBAF43;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 16px rgba(251, 175, 67, 0.4);
+}
+
+.ak23-sample-preview-pill .preview-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #FBAF43;
+    box-shadow: 0 0 6px #FBAF43;
+    animation: ak23PulseDot 1.6s infinite ease-in-out;
+}
+
+.ak23-sample-preview-pill:hover .preview-pulse-dot {
+    background: #0F0F14;
+    box-shadow: 0 0 6px rgba(15, 15, 20, 0.5);
+}
+
+@keyframes ak23PulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.75); }
+}
+
+/* Floating Circular Preview Video Play Button (Legacy) */
 .ak23-sample-preview-btn {
     position: absolute;
     bottom: 10px;
@@ -1154,7 +1223,7 @@
             var title = $(this).attr('data-preview-title') || 'Course Preview Video';
             
             if (title) {
-                $('#previewModalLabel').html('<i class="las la-play-circle me-1"></i> ' + title);
+                $('#previewModalLabel').html('<i class="las la-play-circle me-1"></i> <span style="font-weight:400;color:#9A9AA6;">Now Playing:</span> ' + title);
             }
             
             var container = $('#previewVideoContainer');
@@ -1173,6 +1242,14 @@
                 container.html('<div class="p-5 text-center" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;"><i class="las la-compact-disc text-warning mb-3" style="font-size: 56px;"></i><audio controls autoplay class="w-100" style="max-width: 480px;"><source src="' + embedUrl + '"></audio></div>');
             } else {
                 container.html('<video id="previewModalVideo" controls autoplay playsinline style="position: absolute; top:0; left: 0; width: 100%; height: 100%; object-fit: contain;"><source src="' + embedUrl + '" type="video/mp4"></video>');
+            }
+        });
+
+        // Keyboard access for video poster card
+        $(document).on('keydown', '.ak23-video-poster-screen', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                $(this).trigger('click');
             }
         });
 

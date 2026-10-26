@@ -227,14 +227,16 @@
                                 </button>
                                 @if($bundle->video_embed_info)
                                     <button type="button" 
-                                            class="ak23-sample-preview-btn btn-trigger-preview" 
+                                            class="ak23-sample-preview-pill btn-trigger-preview" 
                                             data-bs-toggle="modal"
                                             data-bs-target="#previewModal"
                                             data-preview-url="{{ $bundle->video_embed_info->embed_url }}" 
                                             data-preview-type="{{ $bundle->video_embed_info->type }}" 
                                             data-preview-title="{{ $bTitle }}" 
-                                            title="Watch Bundle Preview Video">
-                                        <i class="las la-play"></i>
+                                            title="Preview Available - Click to Play">
+                                        <span class="preview-pulse-dot"></span>
+                                        <i class="las {{ $bundle->video_embed_info->type === 'audio' || $bundle->video_embed_info->type === 'soundcloud' ? 'la-headphones' : 'la-play' }}"></i>
+                                        <span>{{ $bundle->video_embed_info->type === 'audio' || $bundle->video_embed_info->type === 'soundcloud' ? 'Audio Preview' : 'Preview' }}</span>
                                     </button>
                                 @endif
                             </div>
@@ -308,14 +310,16 @@
                             </button>
                             @if($course->video_embed_info)
                                 <button type="button" 
-                                        class="ak23-sample-preview-btn btn-trigger-preview" 
+                                        class="ak23-sample-preview-pill btn-trigger-preview" 
                                         data-bs-toggle="modal"
                                         data-bs-target="#previewModal"
                                         data-preview-url="{{ $course->video_embed_info->embed_url }}" 
                                         data-preview-type="{{ $course->video_embed_info->type }}" 
                                         data-preview-title="{{ $courseTitle }}" 
-                                        title="Watch Course Preview Video">
-                                    <i class="las la-play"></i>
+                                        title="Preview Available - Click to Play">
+                                    <span class="preview-pulse-dot"></span>
+                                    <i class="las {{ $course->video_embed_info->type === 'audio' || $course->video_embed_info->type === 'soundcloud' ? 'la-headphones' : 'la-play' }}"></i>
+                                    <span>{{ $course->video_embed_info->type === 'audio' || $course->video_embed_info->type === 'soundcloud' ? 'Audio Preview' : 'Preview' }}</span>
                                 </button>
                             @endif
                         </div>
@@ -350,13 +354,13 @@
         <!-- =====================================================================
              PAGINATION CONTROLS (AT LEAST 6 ITEMS PER PAGE)
              ===================================================================== -->
-        <div id="ak23PaginationWrapper" class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-4 mt-2 border-top" style="border-color: rgba(255, 255, 255, 0.08) !important;">
-            <div class="text-muted fs-13" id="ak23PaginationSummary">
-                Showing <strong>1–6</strong> of <strong>{{ $totalCoursesCount }}</strong> courses
+        <div id="ak23PaginationWrapper" class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-4 mt-3" style="border-top: 1px solid #CBD5E1 !important;">
+            <div class="fs-13" id="ak23PaginationSummary" style="color: #475569; font-weight: 500;">
+                Showing <strong class="text-dark">1–12</strong> of <strong class="text-dark">{{ $totalCoursesCount }}</strong> courses
             </div>
 
             <nav aria-label="Course catalog page navigation">
-                <ul class="pagination pagination-sm mb-0 gap-1" id="ak23PaginationList">
+                <ul class="pagination pagination-sm mb-0" id="ak23PaginationList">
                     <!-- Dynamic page numbers rendered by JS -->
                 </ul>
             </nav>
@@ -393,6 +397,58 @@
 @push('style')
 <style>
 /* Catalog Top Bar & Layout */
+/* Floating Preview Video/Audio Pill Badge */
+.ak23-sample-preview-pill {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    background: rgba(17, 17, 24, 0.92);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(251, 175, 67, 0.7);
+    color: #FBAF43;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    line-height: 1;
+}
+
+.ak23-sample-preview-pill:hover {
+    background: #FBAF43;
+    color: #0F0F14 !important;
+    border-color: #FBAF43;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 16px rgba(251, 175, 67, 0.4);
+}
+
+.ak23-sample-preview-pill .preview-pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #FBAF43;
+    box-shadow: 0 0 6px #FBAF43;
+    animation: ak23PulseDot 1.6s infinite ease-in-out;
+}
+
+.ak23-sample-preview-pill:hover .preview-pulse-dot {
+    background: #0F0F14;
+    box-shadow: 0 0 6px rgba(15, 15, 20, 0.5);
+}
+
+@keyframes ak23PulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.35; transform: scale(0.75); }
+}
+
 .ak23-sample-preview-btn {
     position: absolute;
     bottom: 10px;
@@ -844,37 +900,70 @@
     color: #8C8D9E;
 }
 
-/* Pagination Bar Styling */
-.pagination .page-link {
-    background: #13141F;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #C0C0D0;
-    border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 12px;
-    font-weight: 600;
-    transition: all 0.18s ease;
+/* Pagination Bar Styling - Custom High-End Controls */
+#ak23PaginationList {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+    list-style: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#ak23PaginationList .page-item {
+    margin: 0 !important;
+}
+
+#ak23PaginationList .page-item .page-link {
+    width: auto !important;
+    min-width: 38px !important;
+    height: 38px !important;
+    padding: 0 16px !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    background: #FFFFFF !important;
+    border: 1px solid #CBD5E1 !important;
+    color: #1E293B !important;
+    text-decoration: none !important;
+    transition: all 0.18s ease-in-out !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+}
+
+#ak23PaginationList .page-item .page-link:hover {
+    background: #FFFBEB !important;
+    border-color: #FBAF43 !important;
+    color: #B45309 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 6px rgba(251, 175, 67, 0.2) !important;
+}
+
+#ak23PaginationList .page-item.active .page-link {
+    background: #FBAF43 !important;
+    border-color: #FBAF43 !important;
+    color: #0F0F14 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 8px rgba(251, 175, 67, 0.35) !important;
+    pointer-events: none !important;
+}
+
+#ak23PaginationList .page-item.disabled .page-link {
+    background: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+    color: #94A3B8 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
     box-shadow: none !important;
-}
-
-.pagination .page-link:hover {
-    background: rgba(251, 175, 67, 0.15);
-    border-color: rgba(251, 175, 67, 0.45);
-    color: #FBAF43;
-}
-
-.pagination .page-item.active .page-link {
-    background: #FBAF43;
-    border-color: #FBAF43;
-    color: #0F0F14;
-    font-weight: 800;
-}
-
-.pagination .page-item.disabled .page-link {
-    background: #0E0F16;
-    border-color: rgba(255, 255, 255, 0.05);
-    color: #555768;
-    pointer-events: none;
+    transform: none !important;
+    opacity: 0.75 !important;
 }
 </style>
 @endpush
@@ -1050,21 +1139,22 @@
             const endIndex = Math.min(currentPage * itemsPerPage, totalMatches);
 
             if (totalMatches <= itemsPerPage) {
-                $summary.html(`Showing all <strong>${totalMatches}</strong> courses`);
+                $summary.html(`Showing all <strong class="text-dark">${totalMatches}</strong> courses`);
                 $wrapper.removeClass('d-none');
                 $list.empty();
                 return;
             }
 
-            $summary.html(`Showing <strong>${startIndex}–${endIndex}</strong> of <strong>${totalMatches}</strong> courses`);
+            $summary.html(`Showing <strong class="text-dark">${startIndex}–${endIndex}</strong> of <strong class="text-dark">${totalMatches}</strong> courses`);
             $wrapper.removeClass('d-none');
             $list.empty();
 
             // Previous Button
             const prevDisabled = currentPage === 1 ? 'disabled' : '';
+            const prevAria = currentPage === 1 ? 'aria-disabled="true" tabindex="-1"' : '';
             $list.append(`
                 <li class="page-item ${prevDisabled}">
-                    <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
+                    <a class="page-link" href="javascript:void(0)" data-page="${currentPage - 1}" aria-label="Previous" ${prevAria}>
                         <i class="las la-angle-left"></i> Prev
                     </a>
                 </li>
@@ -1073,18 +1163,20 @@
             // Page Number Buttons
             for (let p = 1; p <= totalPages; p++) {
                 const activeClass = p === currentPage ? 'active' : '';
+                const activeAria = p === currentPage ? 'aria-current="page"' : '';
                 $list.append(`
                     <li class="page-item ${activeClass}">
-                        <a class="page-link" href="#" data-page="${p}">${p}</a>
+                        <a class="page-link" href="javascript:void(0)" data-page="${p}" ${activeAria}>${p}</a>
                     </li>
                 `);
             }
 
             // Next Button
             const nextDisabled = currentPage === totalPages ? 'disabled' : '';
+            const nextAria = currentPage === totalPages ? 'aria-disabled="true" tabindex="-1"' : '';
             $list.append(`
                 <li class="page-item ${nextDisabled}">
-                    <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
+                    <a class="page-link" href="javascript:void(0)" data-page="${currentPage + 1}" aria-label="Next" ${nextAria}>
                         Next <i class="las la-angle-right"></i>
                     </a>
                 </li>
@@ -1209,6 +1301,10 @@
         // Pagination Click Handler
         $(document).on('click', '#ak23PaginationList .page-link', function(e) {
             e.preventDefault();
+            const $item = $(this).closest('.page-item');
+            if ($item.hasClass('disabled') || $item.hasClass('active')) {
+                return false;
+            }
             const targetPage = parseInt($(this).data('page'));
             if (!isNaN(targetPage) && targetPage !== currentPage && targetPage >= 1) {
                 currentPage = targetPage;
@@ -1380,7 +1476,7 @@
             var title = $(this).attr('data-preview-title') || 'Course Preview Video';
             
             if (title) {
-                $('#previewModalLabel').html('<i class="las la-play-circle me-1"></i> ' + title);
+                $('#previewModalLabel').html('<i class="las la-play-circle me-1"></i> <span style="font-weight:400;color:#9A9AA6;">Now Playing:</span> ' + title);
             }
             
             var container = $('#previewVideoContainer');

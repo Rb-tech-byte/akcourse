@@ -34,6 +34,10 @@
 
             // Function to create and initialize a WaveSurfer instance
             function createWaveSurfer(config) {
+                if (!config || !config.filePath || config.filePath.endsWith('/') || config.filePath.indexOf('/null') !== -1 || config.filePath.indexOf('/undefined') !== -1) {
+                    return null;
+                }
+
                 // Destroy existing instance if it exists
                 if (activeWavesurfers[config.id]) {
                     activeWavesurfers[config.id].destroy();
@@ -64,6 +68,10 @@
 
                 wavesurfer.on("finish", function() {
                     $(config.playButton).html('<i class="fas fa-play"></i>');
+                });
+
+                wavesurfer.on("error", function(err) {
+                    console.warn("WaveSurfer audio load note:", err);
                 });
 
                 // Load audio file
