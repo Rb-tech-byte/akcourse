@@ -38,6 +38,7 @@ Route::controller('CartController')->prefix('cart')->name('cart.')->group(functi
 });
 
 Route::controller('SiteController')->group(function () {
+    Route::get('/search-ajax', 'searchAjax')->name('search.ajax');
     Route::get('/faq', 'faq')->name('faq');
     Route::get('/contact', 'contact')->name('contact');
     Route::post('/contact', 'contactSubmit');

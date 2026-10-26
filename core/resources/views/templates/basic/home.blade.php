@@ -8,15 +8,45 @@
 <main class="ak-home-main py-4">
     <div class="container">
         
-        <!-- Centered Search Bar -->
-        <div class="ak-search-wrapper mb-4">
-            <form action="{{ route('home') }}" method="GET" class="ak-search-form">
-                <i class="las la-search ak-search-icon"></i>
+        <!-- Centered Search Bar with Real-Time Floating Results -->
+        <div class="ak-search-wrapper mb-4" id="akHomeSearchWrapper">
+            <form action="{{ route('home') }}" method="GET" class="ak-search-form" id="akHomeSearchForm" autocomplete="off">
+                <i class="las la-search ak-search-icon" id="akSearchIcon"></i>
+                <div class="ak-search-spinner d-none" id="akSearchSpinner">
+                    <i class="las la-circle-notch la-spin"></i>
+                </div>
                 <input type="text" 
+                       id="akHomeSearchInput"
                        name="search" 
                        class="ak-search-input" 
-                       placeholder="Search products..." 
-                       value="{{ request('search') }}">
+                       placeholder="Tafuta kozi, DAW, plugins, au software..." 
+                       value="{{ request('search') }}"
+                       autocomplete="off"
+                       spellcheck="false">
+                <button type="button" class="ak-search-clear {{ request('search') ? '' : 'd-none' }}" id="akSearchClear" aria-label="Futa utafutaji" title="Futa">
+                    <i class="las la-times"></i>
+                </button>
+
+                <!-- Floating Live Search Dropdown -->
+                <div class="ak-search-dropdown d-none" id="akSearchDropdown">
+                    <div class="ak-search-dropdown-header">
+                        <span class="ak-search-count-text">
+                            <i class="las la-bolt text-warning me-1"></i> <span id="akDropdownCount">0</span> Matokeo ya haraka
+                        </span>
+                        <span class="ak-search-esc-hint"><kbd>ESC</kbd> kufunga</span>
+                    </div>
+
+                    <div class="ak-search-dropdown-body" id="akDropdownList">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <div class="ak-search-dropdown-footer" id="akDropdownFooter">
+                        <a href="{{ route('products') }}" class="ak-search-view-all-link" id="akDropdownViewAll">
+                            <span>Angalia kozi zote kwenye Catalog</span>
+                            <i class="las la-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
             </form>
         </div>
 
@@ -47,6 +77,21 @@
             <button type="button" class="ak-notice-close" id="akNoticeClose" aria-label="@lang('Funga')" title="@lang('Funga mwongozo')">
                 <i class="las la-times"></i>
             </button>
+        </div>
+
+        <!-- Live Real-Time Search Status Banner -->
+        <div class="ak-search-live-status d-none mb-3" id="akSearchLiveStatus">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="ak-live-badge">
+                        <i class="las la-search text-warning me-1"></i> Utafutaji wa Haraka: <strong id="akLiveQueryText" class="text-white"></strong>
+                    </span>
+                    <span class="text-secondary fs-13">(<span id="akLiveMatchCount">0</span> kozi zimepatikana)</span>
+                </div>
+                <button type="button" class="ak-live-reset-btn" id="akLiveResetBtn">
+                    <i class="las la-times-circle me-1"></i> Futa &middot; Onyesha Zote
+                </button>
+            </div>
         </div>
 
         <!-- Primary Products Catalog Grid (3 Cards per Row with Clear Spacing) -->
@@ -105,7 +150,7 @@
 
         <!-- Pagination Controls (Aligned with Product Grid, Luxury Studio Theme) -->
         @if($products->hasPages())
-            <div class="ak-pagination-wrapper my-4">
+            <div class="ak-pagination-wrapper my-4" id="akHomePaginationWrapper">
                 <div class="ak-pagination-info">
                     @lang('Showing') <span class="ak-pagination-num">{{ $products->firstItem() }}</span> 
                     @lang('to') <span class="ak-pagination-num">{{ $products->lastItem() }}</span> 
@@ -229,14 +274,16 @@
 
 /* Centered Search Bar */
 .ak-search-wrapper {
-    max-width: 560px;
+    max-width: 620px;
     margin: 0 auto;
+    position: relative;
 }
 .ak-search-form {
     position: relative;
     width: 100%;
 }
-.ak-search-icon {
+.ak-search-icon,
+.ak-search-spinner {
     position: absolute;
     left: 18px;
     top: 50%;
@@ -244,27 +291,232 @@
     color: #FBAF43;
     font-size: 18px;
     pointer-events: none;
+    z-index: 2;
+}
+.ak-search-spinner {
+    animation: akSearchSpin 0.75s linear infinite;
+}
+@keyframes akSearchSpin {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to { transform: translateY(-50%) rotate(360deg); }
+}
+.ak-search-clear {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    color: #94A3B8;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    z-index: 2;
+}
+.ak-search-clear:hover {
+    background: rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
 }
 .ak-search-input {
     width: 100%;
-    height: 48px;
+    height: 52px;
     background: #111118;
     border: 1.5px solid rgba(255, 255, 255, 0.1);
     border-radius: 999px;
-    padding: 0 20px 0 46px;
-    font-size: 14px;
+    padding: 0 46px 0 48px;
+    font-size: 14.5px;
     color: #FFFFFF;
     outline: none;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
     transition: all 0.2s ease;
 }
 .ak-search-input:focus {
     border-color: #FBAF43;
-    background: #151520;
-    box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.2);
+    background: #141620;
+    box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.2), 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 .ak-search-input::placeholder {
     color: #8E8EA2;
+}
+
+/* Floating Real-Time Search Results Dropdown */
+.ak-search-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    background: #13151F;
+    border: 1.5px solid rgba(251, 175, 67, 0.35);
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(251, 175, 67, 0.12);
+    overflow: hidden;
+    z-index: 1050;
+    backdrop-filter: blur(14px);
+    animation: akDropdownFade 0.18s ease-out;
+}
+@keyframes akDropdownFade {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.ak-search-dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 12px;
+    color: #94A3B8;
+}
+.ak-search-esc-hint kbd {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    color: #CBD5E1;
+}
+.ak-search-dropdown-body {
+    max-height: 380px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+.ak-search-dropdown-body::-webkit-scrollbar {
+    width: 6px;
+}
+.ak-search-dropdown-body::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+.ak-search-dropdown-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+.ak-search-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 18px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: all 0.15s ease;
+    color: inherit;
+}
+.ak-search-item:hover,
+.ak-search-item.highlighted {
+    background: rgba(251, 175, 67, 0.1);
+    border-left: 3px solid #FBAF43;
+    padding-left: 21px;
+}
+.ak-search-item-img {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+    background: #0A0B0E;
+}
+.ak-search-item-info {
+    flex-grow: 1;
+    min-width: 0;
+    text-align: left;
+}
+.ak-search-item-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #F1F5F9;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.ak-search-item:hover .ak-search-item-title,
+.ak-search-item.highlighted .ak-search-item-title {
+    color: #FBAF43;
+}
+.ak-search-item-meta {
+    font-size: 11px;
+    color: #94A3B8;
+    margin-top: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.ak-search-item-badge {
+    background: rgba(251, 175, 67, 0.12);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #FBAF43;
+}
+.ak-search-item-price {
+    font-size: 13px;
+    font-weight: 800;
+    color: #FBAF43;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+.ak-search-dropdown-footer {
+    padding: 11px 18px;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
+}
+.ak-search-view-all-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #FBAF43;
+    text-decoration: none !important;
+    transition: all 0.15s ease;
+}
+.ak-search-view-all-link:hover {
+    color: #FFC978;
+    gap: 11px;
+}
+.ak-search-match {
+    background: rgba(251, 175, 67, 0.28);
+    color: #FFD580;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 800;
+}
+
+/* In-Page Real-Time Live Status Bar */
+.ak-search-live-status {
+    background: rgba(251, 175, 67, 0.06);
+    border: 1px solid rgba(251, 175, 67, 0.22);
+    border-radius: 12px;
+    padding: 10px 18px;
+}
+.ak-live-badge {
+    font-size: 13px;
+    color: #CBD5E1;
+}
+.ak-live-reset-btn {
+    background: transparent;
+    border: none;
+    color: #FBAF43;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+.ak-live-reset-btn:hover {
+    color: #FFC978;
+    text-decoration: underline;
 }
 
 /* Main Heading */
@@ -683,7 +935,301 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    }
+    // =========================================================================
+    // REAL-TIME SEARCH ENGINE (DROPDOWN + IN-PAGE GRID SYNC)
+    // =========================================================================
+    (function($) {
+        if (typeof $ === 'undefined') return;
+
+        const searchEndpoint = "{{ route('search.ajax') }}";
+        const $wrapper       = $('#akHomeSearchWrapper');
+        const $form          = $('#akHomeSearchForm');
+        const $input         = $('#akHomeSearchInput, #search, input[name="search"]');
+        const $clearBtn      = $('#akSearchClear');
+        const $searchIcon    = $('#akSearchIcon');
+        const $spinner       = $('#akSearchSpinner');
+        const $dropdown      = $('#akSearchDropdown');
+        const $dropdownBody  = $('#akDropdownList');
+        const $dropdownCount = $('#akDropdownCount');
+        const $dropdownFooter= $('#akDropdownFooter');
+        const $dropdownViewAll = $('#akDropdownViewAll');
+        const $liveStatus    = $('#akSearchLiveStatus');
+        const $liveQuery     = $('#akLiveQueryText');
+        const $liveCount     = $('#akLiveMatchCount');
+        const $liveReset     = $('#akLiveResetBtn');
+        const $productGrid   = $('#mainProductGrid');
+        const $pagination    = $('#akHomePaginationWrapper');
+
+        if (!$input.length) return;
+
+        // Cache initial server-rendered grid HTML for instant restoration
+        const initialGridHtml = $productGrid.html();
+        let debounceTimer     = null;
+        let activeIndex       = -1;
+        let currentXHR        = null;
+
+        function escapeHtml(str) {
+            return $('<div>').text(str || '').html();
+        }
+
+        function highlightMatch(text, query) {
+            if (!query || !text) return escapeHtml(text);
+            const cleanQuery = query.trim().replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+            if (!cleanQuery) return escapeHtml(text);
+            const regex = new RegExp('(' + cleanQuery + ')', 'gi');
+            return escapeHtml(text).replace(regex, '<mark class="ak-search-match">$1</mark>');
+        }
+
+        function renderDropdown(items, query, totalCount, allUrl) {
+            $dropdownBody.empty();
+            activeIndex = -1;
+
+            if (!items || items.length === 0) {
+                $dropdownCount.text('0');
+                $dropdownBody.html(`
+                    <div class="ak-search-empty py-4 text-center">
+                        <i class="las la-search text-warning fs-1 mb-2 opacity-75"></i>
+                        <p class="mb-1 text-white fw-bold">Hakuna kozi iliyopatikana kwa "${escapeHtml(query)}"</p>
+                        <span class="text-secondary fs-12">Jaribu kutafuta kwa DAW (FL Studio, Logic, Cubase) au plugin (Waves, Nectar).</span>
+                    </div>
+                `);
+                $dropdownFooter.addClass('d-none');
+                $dropdown.removeClass('d-none');
+                return;
+            }
+
+            $dropdownCount.text(totalCount);
+            $dropdownViewAll.attr('href', allUrl);
+            $dropdownFooter.removeClass('d-none');
+
+            items.forEach(function(item, idx) {
+                const priceClass = item.is_free ? 'text-success' : 'text-warning';
+                const priceText  = item.price_formatted;
+                const highlightedTitle = highlightMatch(item.title, query);
+
+                const $row = $(`
+                    <a href="${item.url}" class="ak-search-item" data-index="${idx}" data-url="${item.url}">
+                        <img src="${item.thumbnail_url}" alt="${escapeHtml(item.title)}" class="ak-search-item-img" loading="lazy">
+                        <div class="ak-search-item-info">
+                            <div class="ak-search-item-title">${highlightedTitle}</div>
+                            <div class="ak-search-item-meta">
+                                <span class="ak-search-item-badge">${escapeHtml(item.category)}</span>
+                                <span>&middot;</span>
+                                <span>${escapeHtml(item.date)}</span>
+                            </div>
+                        </div>
+                        <div class="ak-search-item-price ${priceClass}">${priceText}</div>
+                        <i class="las la-angle-right text-muted fs-14 ms-2"></i>
+                    </a>
+                `);
+
+                $dropdownBody.append($row);
+            });
+
+            $dropdown.removeClass('d-none');
+        }
+
+        function renderGridCards(items, query) {
+            if (!items || items.length === 0) {
+                $productGrid.html(`
+                    <div class="ak-grid-empty text-center py-5 w-100" style="grid-column: 1 / -1;">
+                        <i class="las la-box-open fs-1 text-warning mb-2 opacity-75"></i>
+                        <h4 class="text-white fw-bold">Hakuna kozi zilizopatikana</h4>
+                        <p class="text-secondary mt-1">Hakuna kozi inayolingana na utafutaji wako wa "${escapeHtml(query)}".</p>
+                        <button type="button" class="btn btn-sm btn-outline-warning rounded-pill mt-2 px-3" id="akGridResetBtn">
+                            <i class="las la-sync me-1"></i> Onyesha Kozi Zote
+                        </button>
+                    </div>
+                `);
+                $('#akGridResetBtn').on('click', resetSearch);
+                return;
+            }
+
+            let html = '';
+            items.forEach(function(item) {
+                const priceHtml = item.is_free 
+                    ? '<span class="text-success fw-bold">FREE</span>' 
+                    : `<span>${item.price_formatted}</span>`;
+
+                html += `
+                    <div class="ak-card-item">
+                        <div class="ak-card">
+                            <div class="ak-card-thumb">
+                                <a href="${item.url}">
+                                    <img src="${item.thumbnail_url}" alt="${escapeHtml(item.title)}" class="ak-card-img" loading="lazy">
+                                </a>
+                                <button type="button" 
+                                        class="ak-card-cart-btn ak23-btn-add-cart" 
+                                        data-sku="${item.sku}" 
+                                        title="Add to Cart">
+                                    <i class="las la-cart-plus"></i>
+                                </button>
+                            </div>
+                            <div class="ak-card-body">
+                                <h3 class="ak-card-title" title="${escapeHtml(item.title)}">
+                                    <a href="${item.url}">${escapeHtml(item.title)}</a>
+                                </h3>
+                                <div class="ak-card-price">
+                                    ${priceHtml}
+                                </div>
+                                <div class="ak-card-meta">
+                                    <span>${escapeHtml(item.category)}</span>
+                                    <span class="mx-1">&middot;</span>
+                                    <span>${escapeHtml(item.date)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            $productGrid.html(html);
+        }
+
+        function performSearch(query) {
+            query = (query || '').trim();
+
+            if (query.length === 0) {
+                resetSearch();
+                return;
+            }
+
+            $clearBtn.removeClass('d-none');
+            $searchIcon.addClass('d-none');
+            $spinner.removeClass('d-none');
+
+            if (currentXHR) {
+                currentXHR.abort();
+            }
+
+            currentXHR = $.ajax({
+                url: searchEndpoint,
+                type: 'GET',
+                data: { search: query },
+                dataType: 'json',
+                success: function(resp) {
+                    $spinner.addClass('d-none');
+                    $searchIcon.removeClass('d-none');
+
+                    if (resp && resp.success) {
+                        renderDropdown(resp.data, query, resp.count, resp.all_url);
+                        renderGridCards(resp.data, query);
+
+                        // Show live status banner
+                        $liveQuery.text(query);
+                        $liveCount.text(resp.count);
+                        $liveStatus.removeClass('d-none');
+
+                        // Hide pagination while searching
+                        if ($pagination.length) {
+                            $pagination.addClass('d-none');
+                        }
+                    }
+                },
+                error: function(xhr, status) {
+                    if (status !== 'abort') {
+                        $spinner.addClass('d-none');
+                        $searchIcon.removeClass('d-none');
+                    }
+                }
+            });
+        }
+
+        function resetSearch() {
+            $input.val('');
+            $clearBtn.addClass('d-none');
+            $spinner.addClass('d-none');
+            $searchIcon.removeClass('d-none');
+            $dropdown.addClass('d-none');
+            $dropdownBody.empty();
+            $liveStatus.addClass('d-none');
+
+            // Restore original server-rendered grid
+            $productGrid.html(initialGridHtml);
+
+            // Restore pagination
+            if ($pagination.length) {
+                $pagination.removeClass('d-none');
+            }
+        }
+
+        // Real-time input listener (200ms debounce)
+        $input.on('input', function() {
+            const val = $(this).val();
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(function() {
+                performSearch(val);
+            }, 200);
+        });
+
+        // Clear button
+        $clearBtn.on('click', function(e) {
+            e.preventDefault();
+            resetSearch();
+            $input.focus();
+        });
+
+        // Reset banner button
+        $liveReset.on('click', function(e) {
+            e.preventDefault();
+            resetSearch();
+            $input.focus();
+        });
+
+        // Re-open dropdown on focus if input has value
+        $input.on('focus', function() {
+            const val = $(this).val().trim();
+            if (val.length > 0 && $dropdownBody.children().length > 0) {
+                $dropdown.removeClass('d-none');
+            }
+        });
+
+        // Keyboard navigation in search dropdown
+        $input.on('keydown', function(e) {
+            const $items = $dropdownBody.find('.ak-search-item');
+            const count = $items.length;
+
+            if (e.key === 'ArrowDown') {
+                if (!$dropdown.is(':visible') && count > 0) {
+                    $dropdown.removeClass('d-none');
+                }
+                if (count === 0) return;
+                e.preventDefault();
+                activeIndex = (activeIndex + 1) % count;
+                $items.removeClass('highlighted');
+                const $active = $items.eq(activeIndex).addClass('highlighted');
+                if ($active.length && $active[0].scrollIntoView) {
+                    $active[0].scrollIntoView({ block: 'nearest' });
+                }
+            } else if (e.key === 'ArrowUp') {
+                if (count === 0) return;
+                e.preventDefault();
+                activeIndex = (activeIndex - 1 + count) % count;
+                $items.removeClass('highlighted');
+                const $active = $items.eq(activeIndex).addClass('highlighted');
+                if ($active.length && $active[0].scrollIntoView) {
+                    $active[0].scrollIntoView({ block: 'nearest' });
+                }
+            } else if (e.key === 'Enter') {
+                if (activeIndex >= 0 && $items.eq(activeIndex).length) {
+                    e.preventDefault();
+                    window.location.href = $items.eq(activeIndex).attr('href');
+                }
+            } else if (e.key === 'Escape') {
+                $dropdown.addClass('d-none');
+                activeIndex = -1;
+            }
+        });
+
+        // Close dropdown on click outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#akHomeSearchWrapper').length) {
+                $dropdown.addClass('d-none');
+                activeIndex = -1;
+            }
+        });
+
+    })(jQuery);
 });
 </script>
 @endpush

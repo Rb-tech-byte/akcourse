@@ -53,8 +53,9 @@ class SiteController extends Controller
         if ($search = request('search')) {
             $productsQuery->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('name', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('software_name', 'like', "%{$search}%")
+                  ->orWhere('tags', 'like', "%{$search}%");
             });
         }
         if ($catId = request('category')) {
@@ -120,6 +121,59 @@ class SiteController extends Controller
         $seoContents = $page->seo_content;
         $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
         return view('Template::pages', compact('pageTitle', 'sections', 'seoContents', 'seoImage'));
+    }
+
+    public function searchAjax(Request $request)
+    {
+        $search = trim((string)$request->input('search', $request->input('q', '')));
+        if (empty($search)) {
+            return response()->json([
+                'success' => true,
+                'count'   => 0,
+                'data'    => [],
+                'all_url' => route('products'),
+            ]);
+        }
+
+        $products = Product::approved()
+            ->with(['category'])
+            ->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhere('software_name', 'like', "%{$search}%")
+                  ->orWhere('tags', 'like', "%{$search}%");
+            })
+            ->orderBy('id', 'desc')
+            ->take(12)
+            ->get();
+
+        $results = $products->map(function ($p) {
+            $title   = $p->title ?: $p->name;
+            $price   = (float)$p->price;
+            $isFree  = $p->is_free || $price <= 0;
+            $catName = $p->category ? $p->category->name : 'STUDIO';
+
+            return [
+                'id'              => $p->id,
+                'title'           => $title,
+                'slug'            => $p->slug,
+                'url'             => route('product.details', $p->slug),
+                'price'           => $price,
+                'price_formatted' => $isFree ? 'FREE' : 'TSH ' . number_format($price),
+                'is_free'         => $isFree,
+                'category'        => strtoupper($catName),
+                'thumbnail_url'   => $p->thumbnail_url,
+                'sku'             => $p->sku ?: ('AK23-PROD-' . $p->id),
+                'date'            => $p->created_at ? $p->created_at->format('M d, Y') : 'Oct 2026',
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'count'   => $results->count(),
+            'data'    => $results,
+            'all_url' => route('products') . '?search=' . urlencode($search),
+        ]);
     }
 
     public function products()
