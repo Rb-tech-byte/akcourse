@@ -193,7 +193,7 @@
                 <h2 class="ak23-series-title mb-1">Complete Curriculum Bundles</h2>
                 <p class="ak23-series-desc mb-0">Get the full course track and included perpetual software licenses at a significant bundled discount.</p>
             </div>
-            <div class="ak23-course-grid-4">
+            <div class="ak23-course-grid-3">
                 @foreach($catalog as $item)
                     @php
                         $bundle = $item['bundle'];
@@ -268,8 +268,8 @@
             </div>
         </div>
 
-        <!-- Main Course Grid: 4 Columns per Row, matching sample -->
-        <div class="ak23-course-grid-4" id="ak23CourseGrid">
+        <!-- Main Course Grid: 3 Columns per Row with Clear Breathing Room Spacing -->
+        <div class="ak23-course-grid-3" id="ak23CourseGrid">
             @foreach($catalog as $cItem)
                 @php
                     $series = $cItem['series'];
@@ -513,36 +513,32 @@
     background: #09090D;
 }
 
-/* 4 Courses Per Row Grid */
+/* 3 Courses Per Row Grid with Generous Spacing to Avoid Overcrowding */
 .ak23-course-grid-3,
 .ak23-course-grid-4 {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 24px;
-    margin-bottom: 34px;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    column-gap: 30px !important;
+    row-gap: 38px !important;
+    margin-bottom: 44px !important;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 991px) {
     .ak23-course-grid-3,
     .ak23-course-grid-4 {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        column-gap: 22px !important;
+        row-gap: 28px !important;
+        margin-bottom: 36px !important;
     }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 580px) {
     .ak23-course-grid-3,
     .ak23-course-grid-4 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-    }
-}
-
-@media (max-width: 540px) {
-    .ak23-course-grid-3,
-    .ak23-course-grid-4 {
-        grid-template-columns: 1fr;
-        gap: 16px;
+        grid-template-columns: 1fr !important;
+        row-gap: 24px !important;
+        margin-bottom: 30px !important;
     }
 }
 
@@ -576,7 +572,7 @@
 .ak23-sample-thumb-wrap {
     position: relative;
     width: 100%;
-    padding-top: 64%; /* Reduced height on top for square-like overall card */
+    padding-top: 58%; /* Reduced height on top for square-like overall card */
     height: 0;
     overflow: hidden;
     background: #09090D;
@@ -638,7 +634,7 @@
 
 /* Card Body */
 .ak23-sample-card-body {
-    padding: 10px 12px 12px;
+    padding: 13px 15px 15px;
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -648,11 +644,11 @@
 /* Title: Clean, High Contrast, 2 Lines */
 .ak23-sample-card-title {
     font-family: inherit;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
-    line-height: 1.35;
+    line-height: 1.4;
     margin: 0 0 8px 0;
-    min-height: 38px;
+    min-height: 40px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -671,7 +667,7 @@
 
 /* Price: Bright Amber Gold or Emerald Free */
 .ak23-sample-card-price {
-    font-size: 15.5px;
+    font-size: 16px;
     font-weight: 800;
     color: #FBAF43;
     letter-spacing: -0.01em;
@@ -991,7 +987,7 @@
         let currentLevel = urlParams.get('level') || urlParams.get('stage') || 'all';
         let currentSort = urlParams.get('sort') || 'default';
         let currentPage = parseInt(urlParams.get('page')) || 1;
-        const itemsPerPage = 12; // 12 items per page (3 full rows of 4 cards on desktop)
+        const itemsPerPage = 12; // 12 items per page (4 full rows of 3 cards on desktop)
 
         // Set initial values into controls
         if (currentSearch) {

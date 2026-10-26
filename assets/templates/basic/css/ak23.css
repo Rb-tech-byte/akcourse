@@ -3352,34 +3352,34 @@ html {
 }
 
 /* ==========================================================================
-   AK23 SAMPLE CARD DESIGN & 4-COLUMN RESPONSIVE GRID
-   Matches sample design with floating cart icon, rounded corners, crisp white body
+   AK23 SAMPLE CARD DESIGN & 3-COLUMN RESPONSIVE GRID
+   3 cards per row with clear breathing room spacing between rows
    ========================================================================== */
+.ak23-course-grid-3,
 .ak23-course-grid-4 {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 24px;
-    margin-bottom: 34px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 30px;
+    row-gap: 38px;
+    margin-bottom: 44px;
 }
 
-@media (max-width: 1200px) {
-    .ak23-course-grid-4 {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 20px;
-    }
-}
-
-@media (max-width: 860px) {
+@media (max-width: 991px) {
+    .ak23-course-grid-3,
     .ak23-course-grid-4 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
+        column-gap: 22px;
+        row-gap: 28px;
+        margin-bottom: 36px;
     }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 580px) {
+    .ak23-course-grid-3,
     .ak23-course-grid-4 {
         grid-template-columns: 1fr;
-        gap: 16px;
+        row-gap: 24px;
+        margin-bottom: 30px;
     }
 }
 
