@@ -19,11 +19,11 @@
                        id="akHomeSearchInput"
                        name="search" 
                        class="ak-search-input" 
-                       placeholder="Tafuta kozi, DAW, plugins, au software..." 
+                       placeholder="@lang('Search courses, DAWs, plugins, or software...')" 
                        value="{{ request('search') }}"
                        autocomplete="off"
                        spellcheck="false">
-                <button type="button" class="ak-search-clear {{ request('search') ? '' : 'd-none' }}" id="akSearchClear" aria-label="Futa utafutaji" title="Futa">
+                <button type="button" class="ak-search-clear {{ request('search') ? '' : 'd-none' }}" id="akSearchClear" aria-label="@lang('Clear search')" title="@lang('Clear')">
                     <i class="las la-times"></i>
                 </button>
 
@@ -31,9 +31,9 @@
                 <div class="ak-search-dropdown d-none" id="akSearchDropdown">
                     <div class="ak-search-dropdown-header">
                         <span class="ak-search-count-text">
-                            <i class="las la-bolt text-warning me-1"></i> <span id="akDropdownCount">0</span> Matokeo ya haraka
+                            <i class="las la-bolt text-warning me-1"></i> <span id="akDropdownCount">0</span> @lang('Quick results')
                         </span>
-                        <span class="ak-search-esc-hint"><kbd>ESC</kbd> kufunga</span>
+                        <span class="ak-search-esc-hint"><kbd>ESC</kbd> @lang('to close')</span>
                     </div>
 
                     <div class="ak-search-dropdown-body" id="akDropdownList">
@@ -42,7 +42,7 @@
 
                     <div class="ak-search-dropdown-footer" id="akDropdownFooter">
                         <a href="{{ route('products') }}" class="ak-search-view-all-link" id="akDropdownViewAll">
-                            <span>Angalia kozi zote kwenye Catalog</span>
+                            <span>@lang('View all courses in Catalog')</span>
                             <i class="las la-arrow-right"></i>
                         </a>
                     </div>
@@ -54,10 +54,10 @@
         <div class="text-center mb-3">
             <div class="ak23-studio-badge mb-2">
                 <i class="las la-graduation-cap text-warning me-1"></i>
-                <span>MAARIFA23 STUDIO ACADEMY &amp; SOFTWARE</span>
+                <span>@lang('MAARIFA23 STUDIO ACADEMY & SOFTWARE')</span>
             </div>
             <h1 class="ak-main-heading">
-                JIFUNZE PRODUCTION NA PAKUA <span class="ak23-gold-gradient">STUDIO MUSIC TOOLS</span> ZAKO
+                @lang('LEARN PRODUCTION & DOWNLOAD YOUR') <span class="ak23-gold-gradient">@lang('STUDIO MUSIC TOOLS')</span>
             </h1>
         </div>
 
@@ -66,15 +66,15 @@
             <div class="ak-notice-content">
                 <i class="las la-shield-alt ak-notice-icon"></i>
                 <span>
-                    <strong>Mwongozo wa Maarifa23:</strong> Katika kila Software na Plugin nimekuwekea video ya maelekezo ya jinsi ya ku-install na kuanza kutumia. Password ya files zote ni 
-                    <span class="ak-pwd-badge" id="akNoticePwd" title="@lang('Bofya ku-copy password')">
+                    <strong>@lang('Maarifa23 Guide'):</strong> @lang('Every Software and Plugin comes with a step-by-step video tutorial on installation and usage. Password for all files is') 
+                    <span class="ak-pwd-badge" id="akNoticePwd" title="@lang('Click to copy password')">
                         <code class="ak-pwd-text">maarifa23.com</code>
                         <i class="las la-copy ak-pwd-icon"></i>
-                        <span class="ak-pwd-toast" id="akPwdToast">Copied!</span>
+                        <span class="ak-pwd-toast" id="akPwdToast">@lang('Copied!')</span>
                     </span>
                 </span>
             </div>
-            <button type="button" class="ak-notice-close" id="akNoticeClose" aria-label="@lang('Funga')" title="@lang('Funga mwongozo')">
+            <button type="button" class="ak-notice-close" id="akNoticeClose" aria-label="@lang('Close')" title="@lang('Close guide')">
                 <i class="las la-times"></i>
             </button>
         </div>
@@ -84,12 +84,12 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                 <div class="d-flex align-items-center gap-2">
                     <span class="ak-live-badge">
-                        <i class="las la-search text-warning me-1"></i> Utafutaji wa Haraka: <strong id="akLiveQueryText" class="text-white"></strong>
+                        <i class="las la-search text-warning me-1"></i> @lang('Quick Search'): <strong id="akLiveQueryText" class="text-white"></strong>
                     </span>
-                    <span class="text-secondary fs-13">(<span id="akLiveMatchCount">0</span> kozi zimepatikana)</span>
+                    <span class="text-secondary fs-13">(<span id="akLiveMatchCount">0</span> @lang('courses found'))</span>
                 </div>
                 <button type="button" class="ak-live-reset-btn" id="akLiveResetBtn">
-                    <i class="las la-times-circle me-1"></i> Futa &middot; Onyesha Zote
+                    <i class="las la-times-circle me-1"></i> @lang('Clear · Show All')
                 </button>
             </div>
         </div>
@@ -209,7 +209,7 @@
              ===================================================================== -->
         @if($trendingProducts->isNotEmpty())
             <div class="ak-section-header text-center mb-4 mt-5">
-                <h2 class="ak-section-title">Trending This Week</h2>
+                <h2 class="ak-section-title">@lang('Trending This Week')</h2>
             </div>
 
             <div class="ak-products-grid-3 mb-4">
@@ -935,6 +935,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    }
+
     // =========================================================================
     // REAL-TIME SEARCH ENGINE (DROPDOWN + IN-PAGE GRID SYNC)
     // =========================================================================
@@ -989,8 +991,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 $dropdownBody.html(`
                     <div class="ak-search-empty py-4 text-center">
                         <i class="las la-search text-warning fs-1 mb-2 opacity-75"></i>
-                        <p class="mb-1 text-white fw-bold">Hakuna kozi iliyopatikana kwa "${escapeHtml(query)}"</p>
-                        <span class="text-secondary fs-12">Jaribu kutafuta kwa DAW (FL Studio, Logic, Cubase) au plugin (Waves, Nectar).</span>
+                        <p class="mb-1 text-white fw-bold">@lang('No courses found') "${escapeHtml(query)}"</p>
+                        <span class="text-secondary fs-12">@lang('No products found. Try adjusting your search query.')</span>
                     </div>
                 `);
                 $dropdownFooter.addClass('d-none');
@@ -1034,10 +1036,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 $productGrid.html(`
                     <div class="ak-grid-empty text-center py-5 w-100" style="grid-column: 1 / -1;">
                         <i class="las la-box-open fs-1 text-warning mb-2 opacity-75"></i>
-                        <h4 class="text-white fw-bold">Hakuna kozi zilizopatikana</h4>
-                        <p class="text-secondary mt-1">Hakuna kozi inayolingana na utafutaji wako wa "${escapeHtml(query)}".</p>
+                        <h4 class="text-white fw-bold">@lang('No courses found')</h4>
+                        <p class="text-secondary mt-1">@lang('No products found. Try adjusting your search query.')</p>
                         <button type="button" class="btn btn-sm btn-outline-warning rounded-pill mt-2 px-3" id="akGridResetBtn">
-                            <i class="las la-sync me-1"></i> Onyesha Kozi Zote
+                            <i class="las la-sync me-1"></i> @lang('Show All Courses')
                         </button>
                     </div>
                 `);

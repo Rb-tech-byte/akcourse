@@ -5,6 +5,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        (function() {
+            var theme = localStorage.getItem('ak23_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            if (theme === 'light') {
+                document.documentElement.classList.add('theme-light');
+            } else {
+                document.documentElement.classList.remove('theme-light');
+            }
+        })();
+    </script>
     <title> {{ gs()->siteName(__($pageTitle)) }}</title>
     @include('partials.seo')
     <link href="{{ asset('assets/global/css/bootstrap.min.css') }}" rel="stylesheet">

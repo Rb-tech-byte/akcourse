@@ -3,6 +3,10 @@
     $user = auth()->user();
     $navItems = getHeaderNavItems();
     $logoDark = siteLogo('dark');
+    $logoLight = siteLogo();
+    $languages = \App\Models\Language::all();
+    $currentLocale = session('lang') ?: config('app.locale');
+    $activeLang = $languages->where('code', $currentLocale)->first() ?: $languages->first();
 @endphp
 
 <style>
@@ -110,7 +114,8 @@
         <div class="ak23-header-inner">
             <!-- Brand Logo -->
             <a class="ak23-brand" href="{{ route('home') }}" aria-label="{{ gs('site_name') }}">
-                <img src="{{ $logoDark }}" alt="{{ gs('site_name') }}" class="ak23-brand-img">
+                <img src="{{ $logoDark }}" alt="{{ gs('site_name') }}" class="ak23-brand-img ak23-logo-dark">
+                <img src="{{ $logoLight }}" alt="{{ gs('site_name') }}" class="ak23-brand-img ak23-logo-light">
             </a>
 
             <!-- Desktop Navigation Links (>= 992px) -->
@@ -149,6 +154,34 @@
 
             <!-- Header Right Action Group -->
             <div class="ak23-header-right">
+                <!-- Theme Switcher Button -->
+                <button type="button" class="ak23-theme-toggle" id="ak23ThemeToggle" aria-label="@lang('Toggle Theme')" title="@lang('Switch to Light Mode')">
+                    <i class="las la-sun ak23-icon-sun"></i>
+                    <i class="las la-moon ak23-icon-moon"></i>
+                </button>
+
+                <!-- Language Switcher Dropdown (Desktop >= 480px) -->
+                @if($languages->count() > 1)
+                    <div class="ak23-lang-wrap d-none d-sm-block">
+                        <button type="button" class="ak23-lang-toggle" id="ak23LangBtn" aria-label="@lang('Language')" title="@lang('Language')">
+                            <img src="{{ getImage(getFilePath('language') . '/' . @$activeLang->image, getFileSize('language')) }}" alt="{{ @$activeLang->name }}" class="ak23-lang-flag">
+                            <span class="ak23-lang-code">{{ strtoupper($currentLocale) }}</span>
+                            <i class="las la-angle-down ak23-lang-chevron"></i>
+                        </button>
+                        <div class="ak23-lang-dropdown" id="ak23LangDropdown">
+                            @foreach($languages as $langItem)
+                                <a href="{{ route('lang', $langItem->code) }}" class="ak23-lang-item {{ $currentLocale == $langItem->code ? 'active' : '' }}">
+                                    <img src="{{ getImage(getFilePath('language') . '/' . $langItem->image, getFileSize('language')) }}" alt="{{ $langItem->name }}" class="ak23-lang-flag">
+                                    <span class="ak23-lang-label">{{ $langItem->name }}</span>
+                                    @if($currentLocale == $langItem->code)
+                                        <i class="las la-check ak23-lang-check"></i>
+                                    @endif
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 <!-- Desktop Auth Link (>= 768px) -->
                 @guest
                     <a href="{{ route('user.login') }}" class="ak23-login-link d-none d-md-inline-flex">
@@ -192,7 +225,8 @@
     <!-- Drawer Header -->
     <div class="ak23-drawer-header">
         <a class="ak23-drawer-brand" href="{{ route('home') }}">
-            <img src="{{ $logoDark }}" alt="{{ gs('site_name') }}">
+            <img src="{{ $logoDark }}" alt="{{ gs('site_name') }}" class="ak23-logo-dark" style="height: 28px; width: auto; object-fit: contain;">
+            <img src="{{ $logoLight }}" alt="{{ gs('site_name') }}" class="ak23-logo-light" style="height: 28px; width: auto; object-fit: contain;">
         </a>
         <button type="button" class="ak23-drawer-close" id="ak23DrawerClose" aria-label="@lang('Close navigation menu')">
             <i class="las la-times"></i>
@@ -351,6 +385,42 @@
                 <i class="las la-angle-right ak23-drawer-nav-chevron"></i>
             </a>
         </div>
+
+        <!-- 4. Drawer Settings & Preferences (Theme & Language) -->
+        <div class="ak23-drawer-section-label mt-4">
+            <i class="las la-sliders-h me-1"></i> @lang('PREFERENCES & DISPLAY')
+        </div>
+        <div class="ak23-drawer-settings-box">
+            <div class="ak23-drawer-setting-item">
+                <span class="ak23-drawer-setting-text">
+                    <i class="las la-adjust me-2 text-warning fs-16"></i> @lang('Theme')
+                </span>
+                <div class="ak23-drawer-theme-pills">
+                    <button type="button" class="ak23-drawer-theme-pill" data-theme-val="dark">
+                        <i class="las la-moon"></i> <span>@lang('Dark')</span>
+                    </button>
+                    <button type="button" class="ak23-drawer-theme-pill" data-theme-val="light">
+                        <i class="las la-sun"></i> <span>@lang('Light')</span>
+                    </button>
+                </div>
+            </div>
+
+            @if($languages->count() > 1)
+                <div class="ak23-drawer-setting-item mt-3 pt-3 border-top-subtle">
+                    <span class="ak23-drawer-setting-text">
+                        <i class="las la-globe me-2 text-warning fs-16"></i> @lang('Language')
+                    </span>
+                    <div class="ak23-drawer-lang-pills">
+                        @foreach($languages as $langItem)
+                            <a href="{{ route('lang', $langItem->code) }}" class="ak23-drawer-lang-pill {{ $currentLocale == $langItem->code ? 'active' : '' }}">
+                                <img src="{{ getImage(getFilePath('language') . '/' . $langItem->image, getFileSize('language')) }}" alt="{{ $langItem->name }}" class="ak23-drawer-flag">
+                                <span>{{ $langItem->name }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </div>
     </div>
 
     <!-- Drawer Footer: WhatsApp Support & Assurance -->
@@ -367,10 +437,76 @@
 </aside>
 
 <!-- =========================================================================
-     DRAWER INTERACTIVITY JAVASCRIPT
+     DRAWER & THEME INTERACTIVITY JAVASCRIPT
      ========================================================================= -->
 <script>
 (function() {
+    function initAk23Theme() {
+        const currentTheme = localStorage.getItem('ak23_theme') || 'dark';
+        applyTheme(currentTheme);
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            if (theme === 'light') {
+                document.documentElement.classList.add('theme-light');
+                document.body.classList.add('theme-light');
+            } else {
+                document.documentElement.classList.remove('theme-light');
+                document.body.classList.remove('theme-light');
+            }
+            localStorage.setItem('ak23_theme', theme);
+
+            const themeBtn = document.getElementById('ak23ThemeToggle');
+            if (themeBtn) {
+                themeBtn.setAttribute('title', theme === 'light' ? "@lang('Switch to Dark Mode')" : "@lang('Switch to Light Mode')");
+            }
+
+            // Sync drawer theme pills
+            document.querySelectorAll('.ak23-drawer-theme-pill').forEach(function(pill) {
+                pill.classList.toggle('active', pill.getAttribute('data-theme-val') === theme);
+            });
+        }
+
+        // Header theme toggle button click
+        const themeBtn = document.getElementById('ak23ThemeToggle');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const active = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+                applyTheme(active);
+            });
+        }
+
+        // Drawer theme pills click
+        document.querySelectorAll('.ak23-drawer-theme-pill').forEach(function(pill) {
+            pill.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetTheme = this.getAttribute('data-theme-val');
+                applyTheme(targetTheme);
+            });
+        });
+
+        // Desktop language dropdown toggle
+        const langWrap = document.querySelector('.ak23-lang-wrap');
+        const langBtn  = document.getElementById('ak23LangBtn');
+        const langDrop = document.getElementById('ak23LangDropdown');
+
+        if (langBtn && langDrop && langWrap) {
+            langBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                langWrap.classList.toggle('open');
+                langDrop.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!langWrap.contains(e.target)) {
+                    langWrap.classList.remove('open');
+                    langDrop.classList.remove('show');
+                }
+            });
+        }
+    }
+
     function initAk23Drawer() {
         const toggleBtn = document.getElementById('ak23DrawerToggle');
         const closeBtn = document.getElementById('ak23DrawerClose');
@@ -458,9 +594,13 @@
     };
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initAk23Drawer);
+        document.addEventListener('DOMContentLoaded', function() {
+            initAk23Drawer();
+            initAk23Theme();
+        });
     } else {
         initAk23Drawer();
+        initAk23Theme();
     }
 })();
 </script>
