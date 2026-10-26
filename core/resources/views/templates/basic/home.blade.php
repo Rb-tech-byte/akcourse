@@ -49,8 +49,8 @@
             </button>
         </div>
 
-        <!-- Primary Products Catalog Grid (4 Columns per Row) -->
-        <div class="row g-3 g-md-4 mb-4" id="mainProductGrid">
+        <!-- Primary Products Catalog Grid (3 Cards per Row with Clear Spacing) -->
+        <div class="ak-products-grid-3 mb-4" id="mainProductGrid">
             @forelse($products as $product)
                 @php
                     $prodTitle = $product->title ?: $product->name;
@@ -60,7 +60,7 @@
                     $catName   = $product->category ? $product->category->name : 'MACOS';
                     $prodDate  = $product->created_at ? $product->created_at->format('M d, Y') : 'Sep 17, 2026';
                 @endphp
-                <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6">
+                <div class="ak-card-item">
                     <div class="ak-card">
                         <!-- Thumbnail Wrapper with Cart Button -->
                         <div class="ak-card-thumb">
@@ -96,7 +96,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-12 text-center py-5">
+                <div class="ak-grid-empty text-center py-5">
                     <i class="las la-box-open fs-1 text-muted"></i>
                     <p class="text-muted mt-2">No products found. Try adjusting your search query.</p>
                 </div>
@@ -167,7 +167,7 @@
                 <h2 class="ak-section-title">Trending This Week</h2>
             </div>
 
-            <div class="row g-3 g-md-4 mb-4">
+            <div class="ak-products-grid-3 mb-4">
                 @foreach($trendingProducts as $tProduct)
                     @php
                         $tTitle = $tProduct->title ?: $tProduct->name;
@@ -176,7 +176,7 @@
                         $tUrl   = route('product.details', $tProduct->slug);
                         $tCat   = $tProduct->category ? $tProduct->category->name : 'Trending';
                     @endphp
-                    <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6">
+                    <div class="ak-card-item">
                         <div class="ak-card">
                             <div class="ak-card-thumb">
                                 <a href="{{ $tUrl }}">
@@ -400,6 +400,38 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
+.ak-home-main .container {
+    max-width: 1280px;
+}
+
+/* 3 Cards Per Row Grid with Generous Spacing to Avoid Overcrowding */
+.ak-products-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 30px;
+    row-gap: 38px;
+    margin-bottom: 44px;
+}
+
+@media (max-width: 991px) {
+    .ak-products-grid-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 22px;
+        row-gap: 28px;
+    }
+}
+
+@media (max-width: 580px) {
+    .ak-products-grid-3 {
+        grid-template-columns: 1fr;
+        row-gap: 24px;
+    }
+}
+
+.ak-products-grid-3 .ak-grid-empty {
+    grid-column: 1 / -1;
+}
+
 /* Product Cards Grid (Studio Dark Texture & Smooth Looks) */
 .ak-card {
     background: #111118;
@@ -420,7 +452,7 @@
 .ak-card-thumb {
     position: relative;
     width: 100%;
-    padding-top: 64%; /* Reduced height on top for square-like overall card */
+    padding-top: 58%; /* Reduced height on top for square-like overall card */
     background: #09090D;
     overflow: hidden;
 }
@@ -438,10 +470,10 @@
 }
 .ak-card-cart-btn {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 30px;
-    height: 30px;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: #FBAF43;
     border: none;
@@ -449,7 +481,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: 16px;
     cursor: pointer;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     transition: transform 0.15s ease, background-color 0.15s ease;
@@ -461,22 +493,22 @@
 }
 
 .ak-card-body {
-    padding: 10px 12px 12px;
+    padding: 13px 15px 15px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
     background: #111118;
 }
 .ak-card-title {
-    font-size: 13px;
+    font-size: 14.5px;
     font-weight: 700;
-    line-height: 1.3;
-    margin: 0 0 4px 0;
+    line-height: 1.35;
+    margin: 0 0 6px 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 34px;
+    min-height: 38px;
 }
 .ak-card-title a {
     color: #FFFFFF;
@@ -487,13 +519,13 @@
     color: #FBAF43;
 }
 .ak-card-price {
-    font-size: 13.5px;
+    font-size: 15.5px;
     font-weight: 800;
     color: #FBAF43;
-    margin-bottom: 2px;
+    margin-bottom: 6px;
 }
 .ak-card-meta {
-    font-size: 10.5px;
+    font-size: 11.5px;
     color: #8E8EA2;
     margin-top: auto;
 }
