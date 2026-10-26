@@ -149,7 +149,7 @@
                                                         <span class="font-monospace text-secondary fs-10 me-1">{{ $product->sku }}</span> &middot;
                                                         {{ showDateTime($product->created_at, 'd M, Y') }}
                                                         @if($product->demo_url)
-                                                            &middot; <a href="{{ $product->demo_url }}" target="_blank" class="text-primary text-decoration-none" title="Live Preview"><i class="las la-play-circle"></i> Preview</a>
+                                                            &middot; <a href="{{ @$product->video_embed_info->embed_url ?: $product->demo_url }}" target="_blank" class="text-danger text-decoration-none fw-semibold" title="Live Preview"><i class="las la-play-circle text-danger"></i> {{ @$product->video_embed_info->provider ?: 'Preview' }}</a>
                                                         @endif
                                                     </span>
                                                 </div>

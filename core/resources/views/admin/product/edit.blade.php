@@ -194,19 +194,63 @@
                                 </div>
 
                                 <!-- Preview Video / Walkthrough URL -->
-                                <div class="form-group mb-3">
-                                    <label class="form-label fs-13 fw-bold text-dark mb-1">
-                                        @lang('Preview Video / Audio Walkthrough URL')
-                                    </label>
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text bg-white text-muted">
-                                            <i class="las la-video"></i>
+                                <div class="card mb-3 border rounded-3 bg-light shadow-sm">
+                                    <div class="card-header bg-white py-2 px-3 border-bottom d-flex align-items-center justify-content-between">
+                                        <span class="fs-12 fw-bold text-dark">
+                                            <i class="las la-play-circle text-danger me-1 fs-15"></i>@lang('Preview Video / Audio Walkthrough')
                                         </span>
-                                        <input type="url" name="demo_url" class="form-control form-control-sm" 
-                                               value="{{ old('demo_url', $product->demo_url) }}" 
-                                               placeholder="https://www.youtube.com/watch?v=... or direct MP4/HLS stream URL">
+                                        <div id="videoProviderBadge">
+                                            @if($product->video_embed_info)
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle fs-10">
+                                                    <i class="las la-check-circle me-1"></i>{{ $product->video_embed_info->provider }}
+                                                </span>
+                                            @else
+                                                <span class="badge bg-secondary-subtle text-muted fs-10">
+                                                    @lang('No Preview Set')
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <small class="text-muted fs-11">@lang('Interactive video or audio walkthrough displayed in course player preview')</small>
+                                    <div class="card-body p-2">
+                                        <div class="input-group input-group-sm mb-1">
+                                            <span class="input-group-text bg-white text-muted">
+                                                <i class="las la-video"></i>
+                                            </span>
+                                            <input type="text" name="demo_url" id="demoUrlInput" class="form-control form-control-sm bg-white" 
+                                                   value="{{ old('demo_url', $product->demo_url) }}" 
+                                                   placeholder="Paste YouTube, Vimeo, Google Drive, or direct MP4/Audio URL">
+                                            
+                                            <button type="button" class="btn btn-outline-danger btn-sm px-2 fw-semibold" id="btnAdminPreviewVideo" title="@lang('Live Video Preview')">
+                                                <i class="las la-play me-1"></i>@lang('Preview')
+                                            </button>
+                                            
+                                            <a href="{{ $product->demo_url ?: '#' }}" target="_blank" 
+                                               class="btn btn-outline-secondary btn-sm {{ empty($product->demo_url) ? 'd-none' : '' }}" 
+                                               id="btnAdminOpenUrl" title="@lang('Open link in new tab')">
+                                                <i class="las la-external-link-alt"></i>
+                                            </a>
+                                        </div>
+
+                                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-1 mt-1">
+                                            <small class="text-muted fs-10">
+                                                <i class="las la-info-circle me-1"></i>@lang('Supports YouTube, Vimeo, Google Drive, MP4, and Audio walkthroughs.')
+                                            </small>
+                                            <span class="text-muted fs-10">
+                                                @lang('Instant live playback available')
+                                            </span>
+                                        </div>
+
+                                        <!-- Inline Live Player Preview Box -->
+                                        <div id="adminVideoInlineBox" class="mt-2 rounded-2 overflow-hidden border bg-black d-none" style="position: relative;">
+                                            <div class="p-1 px-2 bg-dark d-flex align-items-center justify-content-between">
+                                                <span class="fs-11 text-white fw-bold" id="inlinePlayerTitle">Live Preview Player</span>
+                                                <button type="button" class="btn-close btn-close-white p-1" style="font-size: 8px;" id="btnCloseInlinePlayer" aria-label="Close"></button>
+                                            </div>
+                                            <div id="adminPlayerContainer" style="min-height: 220px; max-height: 320px; position: relative; background: #000;">
+                                                <!-- Dynamic player injected via JS -->
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Tags -->
@@ -507,6 +551,153 @@
                     };
                     reader.readAsDataURL(file);
                 }
+            });
+
+            // Live Video / Walkthrough URL Resolver & Inline Player
+            function resolveEmbedUrl(rawUrl) {
+                if (!rawUrl) return null;
+                rawUrl = rawUrl.trim();
+                if (!rawUrl) return null;
+                if (!/^https?:\/\//i.test(rawUrl)) {
+                    rawUrl = 'https://' + rawUrl;
+                }
+
+                // 1. YouTube
+                var ytMatch = rawUrl.match(/(?:youtube(?:-nocookie)?\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+                if (ytMatch && ytMatch[1]) {
+                    return {
+                        type: 'youtube',
+                        provider: 'YouTube',
+                        embedUrl: 'https://www.youtube-nocookie.com/embed/' + ytMatch[1] + '?autoplay=1&rel=0&modestbranding=1',
+                        isEmbed: true,
+                        rawUrl: rawUrl
+                    };
+                }
+
+                // 2. Vimeo
+                var vimeoMatch = rawUrl.match(/vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)/i);
+                if (vimeoMatch && vimeoMatch[3]) {
+                    return {
+                        type: 'vimeo',
+                        provider: 'Vimeo',
+                        embedUrl: 'https://player.vimeo.com/video/' + vimeoMatch[3] + '?autoplay=1&title=0&byline=0',
+                        isEmbed: true,
+                        rawUrl: rawUrl
+                    };
+                }
+
+                // 3. Google Drive
+                var driveMatch = rawUrl.match(/(?:drive|docs)\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:.*&)?id=)([a-zA-Z0-9_-]+)/i);
+                if (driveMatch && driveMatch[1]) {
+                    return {
+                        type: 'gdrive',
+                        provider: 'Google Drive',
+                        embedUrl: 'https://drive.google.com/file/d/' + driveMatch[1] + '/preview',
+                        isEmbed: true,
+                        rawUrl: rawUrl
+                    };
+                }
+
+                // 4. Loom
+                var loomMatch = rawUrl.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9_-]+)/i);
+                if (loomMatch && loomMatch[1]) {
+                    return {
+                        type: 'loom',
+                        provider: 'Loom',
+                        embedUrl: 'https://www.loom.com/embed/' + loomMatch[1],
+                        isEmbed: true,
+                        rawUrl: rawUrl
+                    };
+                }
+
+                // 5. Streamable
+                var stMatch = rawUrl.match(/streamable\.com\/(?:e\/)?([a-zA-Z0-9_-]+)/i);
+                if (stMatch && stMatch[1]) {
+                    return {
+                        type: 'streamable',
+                        provider: 'Streamable',
+                        embedUrl: 'https://streamable.com/e/' + stMatch[1],
+                        isEmbed: true,
+                        rawUrl: rawUrl
+                    };
+                }
+
+                // 6. SoundCloud
+                if (/soundcloud\.com\/[^\/]+\/[^\/\s]+/i.test(rawUrl)) {
+                    return {
+                        type: 'soundcloud',
+                        provider: 'SoundCloud',
+                        embedUrl: 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(rawUrl) + '&color=%23f0a62f&auto_play=false&show_teaser=true',
+                        isEmbed: true,
+                        rawUrl: rawUrl
+                    };
+                }
+
+                // 7. Audio
+                if (/\.(mp3|wav|m4a|ogg|aac|flac)(\?.*)?$/i.test(rawUrl)) {
+                    return {
+                        type: 'audio',
+                        provider: 'Audio Walkthrough',
+                        embedUrl: rawUrl,
+                        isEmbed: false,
+                        rawUrl: rawUrl
+                    };
+                }
+
+                // 8. Direct Video
+                return {
+                    type: 'video',
+                    provider: 'Direct Video (MP4)',
+                    embedUrl: rawUrl,
+                    isEmbed: false,
+                    rawUrl: rawUrl
+                };
+            }
+
+            function updateProviderBadge() {
+                var url = $('#demoUrlInput').val();
+                var info = resolveEmbedUrl(url);
+                if (info) {
+                    $('#videoProviderBadge').html('<span class="badge bg-success-subtle text-success border border-success-subtle fs-10"><i class="las la-check-circle me-1"></i>' + info.provider + '</span>');
+                    $('#btnAdminOpenUrl').attr('href', info.rawUrl).removeClass('d-none');
+                } else {
+                    $('#videoProviderBadge').html('<span class="badge bg-secondary-subtle text-muted fs-10">No Preview Set</span>');
+                    $('#btnAdminOpenUrl').addClass('d-none');
+                }
+            }
+
+            $('#demoUrlInput').on('input change paste', function() {
+                setTimeout(updateProviderBadge, 100);
+            });
+
+            $('#btnAdminPreviewVideo').on('click', function() {
+                var url = $('#demoUrlInput').val();
+                var info = resolveEmbedUrl(url);
+                if (!info) {
+                    alert('Please enter a YouTube, Vimeo, Google Drive, Loom, Streamable, SoundCloud, or direct video/audio URL first.');
+                    $('#demoUrlInput').focus();
+                    return;
+                }
+
+                var container = $('#adminPlayerContainer');
+                container.empty();
+                $('#inlinePlayerTitle').text(info.provider + ' Live Player');
+
+                if (info.isEmbed) {
+                    var h = (info.type === 'soundcloud') ? '166px' : '260px';
+                    container.html('<iframe src="' + info.embedUrl + '" style="width: 100%; height: ' + h + '; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+                } else if (info.type === 'audio') {
+                    container.html('<div class="p-4 text-center"><audio controls autoplay class="w-100" style="max-width: 450px;"><source src="' + info.embedUrl + '"></audio></div>');
+                } else {
+                    container.html('<video controls autoplay playsinline style="width: 100%; max-height: 260px; background: #000;"><source src="' + info.embedUrl + '" type="video/mp4"></video>');
+                }
+
+                $('#adminVideoInlineBox').removeClass('d-none');
+            });
+
+            $('#btnCloseInlinePlayer').on('click', function() {
+                $('#adminPlayerContainer').empty();
+                $('#adminVideoInlineBox').addClass('d-none');
             });
 
         })(jQuery);

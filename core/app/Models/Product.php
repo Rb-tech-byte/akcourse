@@ -86,6 +86,124 @@ class Product extends Model {
         return asset('assets/images/default.png');
     }
 
+    public function getVideoEmbedInfoAttribute() {
+        $url = trim((string)$this->demo_url);
+
+        // If no demo_url but local preview_video file exists
+        if (empty($url) && !empty($this->preview_video)) {
+            $path = getFilePath('previewVideo') . '/' . productFilePath($this, 'preview_video');
+            $url = getImage($path);
+        }
+
+        if (empty($url)) {
+            return null;
+        }
+
+        // Auto-normalize protocol if omitted
+        if (!preg_match('~^(?:f|ht)tps?://~i', $url)) {
+            $url = 'https://' . $url;
+        }
+
+        // 1. YouTube (watch, embed, v, shorts, live, youtu.be, m.youtube.com, nocookie)
+        if (preg_match('~(?:youtube(?:-nocookie)?\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts|live)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})~i', $url, $m)) {
+            $ytId = $m[1];
+            return (object)[
+                'type'      => 'youtube',
+                'id'        => $ytId,
+                'provider'  => 'YouTube',
+                'embed_url' => "https://www.youtube-nocookie.com/embed/{$ytId}?autoplay=1&rel=0&modestbranding=1",
+                'raw_url'   => $url,
+                'is_embed'  => true,
+            ];
+        }
+
+        // 2. Vimeo
+        if (preg_match('~vimeo\.com\/(?:channels\/(?:\w+\/)?|groups\/([^\/]*)\/videos\/|album\/(\d+)\/video\/|video\/|)(\d+)~i', $url, $m)) {
+            $vimeoId = end($m);
+            return (object)[
+                'type'      => 'vimeo',
+                'id'        => $vimeoId,
+                'provider'  => 'Vimeo',
+                'embed_url' => "https://player.vimeo.com/video/{$vimeoId}?autoplay=1&title=0&byline=0",
+                'raw_url'   => $url,
+                'is_embed'  => true,
+            ];
+        }
+
+        // 3. Google Drive (file/d/, open?id=, uc?id=, docs.google.com)
+        if (preg_match('~(?:drive|docs)\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:.*&)?id=)([a-zA-Z0-9_-]+)~i', $url, $m)) {
+            $driveId = $m[1];
+            return (object)[
+                'type'      => 'gdrive',
+                'id'        => $driveId,
+                'provider'  => 'Google Drive',
+                'embed_url' => "https://drive.google.com/file/d/{$driveId}/preview",
+                'raw_url'   => $url,
+                'is_embed'  => true,
+            ];
+        }
+
+        // 4. Loom
+        if (preg_match('~loom\.com\/(?:share|embed)\/([a-zA-Z0-9_-]+)~i', $url, $m)) {
+            $loomId = $m[1];
+            return (object)[
+                'type'      => 'loom',
+                'id'        => $loomId,
+                'provider'  => 'Loom',
+                'embed_url' => "https://www.loom.com/embed/{$loomId}",
+                'raw_url'   => $url,
+                'is_embed'  => true,
+            ];
+        }
+
+        // 5. Streamable
+        if (preg_match('~streamable\.com\/(?:e\/)?([a-zA-Z0-9_-]+)~i', $url, $m)) {
+            $stId = $m[1];
+            return (object)[
+                'type'      => 'streamable',
+                'id'        => $stId,
+                'provider'  => 'Streamable',
+                'embed_url' => "https://streamable.com/e/{$stId}",
+                'raw_url'   => $url,
+                'is_embed'  => true,
+            ];
+        }
+
+        // 6. SoundCloud
+        if (preg_match('~soundcloud\.com\/([^\/]+\/[^\/\s]+)~i', $url)) {
+            return (object)[
+                'type'      => 'soundcloud',
+                'id'        => null,
+                'provider'  => 'SoundCloud',
+                'embed_url' => "https://w.soundcloud.com/player/?url=" . urlencode($url) . "&color=%23f0a62f&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true",
+                'raw_url'   => $url,
+                'is_embed'  => true,
+            ];
+        }
+
+        // 7. Audio (.mp3, .wav, .m4a, .ogg, .aac, .flac)
+        if (preg_match('~\.(mp3|wav|m4a|ogg|aac|flac)(\?.*)?$~i', $url)) {
+            return (object)[
+                'type'      => 'audio',
+                'id'        => null,
+                'provider'  => 'Audio Walkthrough',
+                'embed_url' => $url,
+                'raw_url'   => $url,
+                'is_embed'  => false,
+            ];
+        }
+
+        // 8. Direct Video (.mp4, .webm, .mov, etc.) or stream
+        return (object)[
+            'type'      => 'video',
+            'id'        => null,
+            'provider'  => 'Direct Video (MP4)',
+            'embed_url' => $url,
+            'raw_url'   => $url,
+            'is_embed'  => false,
+        ];
+    }
+
     public function scopeFeatured($query) {
         return $query->where('is_featured', Status::ENABLE);
     }

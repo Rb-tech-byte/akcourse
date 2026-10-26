@@ -160,6 +160,17 @@
                                     TSH {{ number_format($bundlePrice) }}
                                 </span>
                                 <div class="d-flex align-items-center gap-2">
+                                    @if($bundle->video_embed_info)
+                                        <button type="button" class="btn btn-outline-warning btn-trigger-preview px-3" 
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#previewModal"
+                                                data-preview-url="{{ $bundle->video_embed_info->embed_url }}" 
+                                                data-preview-type="{{ $bundle->video_embed_info->type }}" 
+                                                data-preview-title="{{ $bundleTitle }}" 
+                                                title="Watch Preview Video">
+                                            <i class="las la-play me-1"></i> Preview
+                                        </button>
+                                    @endif
                                     <button type="button" class="btn btn-outline-warning ak23-btn-add-cart px-3" data-sku="{{ $bundleSku }}" title="Add Bundle to Cart">
                                         <i class="las la-cart-plus fs-18"></i>
                                     </button>
@@ -214,6 +225,18 @@
                                         title="Add Bundle to Cart">
                                     <i class="las la-cart-plus"></i>
                                 </button>
+                                @if($bundle->video_embed_info)
+                                    <button type="button" 
+                                            class="ak23-sample-preview-btn btn-trigger-preview" 
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#previewModal"
+                                            data-preview-url="{{ $bundle->video_embed_info->embed_url }}" 
+                                            data-preview-type="{{ $bundle->video_embed_info->type }}" 
+                                            data-preview-title="{{ $bTitle }}" 
+                                            title="Watch Bundle Preview Video">
+                                        <i class="las la-play"></i>
+                                    </button>
+                                @endif
                             </div>
 
                             <div class="ak23-sample-card-body">
@@ -283,6 +306,18 @@
                                     title="Add to Cart">
                                 <i class="las la-cart-plus"></i>
                             </button>
+                            @if($course->video_embed_info)
+                                <button type="button" 
+                                        class="ak23-sample-preview-btn btn-trigger-preview" 
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#previewModal"
+                                        data-preview-url="{{ $course->video_embed_info->embed_url }}" 
+                                        data-preview-type="{{ $course->video_embed_info->type }}" 
+                                        data-preview-title="{{ $courseTitle }}" 
+                                        title="Watch Course Preview Video">
+                                    <i class="las la-play"></i>
+                                </button>
+                            @endif
                         </div>
 
                         <!-- Card Body matching provided sample image -->
@@ -330,11 +365,66 @@
     </div>
 </div>
 
+<!-- Video Preview Modal -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background: #111118; border: 1px solid #2B2B3C; border-radius: 12px; color: #fff;">
+            <div class="modal-header border-bottom border-secondary" style="border-color: #232332 !important;">
+                <h5 class="modal-title" id="previewModalLabel" style="font-size: 15px; font-weight: 700; color: #F0A62F;">
+                    <i class="las la-play-circle me-1"></i> @lang('Course Preview')
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;" id="previewVideoContainer">
+                    <!-- Dynamic preview injected via JS -->
+                </div>
+            </div>
+            <div class="modal-footer border-top border-secondary justify-content-between" style="border-color: #232332 !important; padding: 14px 20px;">
+                <span style="font-size: 12.5px; color: #9A9AA6;">Downloadable high-res course files provided after purchase.</span>
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('style')
 <style>
 /* Catalog Top Bar & Layout */
+.ak23-sample-preview-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(17, 17, 24, 0.88);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(251, 175, 67, 0.55);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FBAF43;
+    font-size: 15px;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+.ak23-sample-preview-btn:hover {
+    background: #FBAF43;
+    color: #0E0E15 !important;
+    border-color: #FBAF43;
+    transform: scale(1.15);
+    box-shadow: 0 4px 14px rgba(251, 175, 67, 0.5);
+}
+.ak23-sample-preview-btn:active {
+    transform: scale(0.95);
+}
+
 .ak23-catalog-top-bar {
     padding: 32px 0 20px;
     background: radial-gradient(circle at 50% 0%, rgba(251, 175, 67, 0.08) 0%, transparent 60%), #0D0E15;
@@ -1280,6 +1370,41 @@
                     notify('error', errMsg);
                 }
             });
+        });
+
+        // Dynamic Video Preview Modal Handler
+        $(document).on('click', '.btn-trigger-preview', function(e) {
+            e.stopPropagation();
+            var embedUrl = $(this).attr('data-preview-url');
+            var type = $(this).attr('data-preview-type') || 'youtube';
+            var title = $(this).attr('data-preview-title') || 'Course Preview Video';
+            
+            if (title) {
+                $('#previewModalLabel').html('<i class="las la-play-circle me-1"></i> ' + title);
+            }
+            
+            var container = $('#previewVideoContainer');
+            container.empty();
+            
+            if (!embedUrl) {
+                container.html('<div class="d-flex flex-column align-items-center justify-content-center p-5 text-center text-muted" style="position: absolute; top:0; left: 0; width: 100%; height: 100%;"><i class="las la-play-circle text-warning mb-2" style="font-size: 48px;"></i><h6 class="text-white mb-1">Preview Video Available Soon</h6><p class="fs-12 text-muted mb-0">The studio walkthrough for this course will be available shortly.</p></div>');
+                return;
+            }
+            
+            if (type === 'soundcloud' || embedUrl.indexOf('soundcloud.com') !== -1) {
+                container.html('<div class="p-4 p-md-5 text-center" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;"><i class="las la-headphones text-warning mb-3" style="font-size: 48px;"></i><div class="w-100" style="max-width: 580px;"><iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="' + embedUrl + '"></iframe></div></div>');
+            } else if (type === 'youtube' || type === 'vimeo' || type === 'gdrive' || type === 'loom' || type === 'streamable' || embedUrl.indexOf('youtube') !== -1 || embedUrl.indexOf('vimeo') !== -1 || embedUrl.indexOf('drive.google') !== -1 || embedUrl.indexOf('loom.com') !== -1 || embedUrl.indexOf('streamable.com') !== -1) {
+                container.html('<iframe id="previewModalIframe" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border:0;" src="' + embedUrl + '" title="' + title + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+            } else if (type === 'audio' || /\.(mp3|wav|m4a|ogg|aac|flac)(\?.*)?$/i.test(embedUrl)) {
+                container.html('<div class="p-5 text-center" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;"><i class="las la-compact-disc text-warning mb-3" style="font-size: 56px;"></i><audio controls autoplay class="w-100" style="max-width: 480px;"><source src="' + embedUrl + '"></audio></div>');
+            } else {
+                container.html('<video id="previewModalVideo" controls autoplay playsinline style="position: absolute; top:0; left: 0; width: 100%; height: 100%; object-fit: contain;"><source src="' + embedUrl + '" type="video/mp4"></video>');
+            }
+        });
+
+        // Stop playback when preview modal is closed
+        $('#previewModal').on('hidden.bs.modal', function () {
+            $('#previewVideoContainer').empty();
         });
 
         // Initial catalog filter and pagination run on load

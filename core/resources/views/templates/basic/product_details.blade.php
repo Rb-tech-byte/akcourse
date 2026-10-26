@@ -13,10 +13,11 @@
     $rating = number_format((float)($product->avg_rating ?: 4.9), 1);
     $reviewCount = $product->total_review ?: 24;
     $salesCount = $product->total_sold ?: 142;
+    $embedInfo = $product->video_embed_info;
     $hasVideo = !empty($product->preview_video) || !empty($product->demo_url);
-    $hasAudio = !empty($product->audio_temp_file) || (@$product->category->file_type === 'audio');
+    $hasAudio = !empty($product->audio_temp_file) || (@$product->category->file_type === 'audio') || (@$embedInfo->type === 'audio');
     $videoSrc = !empty($product->preview_video) ? getImage(getFilePath('previewVideo') . '/' . productFilePath($product, 'preview_video')) : ($product->demo_url ?: '');
-    $audioSrc = !empty($product->audio_temp_file) ? asset(getFilePath('previewFile') . '/' . productFilePath($product, 'temp_audio_file') . '/' . $product->audio_temp_file) : '';
+    $audioSrc = !empty($product->audio_temp_file) ? asset(getFilePath('previewFile') . '/' . productFilePath($product, 'temp_audio_file') . '/' . $product->audio_temp_file) : ((@$embedInfo->type === 'audio') ? $embedInfo->raw_url : '');
     $posterImg = $product->thumbnail_url ?: getImage(getFilePath('productPreview') . '/' . productFilePath($product, 'preview_image'), getFileSize('productPreview'));
 @endphp
 
@@ -110,8 +111,51 @@
                     <div class="tab-content" id="mediaPreviewTabContent">
                         <!-- PANE 1: VIDEO DEMO TRAILER -->
                         <div class="tab-pane fade show active" id="preview-video-pane" role="tabpanel">
-                            <div class="ak23-video-wrapper position-relative">
-                                @if(!empty($videoSrc))
+                            <div class="ak23-video-wrapper position-relative overflow-hidden rounded-bottom" style="background: #000;">
+                                @if($embedInfo && $embedInfo->type === 'soundcloud')
+                                    <!-- SoundCloud Embedded Player -->
+                                    <div class="p-4 p-md-5 text-center" style="background: #0d0e15;">
+                                        <div class="mb-3">
+                                            <i class="las la-headphones text-warning" style="font-size: 48px;"></i>
+                                        </div>
+                                        <h5 class="text-white fw-bold mb-3">{{ __($product->title) }}</h5>
+                                        <div class="mx-auto" style="max-width: 650px;">
+                                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="{{ $embedInfo->embed_url }}"></iframe>
+                                        </div>
+                                    </div>
+                                @elseif($embedInfo && $embedInfo->is_embed)
+                                    <!-- Embedded Player (YouTube / Vimeo / Google Drive / Loom / Streamable) -->
+                                    <div class="ratio ratio-16x9" style="min-height: 380px; max-height: 500px;">
+                                        <iframe src="{{ $embedInfo->embed_url }}" 
+                                                title="{{ $product->title }} Preview" 
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                                allowfullscreen 
+                                                style="width: 100%; height: 100%; border: 0;">
+                                        </iframe>
+                                    </div>
+                                @elseif($embedInfo && $embedInfo->type === 'audio')
+                                    <!-- Audio Walkthrough Player -->
+                                    <div class="p-4 p-md-5 text-center" style="background: #0d0e15;">
+                                        <div class="mb-3">
+                                            <i class="las la-compact-disc text-warning" style="font-size: 64px;"></i>
+                                        </div>
+                                        <h5 class="text-white fw-bold mb-1">{{ __($product->title) }}</h5>
+                                        <p class="text-warning mb-3 fs-13">@lang('Audio Walkthrough & Stem Preview')</p>
+                                        <div class="d-flex justify-content-center">
+                                            <audio controls class="w-100" style="max-width: 520px;">
+                                                <source src="{{ $embedInfo->embed_url }}">
+                                                @lang('Your browser does not support the audio element.')
+                                            </audio>
+                                        </div>
+                                    </div>
+                                @elseif($embedInfo && $embedInfo->type === 'video')
+                                    <!-- Direct HTML5 Video (.mp4 / webm) -->
+                                    <video id="ak23-main-video-player" playsinline controls poster="{{ $posterImg }}" class="w-100" style="max-height: 480px; object-fit: contain; background: #000;">
+                                        <source src="{{ $embedInfo->embed_url }}" type="video/mp4">
+                                        @lang('Your browser does not support the video tag.')
+                                    </video>
+                                @elseif(!empty($videoSrc))
+                                    <!-- Direct HTML5 Video Fallback -->
                                     <video id="ak23-main-video-player" playsinline controls poster="{{ $posterImg }}" class="w-100" style="max-height: 480px; object-fit: contain; background: #000;">
                                         <source src="{{ $videoSrc }}" type="video/mp4">
                                         @lang('Your browser does not support the video tag.')

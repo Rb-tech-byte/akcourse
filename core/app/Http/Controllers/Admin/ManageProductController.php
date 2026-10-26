@@ -45,7 +45,7 @@ class ManageProductController extends Controller
             'price'           => 'nullable|numeric|gte:0',
             'price_cl'        => 'nullable|numeric|gte:0',
             'description'     => 'required|string',
-            'demo_url'        => 'nullable|url',
+            'demo_url'        => ['nullable', 'string', 'max:2048'],
             'thumbnail'       => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'preview_image'   => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
             'main_file'       => ['nullable', 'file', 'mimes:zip,rar,tar,gz,7z,pdf,mp4,mp3,wav', 'max:1048576'],
@@ -71,7 +71,17 @@ class ManageProductController extends Controller
         $product->is_free         = $request->has('is_free') && $request->is_free == 1 ? Status::YES : Status::NO;
         $product->price           = $product->is_free ? 0 : ($request->price ?? 0);
         $product->price_cl        = $product->is_free ? 0 : ($request->price_cl ?? 0);
-        $product->demo_url        = $request->demo_url;
+        if ($request->has('demo_url')) {
+            $rawDemo = trim((string)$request->demo_url);
+            if (!empty($rawDemo)) {
+                if (!preg_match('~^(?:f|ht)tps?://~i', $rawDemo)) {
+                    $rawDemo = 'https://' . $rawDemo;
+                }
+                $product->demo_url = $rawDemo;
+            } else {
+                $product->demo_url = null;
+            }
+        }
         $product->tags            = $request->tags ? array_map('trim', explode(',', $request->tags)) : [];
         $product->description     = $request->description;
         $product->is_featured     = $request->has('is_featured') ? Status::YES : Status::NO;

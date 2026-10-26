@@ -123,12 +123,28 @@
                                     <span class="fw-bold text-dark">@lang('Status')</span>
                                     @php echo $product->statusBadge; @endphp
                                 </li>
-                                @if($product->demo_url)
+                                @if($product->demo_url || $product->preview_video)
                                     <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-2 px-3">
-                                        <span class="fw-bold text-dark">@lang('Preview / Demo Video')</span>
-                                        <a href="{{ $product->demo_url }}" target="_blank" class="text-primary text-truncate" style="max-width: 250px;">
-                                            <i class="las la-external-link-alt me-1"></i> {{ $product->demo_url }}
-                                        </a>
+                                        <div>
+                                            <span class="fw-bold text-dark d-block">@lang('Preview / Demo Video')</span>
+                                            @if($product->video_embed_info)
+                                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-10">
+                                                    <i class="las la-play-circle me-1"></i>{{ $product->video_embed_info->provider }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            @if($product->video_embed_info)
+                                                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2 fs-11" data-bs-toggle="modal" data-bs-target="#adminPreviewModal">
+                                                    <i class="las la-play me-1"></i>Watch Preview
+                                                </button>
+                                            @endif
+                                            @if($product->demo_url)
+                                                <a href="{{ $product->demo_url }}" target="_blank" class="text-primary text-truncate fs-12" style="max-width: 180px;" title="{{ $product->demo_url }}">
+                                                    <i class="las la-external-link-alt me-1"></i> {{ $product->demo_url }}
+                                                </a>
+                                            @endif
+                                        </div>
                                     </li>
                                 @endif
                                 @foreach ($product->attribute_info ?? [] as $info)
@@ -198,6 +214,42 @@
             </div>
         </div>
     </div>
+
+    @if($product->video_embed_info)
+        <!-- Live Video Preview Modal -->
+        <div class="modal fade" id="adminPreviewModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-dark border border-secondary text-white">
+                    <div class="modal-header border-bottom border-secondary py-2 px-3">
+                        <h6 class="modal-title fs-14 fw-bold text-warning mb-0">
+                            <i class="las la-play-circle me-1"></i> {{ __($product->title) }} &middot; {{ $product->video_embed_info->provider }}
+                        </h6>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0 bg-black">
+                        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;" id="adminPreviewContainer">
+                            @if($product->video_embed_info->is_embed)
+                                <iframe src="{{ $product->video_embed_info->embed_url }}" 
+                                        style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0;" 
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                        allowfullscreen>
+                                </iframe>
+                            @elseif($product->video_embed_info->type === 'audio')
+                                <div class="p-5 text-center" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    <i class="las la-compact-disc text-warning mb-3" style="font-size: 56px;"></i>
+                                    <audio controls autoplay class="w-100" style="max-width: 480px;"><source src="{{ $product->video_embed_info->embed_url }}"></audio>
+                                </div>
+                            @else
+                                <video controls autoplay playsinline style="position: absolute; top:0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                                    <source src="{{ $product->video_embed_info->embed_url }}" type="video/mp4">
+                                </video>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
 
 @push('script')
@@ -292,16 +344,16 @@
 
             });
 
-            $('#showPreviewVideo').on('click', function(event) {
-                event.preventDefault();
-
-                $('#previewVideo').magnificPopup({
-                    delegate: 'a',
-                    type: 'iframe',
-                    gallery: {
-                        enabled: true
-                    }
-                }).magnificPopup('open');
+            $('#adminPreviewModal').on('hidden.bs.modal', function () {
+                var iframe = $(this).find('iframe');
+                if (iframe.length) {
+                    var src = iframe.attr('src');
+                    iframe.attr('src', src);
+                }
+                var video = $(this).find('video');
+                if (video.length) video[0].pause();
+                var audio = $(this).find('audio');
+                if (audio.length) audio[0].pause();
             });
 
         })(jQuery);
