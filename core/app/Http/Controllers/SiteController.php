@@ -773,7 +773,15 @@ class SiteController extends Controller
             }
         }
 
-        return view('Template::product_details', compact('pageTitle', 'product', 'author', 'seoContents'));
+        // Series courses / related modules for compact native curriculum breakdown
+        $seriesCourses = Product::approved()
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->orderBy('sequence_no', 'asc')
+            ->orderBy('id', 'asc')
+            ->get();
+
+        return view('Template::product_details', compact('pageTitle', 'product', 'author', 'seoContents', 'seriesCourses'));
     }
 
     public function productReviews($slug)
