@@ -16,17 +16,17 @@
     $totalFormatted = number_format($total);
 @endphp
 
-<div class="ak23-cart-wrapper py-4 py-lg-5">
+<div class="ak23-cart-wrapper py-3 py-lg-4">
     <div class="container" style="max-width: 1060px;">
 
         <!-- Cart Header Top Bar -->
-        <div class="ak23-cart-topbar mb-4 p-3 rounded-4 bg-white border d-flex align-items-center justify-content-between flex-wrap gap-2 shadow-sm">
+        <div class="ak23-cart-topbar mb-3 p-3 rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-2" style="background: #111118; border: 1px solid rgba(255,255,255,0.08);">
             <div class="d-flex align-items-center gap-3">
                 <div class="ak23-cart-icon-circle">
                     <i class="las la-shopping-cart"></i>
                 </div>
                 <div>
-                    <h2 class="ak23-cart-page-title mb-0">@lang('Shopping Cart')</h2>
+                    <h2 class="ak23-cart-page-title mb-0 text-white">@lang('Shopping Cart')</h2>
                     <span class="text-muted fs-12">
                         <span id="cartHeaderCount">{{ count($cartItems) }}</span> @lang('item(s) selected for studio download')
                     </span>
@@ -34,7 +34,7 @@
             </div>
 
             <div class="d-flex align-items-center gap-2">
-                <a href="{{ route('courses') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fs-12 fw-bold">
+                <a href="{{ route('courses') }}" class="btn btn-sm ak23-btn-outline-gold rounded-pill px-3 fs-12 fw-bold">
                     <i class="las la-plus me-1"></i> @lang('Add More Courses')
                 </a>
             </div>
@@ -49,14 +49,14 @@
                             $itemTotal = $cartItem->price + $cartItem->buyer_fee;
                             $thumb = $cartItem->product ? $cartItem->product->thumbnail_url : null;
                         @endphp
-                        <div class="ak23-cart-item-card mb-3 p-3 p-sm-4 rounded-4 bg-white border shadow-sm" id="cart-item-row-{{ $cartItem->id }}" data-id="{{ $cartItem->id }}" data-price="{{ $itemTotal }}">
+                        <div class="ak23-cart-item-card mb-3 p-3 p-sm-4 rounded-3" style="background: #111118; border: 1px solid rgba(255,255,255,0.07);" id="cart-item-row-{{ $cartItem->id }}" data-id="{{ $cartItem->id }}" data-price="{{ $itemTotal }}">
                             <div class="d-flex align-items-start gap-3">
                                 <!-- Thumbnail / Visual Icon -->
                                 <div class="ak23-cart-thumb-box flex-shrink-0">
                                     @if($thumb)
-                                        <img src="{{ $thumb }}" alt="{{ $cartItem->title }}" class="ak23-cart-thumb-img rounded-3">
+                                        <img src="{{ $thumb }}" alt="{{ $cartItem->title }}" class="ak23-cart-thumb-img rounded-2">
                                     @else
-                                        <div class="ak23-cart-thumb-placeholder rounded-3">
+                                        <div class="ak23-cart-thumb-placeholder rounded-2">
                                             <i class="las la-compact-disc"></i>
                                         </div>
                                     @endif
@@ -70,7 +70,7 @@
                                                 {{ $cartItem->category ?: 'Audio Course' }}
                                             </span>
                                             <h5 class="ak23-cart-item-title mb-1 text-truncate">
-                                                <a href="{{ $cartItem->product ? route('product.details', $cartItem->product->slug) : '#' }}" class="text-dark text-decoration-none fw-bold">
+                                                <a href="{{ $cartItem->product ? route('product.details', $cartItem->product->slug) : '#' }}" class="text-white text-decoration-none fw-bold hover-gold">
                                                     {{ $cartItem->title }}
                                                 </a>
                                             </h5>
@@ -81,7 +81,7 @@
 
                                         <!-- Remove Item Action -->
                                         <button type="button" 
-                                                class="btn btn-sm btn-light border-0 text-danger rounded-circle ak23-btn-remove-item deleteCartItem" 
+                                                class="btn btn-sm btn-dark border text-danger rounded-circle ak23-btn-remove-item deleteCartItem" 
                                                 data-id="{{ $cartItem->id }}" 
                                                 data-product-id="{{ $cartItem->product_id }}"
                                                 data-action="{{ route('cart.delete', $cartItem->product_id ?: $cartItem->id) }}"
@@ -91,7 +91,7 @@
                                     </div>
 
                                     <!-- Price & License Controls -->
-                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2 border-top">
+                                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
                                         <div class="d-flex align-items-center gap-1">
                                             <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill fs-11 px-2 py-1">
                                                 <i class="las la-certificate me-1"></i> @lang('One-Time Lifetime License Included')
@@ -99,7 +99,7 @@
                                         </div>
 
                                         <div class="text-end">
-                                            <span class="ak23-item-price-tag text-dark fw-bold fs-15" id="item-price-display-{{ $cartItem->id }}">
+                                            <span class="ak23-item-price-tag text-warning fw-bold fs-15" id="item-price-display-{{ $cartItem->id }}">
                                                 TZS {{ number_format($cartItem->product->price ?? $itemTotal) }}
                                             </span>
                                         </div>
@@ -111,15 +111,15 @@
                     @endforelse
 
                     <!-- Empty Cart State -->
-                    <div class="ak23-empty-cart-card text-center p-5 rounded-4 bg-white border shadow-sm {{ count($cartItems) == 0 ? '' : 'd-none' }}" id="emptyCartView">
-                        <div class="ak23-empty-cart-icon mb-3">
-                            <i class="las la-shopping-basket"></i>
+                    <div class="ak23-empty-cart-card text-center p-5 rounded-3 {{ count($cartItems) == 0 ? '' : 'd-none' }}" style="background: #111118; border: 1px solid rgba(255,255,255,0.07);" id="emptyCartView">
+                        <div class="ak23-empty-cart-icon mb-3 text-warning">
+                            <i class="las la-shopping-basket fs-48"></i>
                         </div>
-                        <h4 class="fw-bold text-dark mb-2">@lang('Your Studio Cart is Empty')</h4>
+                        <h4 class="fw-bold text-white mb-2">@lang('Your Studio Cart is Empty')</h4>
                         <p class="text-muted fs-13 mb-4" style="max-width: 420px; margin-left: auto; margin-right: auto;">
                             @lang('Browse our complete vocal mixing masterclasses, DAW workflows, and licensed software packages to get started.')
                         </p>
-                        <a href="{{ route('courses') }}" class="btn btn-warning fw-bold px-4 py-2 rounded-3 fs-14">
+                        <a href="{{ route('courses') }}" class="btn ak23-btn-checkout fw-bold px-4 py-2 rounded-3 fs-14">
                             <i class="las la-compass me-1"></i> @lang('Explore Courses & Software') &rarr;
                         </a>
                     </div>
@@ -128,9 +128,9 @@
 
             <!-- Right Column: Live Order Summary -->
             <div class="col-lg-5 col-xl-4">
-                <div class="ak23-cart-summary-card p-4 rounded-4 bg-white border shadow-sm">
-                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
-                        <h4 class="fw-bold fs-16 text-dark mb-0">@lang('Order Summary')</h4>
+                <div class="ak23-cart-summary-card p-4 rounded-3 sticky-top" style="top: 85px; background: #111118; border: 1.5px solid rgba(251, 175, 67, 0.35); box-shadow: 0 10px 35px rgba(0,0,0,0.45);">
+                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
+                        <h4 class="fw-bold fs-16 text-white mb-0">@lang('Order Summary')</h4>
                         <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill fs-11 px-2">
                             @lang('Instant Access')
                         </span>
@@ -139,13 +139,13 @@
                     <!-- Items Count -->
                     <div class="d-flex justify-content-between align-items-center py-2 text-muted fs-13">
                         <span>@lang('Total Courses & Kits')</span>
-                        <span class="text-dark fw-bold" id="summaryItemsCount">{{ count($cartItems) }}</span>
+                        <span class="text-white fw-bold" id="summaryItemsCount">{{ count($cartItems) }}</span>
                     </div>
 
                     <!-- Subtotal Row -->
                     <div class="d-flex justify-content-between align-items-center py-2 text-muted fs-13">
                         <span>@lang('Subtotal')</span>
-                        <span class="text-dark fw-bold" id="cartSubtotalDisplay">TZS {{ $subtotalFormatted }}</span>
+                        <span class="text-warning fw-bold" id="cartSubtotalDisplay">TZS {{ $subtotalFormatted }}</span>
                     </div>
 
                     <!-- Processing Fee Row -->
@@ -164,12 +164,12 @@
                     </div>
 
                     <!-- Promo / Coupon Code Box -->
-                    <div class="ak23-coupon-box my-3 p-3 rounded-3 bg-light border">
+                    <div class="ak23-coupon-box my-3 p-3 rounded-2" style="background: #161622; border: 1px solid rgba(255,255,255,0.08);">
                         <div class="d-flex align-items-center justify-content-between mb-2">
-                            <label class="fs-12 fw-bold text-dark mb-0 d-flex align-items-center gap-1">
+                            <label class="fs-12 fw-bold text-white mb-0 d-flex align-items-center gap-1">
                                 <i class="las la-tag text-warning"></i> @lang('Have a Promo Code?')
                             </label>
-                            <span class="fs-10 text-muted">Try <strong>AK23LAUNCH</strong></span>
+                            <span class="fs-10 text-muted">Try <strong class="text-warning">AK23LAUNCH</strong></span>
                         </div>
 
                         <!-- Applied Coupon Pill -->
@@ -186,7 +186,7 @@
 
                         <!-- Input Form -->
                         <div id="cartCouponInputGroup" class="input-group input-group-sm {{ !empty($couponCode) ? 'd-none' : '' }}">
-                            <input type="text" class="form-control text-uppercase font-monospace fs-12" id="cartCouponInput" placeholder="ENTER CODE" value="{{ $couponCode ?? '' }}" maxlength="30">
+                            <input type="text" class="form-control text-uppercase font-monospace fs-12 bg-dark text-white border-secondary" id="cartCouponInput" placeholder="ENTER CODE" value="{{ $couponCode ?? '' }}" maxlength="30">
                             <button class="btn btn-warning fw-bold px-3 text-dark fs-12" type="button" id="btnApplyCartCoupon">
                                 @lang('Apply')
                             </button>
@@ -194,12 +194,12 @@
                         <div id="cartCouponMsg" class="fs-11 mt-1 d-none"></div>
                     </div>
 
-                    <hr class="my-3" style="border-color: #F3F4F6;">
+                    <hr class="my-3" style="border-color: rgba(255,255,255,0.08);">
 
                     <!-- Grand Total Block -->
                     <div class="d-flex justify-content-between align-items-end mb-4">
                         <div>
-                            <div class="fw-bold text-dark fs-14">@lang('Total Amount')</div>
+                            <div class="fw-bold text-white fs-14">@lang('Total Amount')</div>
                             <div class="text-muted fs-11">@lang('All software licenses included')</div>
                         </div>
 
@@ -219,7 +219,7 @@
                     </a>
 
                     <!-- Security & Trust Notice -->
-                    <div class="p-3 rounded-3 bg-light border text-center">
+                    <div class="p-3 rounded-2 text-center" style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.2);">
                         <div class="d-flex align-items-center justify-content-center gap-2 text-success fw-bold fs-12 mb-1">
                             <i class="las la-shield-alt fs-16"></i>
                             <span>@lang('Official Selcom Protected Gateway')</span>
@@ -231,7 +231,7 @@
 
                     <!-- Return Link -->
                     <div class="text-center mt-3">
-                        <a href="{{ route('courses') }}" class="text-muted text-decoration-none fs-12">
+                        <a href="{{ route('courses') }}" class="text-muted text-decoration-none fs-12 hover-gold">
                             &larr; @lang('Continue browsing catalog')
                         </a>
                     </div>
@@ -245,51 +245,110 @@
 
 @push('style')
 <style>
-/* Clean Light Theme Matching Checkout & Brand System */
+/* Maarifa23 Studio Dark Cart Styling */
 .ak23-cart-wrapper {
-    background-color: #F6F8FA !important;
-    min-height: calc(100vh - 120px);
+    background-color: #09090D !important;
 }
 
 .ak23-cart-icon-circle {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    background: #FFF7ED;
-    color: #FF7A00;
+    background: rgba(251, 175, 67, 0.15);
+    color: #FBAF43;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 800;
+}
+
+.ak23-btn-outline-gold {
+    background: transparent;
+    border: 1px solid rgba(251, 175, 67, 0.5);
+    color: #FBAF43 !important;
+    transition: all 0.2s ease;
+}
+
+.ak23-btn-outline-gold:hover {
+    background: rgba(251, 175, 67, 0.15);
+    border-color: #FBAF43;
 }
 
 .ak23-cart-page-title {
     font-size: 18px;
     font-weight: 800;
-    color: #111827;
+    color: #FFFFFF;
 }
 
 .ak23-cart-thumb-box {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
 }
 
 .ak23-cart-thumb-img {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     object-fit: cover;
 }
 
 .ak23-cart-thumb-placeholder {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     background: #111119;
-    color: #FF7A00;
+    color: #FBAF43;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 24px;
+}
+
+.ak23-cart-item-title {
+    font-size: 14px;
+    line-height: 1.3;
+}
+
+.ak23-btn-remove-item {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: #EF4444 !important;
+    border: 1px solid rgba(239, 68, 68, 0.2) !important;
+}
+
+.ak23-btn-remove-item:hover {
+    background: #EF4444 !important;
+    color: #FFFFFF !important;
+}
+
+.ak23-grand-total {
+    color: #FBAF43 !important;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+}
+
+.ak23-btn-checkout {
+    background: linear-gradient(135deg, #FBAF43 0%, #E29828 100%);
+    color: #09090D !important;
+    border: none;
+    box-shadow: 0 4px 18px rgba(251, 175, 67, 0.35);
+    transition: all 0.2s ease;
+}
+
+.ak23-btn-checkout:hover {
+    background: linear-gradient(135deg, #FFBE5C 0%, #FBAF43 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(251, 175, 67, 0.5);
+}
+
+.hover-gold:hover {
+    color: #FBAF43 !important;
 }
 
 .ak23-cart-item-title {

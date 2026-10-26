@@ -26,8 +26,17 @@
 
     @stack('style')
 
-    <link rel="stylesheet"
-        href="{{ asset($activeTemplateTrue . 'css/color.php') }}?color={{ gs('base_color') }}&secondColor={{ gs('secondary_color') }}" />
+    @php
+        $baseHsl = hexToHsl(gs('base_color') ?: '#FBAF43');
+    @endphp
+    <style>
+        :root {
+            --base-h: {{ $baseHsl['h'] }};
+            --base-s: {{ $baseHsl['s'] }}%;
+            --base-l: {{ $baseHsl['l'] }}%;
+            --base-color: #{{ str_replace('#', '', gs('base_color') ?: 'FBAF43') }};
+        }
+    </style>
 </head>
 
 @php echo loadExtension('google-analytics') @endphp

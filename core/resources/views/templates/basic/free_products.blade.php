@@ -63,4 +63,75 @@
             </div>
         </div>
     </section>
+@push('style')
+<style>
+.latest-template {
+    background: #09090D !important;
+    padding: 40px 0 60px !important;
+}
+.section-heading__title {
+    color: #FFFFFF !important;
+    font-weight: 800;
+}
+.custom--tab.nav-pills .nav-link {
+    background: #111118 !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    color: #8E8EA2 !important;
+    border-radius: 8px !important;
+}
+.custom--tab.nav-pills .nav-link.active {
+    background: linear-gradient(135deg, #FBAF43 0%, #E29828 100%) !important;
+    color: #09090D !important;
+    font-weight: 800;
+    border-color: #FBAF43 !important;
+}
+.product-card {
+    background: #111118 !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.product-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(251, 175, 67, 0.35) !important;
+}
+.product-card__thumb {
+    position: relative;
+    width: 100%;
+    padding-top: 64%;
+    height: 0;
+    overflow: hidden;
+    background: #09090D;
+}
+.product-card__thumb .link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.product-card__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.product-card__content {
+    background: #111118 !important;
+    border: none !important;
+    padding: 12px 14px 14px !important;
+}
+.product-card__title a {
+    color: #FFFFFF !important;
+}
+.product-card__title a:hover {
+    color: #FBAF43 !important;
+}
+.product-card__price {
+    color: #22C55E !important;
+    font-weight: 800;
+}
+</style>
+@endpush
 @endsection

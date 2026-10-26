@@ -81,8 +81,8 @@
                                 <a href="{{ $prodUrl }}">{{ $prodTitle }}</a>
                             </h3>
                             <div class="ak-card-price">
-                                @if($product->is_free)
-                                    <span class="text-success">FREE</span>
+                                @if($product->is_free || $prodPrice <= 0)
+                                    <span class="text-success fw-bold">FREE</span>
                                 @else
                                     <span>TSH {{ number_format($prodPrice) }}</span>
                                 @endif
@@ -167,7 +167,7 @@
                 <h2 class="ak-section-title">Trending This Week</h2>
             </div>
 
-            <div class="row g-3 g-md-4 mb-5">
+            <div class="row g-3 g-md-4 mb-4">
                 @foreach($trendingProducts as $tProduct)
                     @php
                         $tTitle = $tProduct->title ?: $tProduct->name;
@@ -194,7 +194,11 @@
                                     <a href="{{ $tUrl }}">{{ $tTitle }}</a>
                                 </h3>
                                 <div class="ak-card-price">
-                                    <span>TSH {{ number_format($tPrice) }}</span>
+                                    @if($tProduct->is_free || $tPrice <= 0)
+                                        <span class="text-success fw-bold">FREE</span>
+                                    @else
+                                        <span>TSH {{ number_format($tPrice) }}</span>
+                                    @endif
                                 </div>
                                 <div class="ak-card-meta">
                                     <span>{{ $tCat }}</span>
@@ -214,18 +218,18 @@
 @push('style')
 <style>
 /* ==========================================================================
-   AKDOWNLOADS SIMPLIFIED THEME & LAYOUT
+   MAARIFA23 STUDIO DARK THEME & COMPACT NATIVE FIT
    ========================================================================== */
 
 /* Main Body Background */
 .ak-home-main {
-    background-color: #0E0F13;
-    min-height: 80vh;
+    background-color: #09090D;
+    padding: 24px 0 44px;
 }
 
 /* Centered Search Bar */
 .ak-search-wrapper {
-    max-width: 540px;
+    max-width: 560px;
     margin: 0 auto;
 }
 .ak-search-form {
@@ -244,21 +248,23 @@
 .ak-search-input {
     width: 100%;
     height: 48px;
-    background: #FFFFFF;
-    border: 1.5px solid #FBAF43;
+    background: #111118;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
     border-radius: 999px;
     padding: 0 20px 0 46px;
-    font-size: 14.5px;
-    color: #1E293B;
+    font-size: 14px;
+    color: #FFFFFF;
     outline: none;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     transition: all 0.2s ease;
 }
 .ak-search-input:focus {
-    box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.25);
+    border-color: #FBAF43;
+    background: #151520;
+    box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.2);
 }
 .ak-search-input::placeholder {
-    color: #94A3B8;
+    color: #8E8EA2;
 }
 
 /* Main Heading */
@@ -299,11 +305,11 @@
 .ak-notice-banner {
     max-width: 860px;
     margin: 0 auto;
-    background: rgba(20, 22, 30, 0.9);
+    background: rgba(17, 17, 24, 0.95);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid rgba(251, 175, 67, 0.25);
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 10px 16px;
     display: flex;
     align-items: center;
@@ -394,26 +400,28 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
-/* Product Cards Grid (Matching akdownloads layout) */
+/* Product Cards Grid (Studio Dark Texture & Smooth Looks) */
 .ak-card {
-    background: #FFFFFF;
-    border-radius: 12px;
+    background: #111118;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
     height: 100%;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 .ak-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(251, 175, 67, 0.3);
+    border-color: rgba(251, 175, 67, 0.4);
 }
 .ak-card-thumb {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* 1:1 Aspect Ratio */
-    background: #000000;
+    padding-top: 64%; /* Reduced height on top for square-like overall card */
+    background: #09090D;
     overflow: hidden;
 }
 .ak-card-img {
@@ -430,62 +438,63 @@
 }
 .ak-card-cart-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 32px;
-    height: 32px;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background: #FBAF43;
     border: none;
-    color: #000000;
+    color: #09090D;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 15px;
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     transition: transform 0.15s ease, background-color 0.15s ease;
     z-index: 2;
 }
 .ak-card-cart-btn:hover {
-    background: #FFA126;
+    background: #FFBE5C;
     transform: scale(1.1);
 }
 
 .ak-card-body {
-    padding: 14px 12px 16px;
+    padding: 10px 12px 12px;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    background: #111118;
 }
 .ak-card-title {
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 700;
-    line-height: 1.35;
-    margin: 0 0 6px 0;
+    line-height: 1.3;
+    margin: 0 0 4px 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 36px;
+    min-height: 34px;
 }
 .ak-card-title a {
-    color: #0F172A;
+    color: #FFFFFF;
     text-decoration: none;
     transition: color 0.15s ease;
 }
 .ak-card-title a:hover {
-    color: #E29828;
+    color: #FBAF43;
 }
 .ak-card-price {
-    font-size: 14.5px;
+    font-size: 13.5px;
     font-weight: 800;
     color: #FBAF43;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 .ak-card-meta {
-    font-size: 11px;
-    color: #64748B;
+    font-size: 10.5px;
+    color: #8E8EA2;
     margin-top: auto;
 }
 
@@ -498,7 +507,6 @@
     letter-spacing: -0.01em;
 }
 
-
 /* ==========================================================================
    PAGINATION STYLING (ALIGNED & CLEAR)
    ========================================================================== */
@@ -510,9 +518,9 @@
     flex-wrap: wrap;
     gap: 16px;
     padding: 16px 20px;
-    background: #12141A;
+    background: #111118;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
+    border-radius: 10px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 .ak-pagination-info {
@@ -647,4 +655,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
-

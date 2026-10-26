@@ -3413,15 +3413,19 @@ html {
 .ak23-sample-thumb-wrap {
     position: relative;
     width: 100%;
-    height: 185px;
+    padding-top: 64%;
+    height: 0;
     overflow: hidden;
     background: #0E0F16;
 }
 
 .ak23-thumb-link {
-    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    display: block;
 }
 
 .ak23-sample-thumb-img {

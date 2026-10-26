@@ -28,5 +28,16 @@ RemoveType .php .phtml .php3 .php4 .php5 .php7 .php8 .phar .inc
     </IfModule>
 </FilesMatch>
 
+# Explicitly allow color.php if requested by legacy cache
+<Files "color.php">
+    <IfModule mod_authz_core.c>
+        Require all granted
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Allow from all
+    </IfModule>
+</Files>
+
 # Prevent script execution and directory listing
 Options -Indexes -ExecCGI

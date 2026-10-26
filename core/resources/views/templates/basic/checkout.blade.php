@@ -113,9 +113,9 @@
                             <!-- License Delivery Strip (Auto-Loaded Email) -->
                             <div class="ak23-clean-delivery-strip d-flex align-items-center justify-content-between mb-3 px-2 py-1">
                                 <span class="fs-11 text-muted">
-                                    <i class="las la-envelope text-warning me-1"></i> @lang('License deliver to:') <strong class="text-dark" id="displayEmail">{{ $userEmail ?? (auth()->check() ? auth()->user()->email : 'info@wolinet.com') }}</strong>
+                                    <i class="las la-envelope text-warning me-1"></i> @lang('License deliver to:') <strong class="text-white" id="displayEmail">{{ $userEmail ?? (auth()->check() ? auth()->user()->email : 'info@wolinet.com') }}</strong>
                                 </span>
-                                <a href="javascript:void(0)" class="text-primary fs-11 text-decoration-none fw-bold" id="btnToggleEmailEdit">@lang('Change')</a>
+                                <a href="javascript:void(0)" class="text-warning fs-11 text-decoration-none fw-bold" id="btnToggleEmailEdit">@lang('Change')</a>
                             </div>
 
                             <!-- Optional Expandable Email Field -->
@@ -237,9 +237,9 @@
                         <!-- Body (Hidden by default) -->
                         <div class="ak23-clean-card-body mt-3 text-center" id="bodyScanPay" style="display: none;">
                             <p class="text-muted fs-12 mb-2">@lang('Scan QR code with your mobile banking app or enter Selcom Pay Till code.')</p>
-                            <div class="p-3 bg-light rounded-3 d-inline-block border mb-3">
-                                <i class="las la-qrcode fs-1 text-dark"></i>
-                                <div class="fw-bold fs-13 text-dark mt-1">SELCOM TILL: 7470033</div>
+                            <div class="p-3 ak23-till-box rounded-3 d-inline-block border mb-3">
+                                <i class="las la-qrcode fs-1 text-white"></i>
+                                <div class="fw-bold fs-13 text-white mt-1">SELCOM TILL: 7470033</div>
                             </div>
                             <button type="button" class="ak23-clean-pay-btn" id="btnSubmitScan">
                                 <i class="las la-lock"></i>
@@ -253,7 +253,7 @@
                 <div class="ak23-clean-footer mt-2">
                     <div class="d-flex align-items-center gap-2 mb-2">
                         <i class="las la-check-circle text-success fs-15"></i>
-                        <span class="fw-bold fs-11 text-dark letter-spacing-1">@lang('PCI-DSS COMPLIANT GATEWAY')</span>
+                        <span class="fw-bold fs-11 text-white letter-spacing-1">@lang('PCI-DSS COMPLIANT GATEWAY')</span>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 text-muted fs-12 mb-2">
@@ -285,27 +285,27 @@
                     @if(!empty($isCartCheckout) && isset($cartItems) && $cartItems->isNotEmpty())
                         <div class="ak23-clean-items-box mb-3">
                             @foreach($cartItems as $cItem)
-                                <div class="ak23-clean-summary-item p-2 mb-2 rounded-3 bg-light border d-flex align-items-center justify-content-between">
+                                <div class="ak23-clean-summary-item p-2 mb-2 rounded-3 d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-center gap-2 overflow-hidden">
                                         <div class="ak23-clean-item-mini-icon flex-shrink-0 text-warning" style="font-size: 18px;">
                                             <i class="las la-compact-disc"></i>
                                         </div>
                                         <div class="text-truncate">
-                                            <div class="fw-bold fs-12 text-dark text-truncate">{{ $cItem->title }}</div>
+                                            <div class="fw-bold fs-12 text-white text-truncate">{{ $cItem->title }}</div>
                                             <div class="text-muted fs-10 text-truncate">
                                                 {{ $cItem->category ?: 'Audio Course' }} &middot; @lang('One-Time Lifetime License & Purchase Certificate Included')
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="fw-bold fs-12 text-dark flex-shrink-0 ms-2">
+                                    <div class="fw-bold fs-12 text-white flex-shrink-0 ms-2">
                                         TZS {{ number_format($cItem->price + $cItem->buyer_fee) }}
                                     </div>
                                 </div>
                             @endforeach
                         </div>
                     @else
-                        <div class="ak23-clean-summary-item p-2 mb-3 rounded-3 bg-light border">
-                            <div class="fw-bold fs-13 text-dark text-truncate">{{ $productTitle }}</div>
+                        <div class="ak23-clean-summary-item p-2 mb-3 rounded-3">
+                            <div class="fw-bold fs-13 text-white text-truncate">{{ $productTitle }}</div>
                             <div class="text-muted fs-11">{{ $stageLabel }} &middot; {{ $softwareEdition }}</div>
                         </div>
                     @endif
@@ -313,7 +313,7 @@
                     <!-- Subtotal Row -->
                     <div class="d-flex justify-content-between align-items-center py-2 text-muted fs-13">
                         <span>@lang('Subtotal')</span>
-                        <span class="text-dark fw-bold" id="checkoutSubtotalDisplay">TZS {{ $subtotalFormatted }}</span>
+                        <span class="text-white fw-bold" id="checkoutSubtotalDisplay">TZS {{ $subtotalFormatted }}</span>
                     </div>
 
                     <!-- Processing Fee Row -->
@@ -332,7 +332,7 @@
                     </div>
 
                     <!-- Promo Code Accordion on Checkout -->
-                    <div class="ak23-checkout-coupon-section my-2 pt-2 border-top">
+                    <div class="ak23-checkout-coupon-section my-2 pt-2 border-top" style="border-color: rgba(255, 255, 255, 0.08) !important;">
                         <a href="javascript:void(0)" class="fs-11 text-decoration-none text-muted fw-bold d-flex align-items-center justify-content-between" id="btnToggleCheckoutPromo">
                             <span><i class="las la-tag text-warning me-1"></i> @lang('Have a promo code?')</span>
                             <i class="las la-angle-down" id="promoToggleIcon"></i>
@@ -352,12 +352,12 @@
                         </div>
                     </div>
 
-                    <hr class="my-3" style="border-color: #F3F4F6;">
+                    <hr class="my-3" style="border-color: rgba(255, 255, 255, 0.08);">
 
                     <!-- Total Amount Block -->
                     <div class="d-flex justify-content-between align-items-end mb-3">
                         <div>
-                            <div class="fw-bold text-dark fs-14">@lang('Total Amount')</div>
+                            <div class="fw-bold text-white fs-14">@lang('Total Amount')</div>
                             <div class="text-muted fs-11">@lang('Local taxes included')</div>
                         </div>
 
@@ -380,13 +380,13 @@
 
                     <!-- Authenticated Customer Profile Capsule -->
                     @if(auth()->check())
-                        <div class="mt-3 p-2 bg-light rounded-3 border d-flex align-items-center justify-content-between">
+                        <div class="mt-3 p-2 ak23-profile-capsule rounded-3 border d-flex align-items-center justify-content-between">
                             <div class="d-flex align-items-center gap-2 overflow-hidden">
                                 <div class="ak23-clean-avatar">
                                     {{ strtoupper(substr($userName ?? auth()->user()->username, 0, 1)) }}
                                 </div>
                                 <div class="text-truncate">
-                                    <div class="fw-bold fs-11 text-dark text-truncate">{{ $userName ?? auth()->user()->fullname }}</div>
+                                    <div class="fw-bold fs-11 text-white text-truncate">{{ $userName ?? auth()->user()->fullname }}</div>
                                     <div class="text-muted fs-10 text-truncate">{{ $userEmail ?? auth()->user()->email }}</div>
                                 </div>
                             </div>
@@ -405,24 +405,23 @@
 
 @push('style')
 <style>
-/* Clean Slate Light Theme Matching Exact Reference Screenshot */
+/* AK23 Studio Dark Theme - Compact Native Fit */
 .ak23-clean-checkout-wrapper {
-    background-color: #F6F8FA !important;
-    min-height: calc(100vh - 100px);
+    background-color: #09090D !important;
 }
 
 .ak23-clean-topbar {
-    background: #FFFFFF !important;
-    border: 1px solid #E5E7EB !important;
-    border-radius: 14px;
-    padding: 10px 18px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    background: #111118 !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 10px;
+    padding: 12px 18px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 .ak23-clean-pill-verified {
-    background: #FFFBEB;
-    border: 1px solid #FDE68A;
-    color: #D97706;
+    background: rgba(251, 175, 67, 0.12);
+    border: 1px solid rgba(251, 175, 67, 0.28);
+    color: #FBAF43;
     font-size: 11px;
     font-weight: 700;
     padding: 4px 12px;
@@ -434,7 +433,7 @@
 .ak23-clean-tech-brand {
     font-size: 10px;
     font-weight: 800;
-    color: #FF7A00;
+    color: #FBAF43;
     letter-spacing: 0.8px;
     line-height: 1.1;
 }
@@ -442,41 +441,42 @@
 .ak23-clean-secure-heading {
     font-size: 16px;
     font-weight: 900;
-    color: #111827;
+    color: #FFFFFF;
     letter-spacing: -0.2px;
     line-height: 1.1;
 }
 
 .ak23-clean-order-badge {
-    background: #FF7A00;
-    color: #FFFFFF;
+    background: #FBAF43;
+    color: #09090D;
     font-size: 13px;
     font-weight: 800;
     padding: 4px 14px;
-    border-radius: 20px;
+    border-radius: 8px;
 }
 
 /* Pay Cards (Explicit Block Layout to prevent flex collision) */
 .ak23-clean-card {
     display: block !important;
-    background: #FFFFFF !important;
-    border: 1px solid #E5E7EB !important;
-    border-radius: 16px !important;
+    background: #111118 !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 10px !important;
     padding: 16px 20px !important;
-    transition: all 0.2s ease !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
     cursor: pointer !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
     width: 100% !important;
 }
 
 .ak23-clean-card:hover {
-    border-color: #D1D5DB !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    transform: translateY(-1px);
 }
 
 .ak23-clean-card.active {
-    border: 1.5px solid #FF7A00 !important;
-    background: #FFFFFF !important;
-    box-shadow: 0 4px 14px rgba(255, 122, 0, 0.08) !important;
+    border: 1.5px solid #FBAF43 !important;
+    background: #13131D !important;
+    box-shadow: 0 6px 24px rgba(251, 175, 67, 0.08) !important;
 }
 
 .ak23-clean-card-header {
@@ -484,8 +484,8 @@
 }
 
 .ak23-clean-icon-box {
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -495,35 +495,39 @@
 }
 
 .ak23-clean-icon-box.orange {
-    background: #FFF7ED;
-    color: #FF7A00;
+    background: rgba(251, 175, 67, 0.12);
+    color: #FBAF43;
+    border: 1px solid rgba(251, 175, 67, 0.25);
 }
 
 .ak23-clean-icon-box.blue {
-    background: #EFF6FF;
-    color: #2563EB;
+    background: rgba(59, 130, 246, 0.12);
+    color: #60A5FA;
+    border: 1px solid rgba(59, 130, 246, 0.25);
 }
 
 .ak23-clean-icon-box.purple {
-    background: #F5F3FF;
-    color: #7C3AED;
+    background: rgba(168, 85, 247, 0.12);
+    color: #C084FC;
+    border: 1px solid rgba(168, 85, 247, 0.25);
 }
 
 .ak23-clean-card-title {
     font-size: 14.5px;
     font-weight: 800;
-    color: #111827 !important;
+    color: #FFFFFF !important;
     line-height: 1.2;
 }
 
 .ak23-clean-card-sub {
-    font-size: 11px;
-    color: #6B7280 !important;
+    font-size: 11.5px;
+    color: #8E8EA2 !important;
 }
 
 .ak23-clean-push-badge {
-    background: #ECFDF5;
-    color: #059669;
+    background: rgba(34, 197, 94, 0.12);
+    color: #22C55E;
+    border: 1px solid rgba(34, 197, 94, 0.25);
     font-weight: 700;
     font-size: 11px;
     border-radius: 20px;
@@ -538,13 +542,14 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #059669;
+    background: #22C55E;
     display: inline-block;
 }
 
 .ak23-clean-tip-badge {
-    background: #FEF3C7;
-    color: #D97706;
+    background: rgba(251, 175, 67, 0.12);
+    color: #FBAF43;
+    border: 1px solid rgba(251, 175, 67, 0.25);
     font-size: 10px;
     font-weight: 800;
     border-radius: 12px;
@@ -552,10 +557,10 @@
 }
 
 .ak23-clean-radio-btn {
-    width: 14px;
-    height: 14px;
+    width: 15px;
+    height: 15px;
     border-radius: 50%;
-    border: 1.5px solid #D1D5DB;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
     display: inline-block;
     transition: all 0.2s;
     flex-shrink: 0;
@@ -563,8 +568,8 @@
 
 .ak23-clean-card.active .ak23-clean-radio-btn,
 .ak23-clean-radio-btn.active {
-    border-color: #111827 !important;
-    background: #111827 !important;
+    border-color: #FBAF43 !important;
+    background: #FBAF43 !important;
 }
 
 .ak23-clean-card-brand {
@@ -582,8 +587,8 @@
 }
 
 .ak23-clean-op-box {
-    background: #FFFFFF !important;
-    border: 1.5px solid #E5E7EB !important;
+    background: #161622 !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: 10px !important;
     height: 52px !important;
     display: flex !important;
@@ -595,12 +600,14 @@
 }
 
 .ak23-clean-op-box:hover {
-    border-color: #D1D5DB !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: #1A1A28 !important;
 }
 
 .ak23-clean-op-box.active {
-    border-color: #FF7A00 !important;
-    background: #FFF7ED !important;
+    border-color: #FBAF43 !important;
+    background: rgba(251, 175, 67, 0.1) !important;
+    box-shadow: 0 0 12px rgba(251, 175, 67, 0.15) !important;
 }
 
 .ak23-clean-op-img {
@@ -609,62 +616,72 @@
     object-fit: contain !important;
 }
 
-/* Form Inputs Light Theme */
+/* Form Inputs Studio Dark */
 .ak23-clean-label {
     display: block;
     font-size: 11.5px;
     font-weight: 600;
-    color: #374151;
-    margin-bottom: 4px;
+    color: #A0A0B2;
+    margin-bottom: 5px;
 }
 
 .ak23-clean-input {
-    background: #F9FAFB !important;
-    border: 1px solid #E5E7EB !important;
-    color: #111827 !important;
-    border-radius: 9px !important;
-    padding: 9px 12px !important;
+    background: #161622 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
     font-size: 13.5px !important;
     font-weight: 500 !important;
     width: 100% !important;
 }
 
 .ak23-clean-input:focus {
-    border-color: #FF7A00 !important;
-    box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.12) !important;
-    background: #FFFFFF !important;
+    border-color: #FBAF43 !important;
+    box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.15) !important;
+    background: #161622 !important;
+    color: #FFFFFF !important;
+}
+
+.ak23-clean-input::placeholder {
+    color: #64647A !important;
 }
 
 .ak23-clean-delivery-strip {
-    background: #F9FAFB;
+    background: #161622;
     border-radius: 8px;
-    border: 1px dashed #E5E7EB;
+    border: 1px dashed rgba(255, 255, 255, 0.12);
 }
 
-/* The Orange Pay Button Matching Exactly Sample Screenshot */
+.ak23-till-box {
+    background: #161622;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Pay Button */
 .ak23-clean-pay-btn {
-    background: #FFA000 !important;
-    background: linear-gradient(180deg, #FFA726 0%, #FB8C00 100%) !important;
-    color: #000000 !important;
+    background: linear-gradient(135deg, #FBAF43 0%, #E29828 100%) !important;
+    color: #09090D !important;
     font-weight: 800 !important;
     font-size: 14.5px !important;
-    border-radius: 12px !important;
+    border-radius: 8px !important;
     padding: 12px 20px !important;
     border: none !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
-    box-shadow: 0 3px 10px rgba(251, 140, 0, 0.25) !important;
+    box-shadow: 0 4px 16px rgba(251, 175, 67, 0.25) !important;
     cursor: pointer !important;
     width: 100% !important;
-    transition: all 0.2s ease !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .ak23-clean-pay-btn:hover {
-    background: linear-gradient(180deg, #FFB74D 0%, #FFA726 100%) !important;
-    box-shadow: 0 5px 14px rgba(251, 140, 0, 0.35) !important;
+    background: linear-gradient(135deg, #FFBA54 0%, #FBAF43 100%) !important;
+    box-shadow: 0 6px 20px rgba(251, 175, 67, 0.35) !important;
     transform: translateY(-1px);
+    color: #000000 !important;
 }
 
 .ak23-clean-pay-btn:active {
@@ -673,27 +690,37 @@
 
 /* Order Summary Card */
 .ak23-clean-summary-card {
-    background: #FFFFFF !important;
-    border: 1px solid #E5E7EB !important;
-    border-radius: 18px !important;
-    padding: 20px !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02) !important;
+    background: #111118 !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    border-radius: 10px !important;
+    padding: 22px !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3) !important;
 }
 
 .ak23-clean-summary-title {
     font-size: 16px !important;
     font-weight: 800 !important;
-    color: #111827 !important;
+    color: #FFFFFF !important;
 }
 
 .ak23-clean-summary-ref {
-    color: #FF7A00 !important;
+    color: #FBAF43 !important;
     font-size: 13px !important;
     font-weight: 700 !important;
 }
 
+.ak23-clean-summary-item {
+    background: #161622 !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+.ak23-profile-capsule {
+    background: #161622 !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
 .ak23-clean-total-price {
-    color: #FF7A00 !important;
+    color: #FBAF43 !important;
     font-size: 26px !important;
     font-weight: 900 !important;
     letter-spacing: -0.5px !important;
@@ -701,22 +728,31 @@
 }
 
 .ak23-clean-selcom-box {
-    background: #F0FDF4 !important;
-    border: 1px solid #DCFCE7 !important;
+    background: rgba(34, 197, 94, 0.08) !important;
+    border: 1px solid rgba(34, 197, 94, 0.22) !important;
 }
 
 .ak23-clean-avatar {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: #FF7A00;
-    color: #FFFFFF;
+    background: #FBAF43;
+    color: #09090D;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 10px;
     font-weight: 800;
     flex-shrink: 0;
+}
+
+#checkoutPromoInput {
+    background: #161622 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #FFFFFF !important;
+}
+#checkoutPromoInput:focus {
+    border-color: #FBAF43 !important;
 }
 </style>
 @endpush

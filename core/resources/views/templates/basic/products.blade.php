@@ -249,7 +249,11 @@
                                 </h3>
 
                                 <div class="ak23-sample-card-price">
-                                    <span>TSH {{ number_format($bPrice) }}</span>
+                                    @if((@$bundle && $bundle->is_free) || $bPrice <= 0)
+                                        <span class="text-success fw-bold">FREE</span>
+                                    @else
+                                        <span>TSH {{ number_format($bPrice) }}</span>
+                                    @endif
                                 </div>
 
                                 <div class="ak23-sample-card-meta">
@@ -333,8 +337,8 @@
                             </h3>
 
                             <div class="ak23-sample-card-price">
-                                @if($course->is_free)
-                                    <span class="text-success">FREE</span>
+                                @if($course->is_free || $coursePrice <= 0)
+                                    <span class="text-success fw-bold">FREE</span>
                                 @else
                                     <span>TSH {{ number_format($coursePrice) }}</span>
                                 @endif
@@ -505,12 +509,11 @@
 }
 
 .ak23-catalog-body {
-    padding: 34px 0 64px;
-    background: #F1F5F9;
-    min-height: 60vh;
+    padding: 28px 0 48px;
+    background: #09090D;
 }
 
-/* 4 Courses Per Row Grid - Exactly matching sample */
+/* 4 Courses Per Row Grid */
 .ak23-course-grid-3,
 .ak23-course-grid-4 {
     display: grid;
@@ -543,47 +546,49 @@
     }
 }
 
-/* Sample Card: Crisp White Card with Rounded Corners & Soft Shadow */
+/* Studio Dark Card: Deep Onyx Surface with 10px Rounded Corners & Subtle Glow */
 .ak23-card-sample {
-    background: #FFFFFF;
-    border: 1px solid #E2E8F0;
-    border-radius: 14px;
+    background: #111118;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
-                box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
-                border-color 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
     position: relative;
     cursor: pointer;
     user-select: none;
 }
 
 .ak23-card-sample:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(251, 175, 67, 0.25);
-    border-color: #FBAF43;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(251, 175, 67, 0.3);
+    border-color: rgba(251, 175, 67, 0.4);
 }
 
 .ak23-card-sample:active {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 /* Thumbnail Area with Aspect Ratio & Overflow Hidden */
 .ak23-sample-thumb-wrap {
     position: relative;
     width: 100%;
-    height: 185px;
+    padding-top: 64%; /* Reduced height on top for square-like overall card */
+    height: 0;
     overflow: hidden;
-    background: #0E0F16;
+    background: #09090D;
 }
 
 .ak23-thumb-link {
-    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
+    display: block;
 }
 
 .ak23-sample-thumb-img {
@@ -601,19 +606,19 @@
 /* Floating Circular Cart Button at Top-Right of thumbnail */
 .ak23-sample-cart-btn {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 34px;
-    height: 34px;
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    background: #FFFFFF;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+    background: #FBAF43;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #EA580C;
-    font-size: 18px;
+    color: #09090D;
+    font-size: 15px;
     cursor: pointer;
     z-index: 5;
     transition: all 0.2s ease;
@@ -621,11 +626,10 @@
 }
 
 .ak23-sample-cart-btn:hover {
-    background: #EA580C;
-    color: #FFFFFF !important;
-    border-color: #EA580C;
-    transform: scale(1.12);
-    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.4);
+    background: #FFBE5C;
+    color: #09090D !important;
+    transform: scale(1.1);
+    box-shadow: 0 4px 14px rgba(251, 175, 67, 0.4);
 }
 
 .ak23-sample-cart-btn:active {
@@ -634,21 +638,21 @@
 
 /* Card Body */
 .ak23-sample-card-body {
-    padding: 16px 18px 16px;
+    padding: 10px 12px 12px;
     display: flex;
     flex-direction: column;
     flex: 1;
-    background: #FFFFFF;
+    background: #111118;
 }
 
 /* Title: Clean, High Contrast, 2 Lines */
 .ak23-sample-card-title {
     font-family: inherit;
-    font-size: 15.5px;
+    font-size: 14px;
     font-weight: 700;
     line-height: 1.35;
-    margin: 0 0 10px 0;
-    min-height: 42px;
+    margin: 0 0 8px 0;
+    min-height: 38px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -656,22 +660,22 @@
 }
 
 .ak23-sample-card-title a {
-    color: #0F172A !important;
+    color: #FFFFFF !important;
     text-decoration: none;
     transition: color 0.18s ease;
 }
 
 .ak23-sample-card-title a:hover {
-    color: #EA580C !important;
+    color: #FBAF43 !important;
 }
 
-/* Price: Bright Amber/Orange */
+/* Price: Bright Amber Gold or Emerald Free */
 .ak23-sample-card-price {
-    font-size: 17.5px;
+    font-size: 15.5px;
     font-weight: 800;
-    color: #F59E0B; /* Bright golden amber matching sample */
+    color: #FBAF43;
     letter-spacing: -0.01em;
-    margin-bottom: 14px;
+    margin-bottom: 10px;
     line-height: 1.2;
 }
 
@@ -681,15 +685,15 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 600;
-    color: #64748B;
+    color: #8E8EA2;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
 .ak23-meta-tag {
-    color: #64748B;
+    color: #8E8EA2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -697,11 +701,11 @@
 }
 
 .ak23-meta-sep {
-    color: #94A3B8;
+    color: #555566;
 }
 
 .ak23-meta-date {
-    color: #94A3B8;
+    color: #8E8EA2;
     white-space: nowrap;
 }
 
@@ -928,42 +932,38 @@
     font-size: 13px !important;
     font-weight: 600 !important;
     border-radius: 8px !important;
-    background: #FFFFFF !important;
-    border: 1px solid #CBD5E1 !important;
-    color: #1E293B !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #CBD5E1 !important;
     text-decoration: none !important;
     transition: all 0.18s ease-in-out !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     cursor: pointer !important;
     line-height: 1 !important;
 }
 
 #ak23PaginationList .page-item .page-link:hover {
-    background: #FFFBEB !important;
+    background: rgba(251, 175, 67, 0.15) !important;
     border-color: #FBAF43 !important;
-    color: #B45309 !important;
+    color: #FBAF43 !important;
     transform: translateY(-1px) !important;
-    box-shadow: 0 3px 6px rgba(251, 175, 67, 0.2) !important;
 }
 
 #ak23PaginationList .page-item.active .page-link {
     background: #FBAF43 !important;
     border-color: #FBAF43 !important;
-    color: #0F0F14 !important;
-    font-weight: 700 !important;
-    box-shadow: 0 2px 8px rgba(251, 175, 67, 0.35) !important;
+    color: #09090D !important;
+    font-weight: 800 !important;
+    box-shadow: 0 4px 12px rgba(251, 175, 67, 0.35) !important;
     pointer-events: none !important;
 }
 
 #ak23PaginationList .page-item.disabled .page-link {
-    background: #F8FAFC !important;
-    border-color: #E2E8F0 !important;
-    color: #94A3B8 !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+    color: #555566 !important;
     cursor: not-allowed !important;
     pointer-events: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-    opacity: 0.75 !important;
+    opacity: 0.4 !important;
 }
 </style>
 @endpush

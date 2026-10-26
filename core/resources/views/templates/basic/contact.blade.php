@@ -216,14 +216,12 @@
     <!-- Clean White Contact Page Dedicated High-Priority Styles -->
     <style>
     /* ==========================================================================
-       AK23 CLEAN WHITE CONTACT PAGE STYLES (ZERO BLUE, LUXURY GOLD ACCENTS)
+       AK23 STUDIO DARK CONTACT PAGE STYLES (LUXURY GOLD ACCENTS)
        ========================================================================== */
     .ak23-clean-contact-page {
-        background: #F8FAFC !important;
-        color: #0F172A !important;
-        padding: 50px 0 80px;
-        min-height: 80vh;
-        border-bottom: 1px solid #E2E8F0;
+        background: #09090D !important;
+        color: #FFFFFF !important;
+        padding: 40px 0 60px;
     }
 
     /* Neutralize all blue anchor colors inside contact page */
@@ -234,7 +232,7 @@
     }
 
     .ak23-clean-header {
-        margin-bottom: 34px;
+        margin-bottom: 30px;
         text-align: left;
     }
 
@@ -242,42 +240,42 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: #FEF3C7 !important;
-        border: 1px solid #FDE68A !important;
+        background: rgba(251, 175, 67, 0.12) !important;
+        border: 1px solid rgba(251, 175, 67, 0.28) !important;
         border-radius: 20px;
-        padding: 5px 14px;
+        padding: 4px 14px;
         font-size: 11px;
-        font-weight: 800;
-        letter-spacing: 0.1em;
+        font-weight: 700;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #B45309 !important;
+        color: #FBAF43 !important;
         margin-bottom: 12px;
     }
 
     .ak23-clean-title {
-        font-size: 38px !important;
+        font-size: 34px !important;
         font-weight: 800 !important;
         line-height: 1.15;
-        color: #0F172A !important;
+        color: #FFFFFF !important;
         letter-spacing: -0.025em;
         margin-bottom: 10px;
     }
 
     .ak23-clean-subtitle {
-        font-size: 15px !important;
-        color: #475569 !important;
+        font-size: 14.5px !important;
+        color: #8E8EA2 !important;
         max-width: 680px;
         line-height: 1.6;
         margin: 0;
     }
 
-    /* Left: Native White Card */
+    /* Left: Native Studio Dark Card */
     .ak23-clean-card {
-        background: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 16px !important;
-        padding: 34px 30px !important;
-        box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.02) !important;
+        background: #111118 !important;
+        border: 1px solid rgba(255, 255, 255, 0.07) !important;
+        border-radius: 10px !important;
+        padding: 30px 26px !important;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3) !important;
     }
 
     .ak23-card-title-box {
@@ -288,34 +286,35 @@
     }
 
     .ak23-card-icon-pill {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        background: #FEF3C7;
-        color: #D97706;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: rgba(251, 175, 67, 0.12);
+        color: #FBAF43;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
+        font-size: 20px;
         flex-shrink: 0;
+        border: 1px solid rgba(251, 175, 67, 0.25);
     }
 
     .ak23-card-heading-clean {
-        font-size: 19px !important;
+        font-size: 18px !important;
         font-weight: 800 !important;
-        color: #0F172A !important;
+        color: #FFFFFF !important;
         margin: 0 0 4px !important;
     }
 
     .ak23-card-sub-clean {
         font-size: 13px !important;
-        color: #64748B !important;
+        color: #8E8EA2 !important;
         margin: 0 !important;
         line-height: 1.5;
     }
 
     .ak23-clean-label {
-        color: #1E293B !important;
+        color: #A0A0B2 !important;
         font-size: 11px !important;
         font-weight: 800 !important;
         text-transform: uppercase !important;
@@ -327,41 +326,42 @@
     }
 
     .ak23-clean-label i {
-        color: #D97706;
+        color: #FBAF43;
         font-size: 14px;
     }
 
     .ak23-clean-input {
         width: 100% !important;
-        background: #F8FAFC !important;
-        border: 1px solid #CBD5E1 !important;
+        background: #161622 !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
         border-radius: 8px !important;
-        color: #0F172A !important;
-        font-size: 14px !important;
-        padding: 12px 16px !important;
+        color: #FFFFFF !important;
+        font-size: 13.5px !important;
+        padding: 11px 14px !important;
         outline: none !important;
         transition: all 0.2s ease !important;
     }
 
     .ak23-clean-input:focus {
-        background: #FFFFFF !important;
+        background: #161622 !important;
         border-color: #FBAF43 !important;
-        box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.25) !important;
+        box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.15) !important;
+        color: #FFFFFF !important;
     }
 
     .ak23-clean-input::placeholder {
-        color: #94A3B8 !important;
+        color: #64647A !important;
     }
 
     .ak23-clean-btn-submit {
         background: linear-gradient(135deg, #FBAF43 0%, #E29828 100%) !important;
-        color: #0A0A0E !important;
+        color: #09090D !important;
         font-weight: 800 !important;
         font-size: 14.5px !important;
         border: none !important;
         border-radius: 8px !important;
-        padding: 14px 24px !important;
-        box-shadow: 0 4px 16px rgba(251, 175, 67, 0.35) !important;
+        padding: 13px 24px !important;
+        box-shadow: 0 4px 16px rgba(251, 175, 67, 0.25) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -371,14 +371,15 @@
     }
 
     .ak23-clean-btn-submit:hover {
-        background: linear-gradient(135deg, #FFC107 0%, #F59E0B 100%) !important;
+        background: linear-gradient(135deg, #FFBA54 0%, #FBAF43 100%) !important;
         transform: translateY(-1px);
-        box-shadow: 0 6px 22px rgba(251, 175, 67, 0.45) !important;
+        box-shadow: 0 6px 20px rgba(251, 175, 67, 0.35) !important;
+        color: #000000 !important;
     }
 
     .ak23-clean-sla-note {
         font-size: 12px;
-        color: #64748B;
+        color: #8E8EA2;
         text-align: center;
         margin-top: 14px;
         display: flex;
@@ -388,17 +389,17 @@
     }
 
     .ak23-clean-sla-note i {
-        color: #D97706;
+        color: #FBAF43;
     }
 
-    /* Right: WhatsApp Priority Card (Clean Green Mint) */
+    /* Right: WhatsApp Priority Card */
     .ak23-clean-wa-card {
-        background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%) !important;
-        border: 1px solid #86EFAC !important;
-        border-radius: 16px !important;
+        background: rgba(34, 197, 94, 0.08) !important;
+        border: 1px solid rgba(34, 197, 94, 0.22) !important;
+        border-radius: 10px !important;
         padding: 22px 24px !important;
         margin-bottom: 16px !important;
-        box-shadow: 0 4px 18px rgba(34, 197, 94, 0.12) !important;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2) !important;
     }
 
     .ak23-clean-wa-top {
@@ -409,8 +410,8 @@
     }
 
     .ak23-clean-wa-icon {
-        width: 44px;
-        height: 44px;
+        width: 42px;
+        height: 42px;
         border-radius: 50%;
         background: #25D366 !important;
         color: #FFFFFF !important;
@@ -425,7 +426,7 @@
     .ak23-clean-wa-title {
         font-size: 16px !important;
         font-weight: 800 !important;
-        color: #15803D !important;
+        color: #22C55E !important;
         margin: 0 !important;
         display: flex;
         align-items: center;
@@ -434,8 +435,8 @@
 
     .ak23-clean-wa-badge {
         font-size: 10px;
-        background: #BBF7D0;
-        color: #166534;
+        background: rgba(34, 197, 94, 0.18);
+        color: #22C55E;
         padding: 2px 8px;
         border-radius: 10px;
         font-weight: 800;
@@ -444,14 +445,14 @@
 
     .ak23-clean-wa-subtitle {
         font-size: 11.5px;
-        color: #166534;
+        color: #8E8EA2;
         display: block;
         margin-top: 2px;
     }
 
     .ak23-clean-wa-desc {
         font-size: 13px !important;
-        color: #14532D !important;
+        color: #CBD5E1 !important;
         line-height: 1.5;
         margin: 0 0 14px 0 !important;
     }
@@ -488,36 +489,37 @@
     }
 
     .ak23-clean-channel-item {
-        background: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 12px !important;
+        background: #111118 !important;
+        border: 1px solid rgba(255, 255, 255, 0.07) !important;
+        border-radius: 10px !important;
         padding: 13px 18px !important;
         display: flex !important;
         align-items: center !important;
         gap: 14px !important;
         text-decoration: none !important;
-        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02) !important;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
         transition: all 0.2s ease !important;
     }
 
     .ak23-clean-channel-item:hover {
-        border-color: #FBAF43 !important;
-        background: #FFFFFF !important;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 18px rgba(251, 175, 67, 0.15) !important;
+        border-color: rgba(255, 255, 255, 0.18) !important;
+        background: #13131E !important;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
     }
 
     .ak23-clean-channel-icon {
         width: 40px;
         height: 40px;
         border-radius: 10px;
-        background: #FEF3C7;
-        color: #D97706;
+        background: rgba(251, 175, 67, 0.12);
+        color: #FBAF43;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 20px;
         flex-shrink: 0;
+        border: 1px solid rgba(251, 175, 67, 0.25);
     }
 
     .ak23-clean-channel-content {
@@ -527,39 +529,39 @@
     .ak23-clean-channel-heading {
         font-size: 13.5px !important;
         font-weight: 700 !important;
-        color: #0F172A !important;
+        color: #FFFFFF !important;
         margin-bottom: 2px !important;
     }
 
     .ak23-clean-channel-addr {
         font-size: 13px !important;
         font-weight: 700 !important;
-        color: #D97706 !important;
+        color: #FBAF43 !important;
         margin-bottom: 1px !important;
     }
 
     .ak23-clean-channel-sub {
         font-size: 11.5px !important;
-        color: #64748B !important;
+        color: #8E8EA2 !important;
         margin: 0 !important;
     }
 
     .ak23-clean-channel-arrow {
-        color: #CBD5E1;
+        color: #71718A;
         font-size: 14px;
         transition: color 0.2s ease, transform 0.2s ease;
     }
 
     .ak23-clean-channel-item:hover .ak23-clean-channel-arrow {
-        color: #D97706;
+        color: #FBAF43;
         transform: translateX(2px);
     }
 
     /* Working Hours & SLA Card */
     .ak23-clean-hours-card {
-        background: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        border-radius: 12px !important;
+        background: #111118 !important;
+        border: 1px solid rgba(255, 255, 255, 0.07) !important;
+        border-radius: 10px !important;
         padding: 14px 18px !important;
         margin-bottom: 16px !important;
     }
@@ -569,7 +571,7 @@
         font-weight: 800 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.08em !important;
-        color: #B45309 !important;
+        color: #FBAF43 !important;
         display: flex;
         align-items: center;
         gap: 6px;
@@ -578,7 +580,7 @@
 
     .ak23-clean-hours-text {
         font-size: 12.5px !important;
-        color: #334155 !important;
+        color: #CBD5E1 !important;
         margin: 0 !important;
         line-height: 1.5;
         font-weight: 500;
@@ -587,13 +589,13 @@
     .ak23-clean-hours-sla {
         margin-top: 6px;
         font-size: 11.5px;
-        color: #64748B;
+        color: #8E8EA2;
         display: flex;
         align-items: center;
         gap: 6px;
     }
 
-    /* Social Community Row (Zero Blue Pills) */
+    /* Social Community Row */
     .ak23-clean-social-row {
         display: flex;
         align-items: center;
@@ -606,7 +608,7 @@
         font-weight: 700 !important;
         text-transform: uppercase !important;
         letter-spacing: 0.08em !important;
-        color: #64748B !important;
+        color: #8E8EA2 !important;
     }
 
     .ak23-clean-social-pills {
@@ -619,22 +621,21 @@
         width: 36px;
         height: 36px;
         border-radius: 8px;
-        background: #FFFFFF !important;
-        border: 1px solid #E2E8F0 !important;
-        color: #475569 !important;
+        background: #161622 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: #A0A0B2 !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         font-size: 15px !important;
         text-decoration: none !important;
         transition: all 0.2s ease !important;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
 
     .ak23-clean-social-pill:hover {
-        background: #FEF3C7 !important;
+        background: rgba(251, 175, 67, 0.12) !important;
         border-color: #FBAF43 !important;
-        color: #B45309 !important;
+        color: #FBAF43 !important;
         transform: translateY(-2px);
     }
     </style>

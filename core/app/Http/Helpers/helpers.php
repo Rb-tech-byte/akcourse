@@ -887,3 +887,47 @@ function getHeaderNavItems(): array {
 
     return $items;
 }
+
+function hexToHsl($hex) {
+    $hex = str_replace('#', '', (string)$hex);
+    if (strlen($hex) != 6) {
+        return ['h' => 35, 's' => 96, 'l' => 62];
+    }
+    $red   = hexdec(substr($hex, 0, 2)) / 255;
+    $green = hexdec(substr($hex, 2, 2)) / 255;
+    $blue  = hexdec(substr($hex, 4, 2)) / 255;
+
+    $cmin  = min($red, $green, $blue);
+    $cmax  = max($red, $green, $blue);
+    $delta = $cmax - $cmin;
+
+    if ($delta == 0) {
+        $hue = 0;
+    } else if ($cmax === $red) {
+        $hue = (($green - $blue) / $delta);
+    } else if ($cmax === $green) {
+        $hue = ($blue - $red) / $delta + 2;
+    } else {
+        $hue = ($red - $green) / $delta + 4;
+    }
+
+    $hue = round($hue * 60);
+    if ($hue < 0) {
+        $hue += 360;
+    }
+
+    $lightness  = (($cmax + $cmin) / 2);
+    $saturation = $delta == 0 ? 0 : ($delta / (1 - abs(2 * $lightness - 1)));
+    if ($saturation < 0) {
+        $saturation += 1;
+    }
+
+    $lightness  = round($lightness * 100);
+    $saturation = round($saturation * 100);
+
+    return [
+        'h' => $hue,
+        's' => $saturation,
+        'l' => $lightness,
+    ];
+}
