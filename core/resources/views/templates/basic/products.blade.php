@@ -10,100 +10,161 @@
 @endphp
 
 <!-- =========================================================================
-     COMPACT HERO & REAL-TIME SEARCH / FILTER CONTROL BAR
+     PRODUCTS CATALOG PAGE (SIDEBAR MENU LAYOUT MATCHING AK23STUDIOKITS.COM)
      ========================================================================= -->
-<div class="ak23-catalog-top-bar">
-    <div class="ak23-container">
-        <!-- Top Row: Page Title & Real-Time Search -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
-            <div>
-                <span class="ak23-catalog-bar-tag"><i class="las la-graduation-cap text-warning me-1"></i> AUDIO PRODUCTION CURRICULUM</span>
-                <h1 class="ak23-catalog-bar-title mb-1">Courses &amp; Production Software</h1>
-                <p class="text-muted fs-13 mb-0">Hands-on studio workflows paired with genuine software licenses, multitrack stems, and lifetime access.</p>
-            </div>
+<div class="ak23-catalog-page py-4">
+    <div class="ak23-products-container">
 
-            <!-- Real-time Live Search Input -->
-            <div class="ak23-search-box">
-                <i class="las la-search search-icon"></i>
-                <input type="text" id="ak23LiveSearch" class="form-control" placeholder="Search by course title, DAW, plugin, or topic..." autocomplete="off">
-                <button type="button" id="ak23ClearSearch" class="clear-btn d-none" title="Clear search">
-                    <i class="las la-times-circle"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- Filter Controls Row: Category Pills, Level Filter, Sort & Live Count -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-2 border-top" style="border-color: rgba(255, 255, 255, 0.08) !important;">
-            <!-- Category Series Filter Pills -->
-            <div class="d-flex align-items-center gap-2 flex-wrap" id="ak23SeriesFilterPills">
-                <button type="button" class="btn btn-sm ak23-filter-btn {{ !request('series') && !request('category') ? 'active' : '' }}" data-series="all">
-                    <span>All Courses ({{ $totalCoursesCount }})</span>
-                </button>
-                @foreach($catalog as $cItem)
-                    @php
-                        $cSeries = $cItem['series'];
-                        $isPillActive = request('series') === $cSeries->slug 
-                            || request('category') === $cSeries->slug 
-                            || (string)request('category') === (string)$cSeries->id;
-                    @endphp
-                    <button type="button" class="btn btn-sm ak23-filter-btn {{ $isPillActive ? 'active' : '' }}" 
-                            data-series="{{ $cSeries->slug }}" 
-                            data-category-id="{{ $cSeries->id }}">
-                        <span>{{ $cSeries->title }} ({{ count($cItem['courses']) }})</span>
+        <!-- Top Header: Title & Mobile Filter Trigger -->
+        <div class="ak23-catalog-page-head mb-4">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <span class="ak23-catalog-bar-tag"><i class="las la-graduation-cap text-warning me-1"></i> AUDIO PRODUCTION CURRICULUM</span>
+                    <h1 class="ak23-catalog-bar-title mb-0">Courses &amp; Production Software</h1>
+                </div>
+                <div class="d-lg-none">
+                    <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1" id="ak23MobileFilterToggle">
+                        <i class="las la-sliders-h me-1"></i> Filters &amp; Categories
                     </button>
-                @endforeach
-                <!-- Bundles Quick Filter Pill -->
-                <button type="button" class="btn btn-sm ak23-filter-btn {{ request('series') === 'bundles' ? 'active' : '' }}" data-series="bundles">
-                    <span><i class="las la-cubes me-1"></i>Series Bundles ({{ $totalBundlesCount }})</span>
-                </button>
-            </div>
-
-            <!-- Right Controls: Level Filter, Sort Dropdown & Match Counter -->
-            <div class="d-flex align-items-center gap-2 flex-wrap">
-                <!-- Level Filter -->
-                <select id="ak23LevelFilter" class="form-select form-select-sm ak23-select-filter" style="width: auto;" aria-label="Filter by level">
-                    <option value="all">All Levels</option>
-                    <option value="getting-started">Getting Started</option>
-                    <option value="beginner">Beginner</option>
-                    <option value="developing-your-skills">Developing Skills</option>
-                    <option value="intermediate">Intermediate</option>
-                    <option value="advanced">Advanced</option>
-                </select>
-
-                <!-- Sort Dropdown -->
-                <select id="ak23SortFilter" class="form-select form-select-sm ak23-select-filter" style="width: auto;" aria-label="Sort courses">
-                    <option value="default">Default Order</option>
-                    <option value="price-asc">Price: Low to High</option>
-                    <option value="price-desc">Price: High to Low</option>
-                    <option value="title-asc">Title: A to Z</option>
-                    <option value="lessons-desc">Lessons: High to Low</option>
-                </select>
-
-                <!-- Live Results Count -->
-                <div class="text-muted fs-12 px-2" id="ak23LiveCount">
-                    Showing <strong class="text-white" id="ak23CountNum">{{ $totalCoursesCount }}</strong> courses
                 </div>
             </div>
         </div>
 
-        <!-- Active Filters Chips Bar (Shown when any filter is active) -->
-        <div id="ak23ActiveFiltersBar" class="d-flex align-items-center gap-2 flex-wrap pt-2 mt-2 border-top d-none" style="border-color: rgba(255, 255, 255, 0.05) !important;">
-            <span class="text-muted fs-11 text-uppercase fw-bold letter-spacing-1">Active Filters:</span>
-            <div id="ak23ChipsContainer" class="d-flex align-items-center gap-2 flex-wrap"></div>
-            <button type="button" class="btn btn-link text-warning p-0 fs-11 text-decoration-none ms-1" id="ak23ClearAllChipsBtn">
-                <i class="las la-times me-1"></i>Reset All
-            </button>
-        </div>
-    </div>
-</div>
+        <!-- Main Two-Column Layout: Left Sidebar + Right Catalog Content -->
+        <div class="ak23-catalog-layout">
 
-<!-- =========================================================================
-     CATALOG BODY (STRICTLY 3 PER ROW WITH 6-PER-PAGE PAGINATION)
-     ========================================================================= -->
-<div class="ak23-catalog-body">
-    <div class="ak23-container">
-        <!-- Target Anchor for Smooth Page Switch Scrolling -->
-        <div id="ak23CatalogTopTarget"></div>
+            <!-- LEFT SIDEBAR: Search, Categories, Levels, Sort, Mission Note -->
+            <aside class="ak23-sidebar" id="ak23Sidebar">
+                <!-- 1. Tafuta / Search -->
+                <div class="ak23-sidebar-section">
+                    <label for="ak23LiveSearch" class="ak23-sidebar-heading">
+                        <i class="las la-search text-warning me-1"></i> Tafuta / Search
+                    </label>
+                    <div class="ak23-sidebar-search">
+                        <i class="las la-search search-icon"></i>
+                        <input type="text" id="ak23LiveSearch" class="form-control" placeholder="Search by course title, DAW, plugin, or topic..." autocomplete="off">
+                        <button type="button" id="ak23ClearSearch" class="clear-btn d-none" title="Clear search">
+                            <i class="las la-times-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Kategoria / Categories -->
+                <div class="ak23-sidebar-section">
+                    <div class="ak23-sidebar-heading">
+                        <i class="las la-filter text-warning me-1"></i> Kategoria / Categories
+                    </div>
+                    <div class="ak23-sidebar-nav" id="ak23SeriesFilterPills">
+                        <button type="button" class="ak23-sidebar-item ak23-filter-btn {{ !request('series') && !request('category') ? 'active' : '' }}" data-series="all">
+                            <span>Zote (All Courses)</span>
+                            <span class="ak23-sidebar-count">{{ $totalCoursesCount }}</span>
+                        </button>
+                        @foreach($catalog as $cItem)
+                            @php
+                                $cSeries = $cItem['series'];
+                                $isPillActive = request('series') === $cSeries->slug 
+                                    || request('category') === $cSeries->slug 
+                                    || (string)request('category') === (string)$cSeries->id;
+                            @endphp
+                            <button type="button" class="ak23-sidebar-item ak23-filter-btn {{ $isPillActive ? 'active' : '' }}" 
+                                    data-series="{{ $cSeries->slug }}" 
+                                    data-category-id="{{ $cSeries->id }}">
+                                <span>{{ $cSeries->title }}</span>
+                                <span class="ak23-sidebar-count">{{ count($cItem['courses']) }}</span>
+                            </button>
+                        @endforeach
+                        <button type="button" class="ak23-sidebar-item ak23-filter-btn {{ request('series') === 'bundles' ? 'active' : '' }}" data-series="bundles">
+                            <span><i class="las la-cubes me-1 text-warning"></i> Complete Bundles</span>
+                            <span class="ak23-sidebar-count">{{ $totalBundlesCount }}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. Daraja / Course Level -->
+                <div class="ak23-sidebar-section">
+                    <div class="ak23-sidebar-heading">
+                        <i class="las la-layer-group text-warning me-1"></i> Daraja / Level
+                    </div>
+                    <div class="ak23-sidebar-nav" id="ak23LevelFilterPills">
+                        <button type="button" class="ak23-sidebar-item ak23-level-btn active" data-level="all">
+                            <span>All Levels</span>
+                        </button>
+                        <button type="button" class="ak23-sidebar-item ak23-level-btn" data-level="getting-started">
+                            <span>Getting Started</span>
+                        </button>
+                        <button type="button" class="ak23-sidebar-item ak23-level-btn" data-level="beginner">
+                            <span>Beginner</span>
+                        </button>
+                        <button type="button" class="ak23-sidebar-item ak23-level-btn" data-level="developing-your-skills">
+                            <span>Developing Skills</span>
+                        </button>
+                        <button type="button" class="ak23-sidebar-item ak23-level-btn" data-level="intermediate">
+                            <span>Intermediate</span>
+                        </button>
+                        <button type="button" class="ak23-sidebar-item ak23-level-btn" data-level="advanced">
+                            <span>Advanced</span>
+                        </button>
+                    </div>
+                    <!-- Compatible Level Select Element for JS sync -->
+                    <select id="ak23LevelFilter" class="d-none" aria-label="Filter by level">
+                        <option value="all">All Levels</option>
+                        <option value="getting-started">Getting Started</option>
+                        <option value="beginner">Beginner</option>
+                        <option value="developing-your-skills">Developing Skills</option>
+                        <option value="intermediate">Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+
+                <!-- 4. Panga Kwa / Sort Order -->
+                <div class="ak23-sidebar-section">
+                    <label for="ak23SortFilter" class="ak23-sidebar-heading">
+                        <i class="las la-sort-amount-down text-warning me-1"></i> Panga Kwa / Sort Order
+                    </label>
+                    <div class="ak23-sidebar-select-wrap">
+                        <select id="ak23SortFilter" class="form-select ak23-sidebar-select" aria-label="Sort courses">
+                            <option value="default">Default Order</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="title-asc">Title: A to Z</option>
+                            <option value="lessons-desc">Lessons: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 5. Studio Mission Note in Sidebar -->
+                <div class="ak23-sidebar-mission">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="las la-shield-alt text-warning fs-18"></i>
+                        <span class="fw-bold fs-12 text-white">MAARIFA23 STUDIO</span>
+                    </div>
+                    <p class="fs-12 text-muted mb-0 lh-base">
+                        Hands-on studio workflows paired with genuine software licenses, multitrack stems, and lifetime access.
+                    </p>
+                </div>
+            </aside>
+
+            <!-- RIGHT MAIN CONTENT: Results Count, Chips, 3-Card Grid, Pagination -->
+            <main class="ak23-main-content">
+                <!-- Target Anchor for Smooth Page Switch Scrolling -->
+                <div id="ak23CatalogTopTarget"></div>
+
+                <!-- Results Header: "Showing 17 courses / matokeo yalipatikana" + Active Chips -->
+                <div class="ak23-results-header">
+                    <div class="ak23-results-count">
+                        <span id="ak23CountNum" class="text-warning fw-bold">{{ $totalCoursesCount }}</span> 
+                        <span>matokeo yalipatikana / courses found</span>
+                    </div>
+
+                    <!-- Active Filters Chips Bar -->
+                    <div id="ak23ActiveFiltersBar" class="ak23-chips-wrapper d-none">
+                        <span class="text-muted fs-11 text-uppercase fw-bold">Active:</span>
+                        <div id="ak23ChipsContainer" class="d-flex align-items-center gap-2 flex-wrap"></div>
+                        <button type="button" class="btn btn-link text-warning p-0 fs-11 text-decoration-none ms-1" id="ak23ClearAllChipsBtn">
+                            <i class="las la-times me-1"></i>Reset All
+                        </button>
+                    </div>
+                </div>
 
         <!-- Zero Results Fallback Banner -->
         <div id="ak23NoResults" class="ak23-no-results text-center py-5 d-none">
@@ -356,11 +417,11 @@
         </div>
 
         <!-- =====================================================================
-             PAGINATION CONTROLS (AT LEAST 6 ITEMS PER PAGE)
+             PAGINATION CONTROLS
              ===================================================================== -->
-        <div id="ak23PaginationWrapper" class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-4 mt-3" style="border-top: 1px solid #CBD5E1 !important;">
-            <div class="fs-13" id="ak23PaginationSummary" style="color: #475569; font-weight: 500;">
-                Showing <strong class="text-dark">1–12</strong> of <strong class="text-dark">{{ $totalCoursesCount }}</strong> courses
+        <div id="ak23PaginationWrapper" class="d-flex flex-wrap align-items-center justify-content-between gap-3 pt-4 mt-3" style="border-top: 1px solid rgba(255, 255, 255, 0.08) !important;">
+            <div class="fs-13" id="ak23PaginationSummary" style="color: #9A9AA6; font-weight: 500;">
+                Showing <strong class="text-white">1–12</strong> of <strong class="text-white">{{ $totalCoursesCount }}</strong> courses
             </div>
 
             <nav aria-label="Course catalog page navigation">
@@ -370,6 +431,8 @@
             </nav>
         </div>
 
+            </main>
+        </div>
     </div>
 </div>
 
@@ -485,10 +548,22 @@
     transform: scale(0.95);
 }
 
-.ak23-catalog-top-bar {
-    padding: 32px 0 20px;
-    background: radial-gradient(circle at 50% 0%, rgba(251, 175, 67, 0.08) 0%, transparent 60%), #0D0E15;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+/* Container & Two-Column Layout */
+.ak23-products-container {
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.ak23-catalog-page {
+    background: #09090D;
+    min-height: 80vh;
+}
+
+.ak23-catalog-page-head {
+    padding-bottom: 8px;
 }
 
 .ak23-catalog-bar-tag {
@@ -508,9 +583,199 @@
     color: #FFFFFF;
 }
 
-.ak23-catalog-body {
-    padding: 28px 0 48px;
-    background: #09090D;
+.ak23-catalog-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 36px;
+    align-items: start;
+}
+
+/* Left Sidebar - Styled like ak23studiokits.com */
+.ak23-sidebar {
+    background: #0E0F16;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: sticky;
+    top: 85px;
+    z-index: 10;
+}
+
+.ak23-sidebar-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.ak23-sidebar-heading {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.02em;
+}
+
+/* Sidebar Search Box */
+.ak23-sidebar-search {
+    position: relative;
+    width: 100%;
+}
+
+.ak23-sidebar-search input {
+    background: #141520;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #FFFFFF;
+    font-size: 12.5px;
+    padding: 10px 32px 10px 34px;
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.ak23-sidebar-search input:focus {
+    background: #181928;
+    border-color: #FBAF43;
+    box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.18);
+    color: #FFFFFF;
+    outline: none;
+}
+
+.ak23-sidebar-search input::placeholder {
+    color: #6E7082;
+    font-size: 12px;
+}
+
+.ak23-sidebar-search .search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7A7B8E;
+    font-size: 15px;
+    pointer-events: none;
+}
+
+.ak23-sidebar-search .clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #8E90A2;
+    font-size: 14px;
+    padding: 0;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Sidebar Navigation Items (Categories & Levels) */
+.ak23-sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ak23-sidebar-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: #141520;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #C0C0D2;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    user-select: none;
+}
+
+.ak23-sidebar-item:hover {
+    background: rgba(251, 175, 67, 0.1);
+    border-color: rgba(251, 175, 67, 0.35);
+    color: #FBAF43;
+}
+
+.ak23-sidebar-item.active {
+    background: #FBAF43 !important;
+    border-color: #FBAF43 !important;
+    color: #09090D !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(251, 175, 67, 0.35);
+}
+
+.ak23-sidebar-item.active .ak23-sidebar-count {
+    background: rgba(0, 0, 0, 0.2);
+    color: #09090D;
+}
+
+.ak23-sidebar-count {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #9A9AA6;
+}
+
+/* Sidebar Select (Sort Order) */
+.ak23-sidebar-select {
+    background: #141520 url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23FBAF43' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") no-repeat right 12px center/12px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #FFFFFF;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 9px 34px 9px 12px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.ak23-sidebar-select:focus {
+    background-color: #181928;
+    border-color: #FBAF43;
+    box-shadow: 0 0 0 3px rgba(251, 175, 67, 0.18);
+    color: #FFFFFF;
+    outline: none;
+}
+
+/* Studio Mission Note in Sidebar */
+.ak23-sidebar-mission {
+    background: linear-gradient(135deg, rgba(251, 175, 67, 0.08) 0%, rgba(20, 21, 32, 0.9) 100%);
+    border: 1px solid rgba(251, 175, 67, 0.25);
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 4px;
+}
+
+/* Right Main Content & Results Header */
+.ak23-main-content {
+    min-width: 0;
+}
+
+.ak23-results-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.ak23-results-count {
+    font-size: 13.5px;
+    color: #A0A0B0;
+    font-weight: 500;
 }
 
 /* 3 Courses Per Row Grid with Generous Spacing to Avoid Overcrowding */
@@ -518,18 +783,41 @@
 .ak23-course-grid-4 {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    column-gap: 30px !important;
-    row-gap: 38px !important;
+    column-gap: 26px !important;
+    row-gap: 36px !important;
     margin-bottom: 44px !important;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1199px) {
+    .ak23-catalog-layout {
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 24px;
+    }
     .ak23-course-grid-3,
     .ak23-course-grid-4 {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        column-gap: 22px !important;
+        column-gap: 20px !important;
         row-gap: 28px !important;
-        margin-bottom: 36px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .ak23-catalog-layout {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    .ak23-sidebar {
+        position: static;
+        display: none;
+    }
+    .ak23-sidebar.show-mobile {
+        display: flex;
+    }
+    .ak23-course-grid-3,
+    .ak23-course-grid-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        column-gap: 20px !important;
+        row-gap: 28px !important;
     }
 }
 
@@ -996,6 +1284,8 @@
         }
         if (currentLevel !== 'all') {
             $('#ak23LevelFilter').val(currentLevel);
+            $('#ak23LevelFilterPills .ak23-level-btn').removeClass('active');
+            $('#ak23LevelFilterPills .ak23-level-btn[data-level="' + currentLevel + '"]').addClass('active');
         }
         if (currentSort !== 'default') {
             $('#ak23SortFilter').val(currentSort);
@@ -1086,7 +1376,7 @@
 
             if (currentLevel !== 'all') {
                 hasChips = true;
-                const levelTitle = $('#ak23LevelFilter option:selected').text();
+                const levelTitle = $('#ak23LevelFilterPills .ak23-level-btn[data-level="' + currentLevel + '"] span').text().trim() || $('#ak23LevelFilter option:selected').text() || currentLevel;
                 $container.append(`
                     <span class="ak23-filter-chip">
                         <span>Level: ${levelTitle}</span>
@@ -1363,9 +1653,41 @@
             $('#ak23SeriesFilterPills .ak23-filter-btn[data-series="all"]').trigger('click');
         });
 
-        // Level Filter Dropdown
+        // Level Filter Pill Buttons Click
+        $(document).on('click', '#ak23LevelFilterPills .ak23-level-btn', function(e) {
+            e.preventDefault();
+            const level = $(this).data('level') || 'all';
+            currentLevel = level;
+
+            $('#ak23LevelFilterPills .ak23-level-btn').removeClass('active');
+            $(this).addClass('active');
+
+            $('#ak23LevelFilter').val(level);
+
+            const url = new URL(window.location.href);
+            if (level === 'all') {
+                url.searchParams.delete('level');
+                url.searchParams.delete('stage');
+            } else {
+                url.searchParams.set('level', level);
+            }
+            url.searchParams.delete('page');
+            window.history.pushState({ level: level }, '', url.toString());
+
+            runCatalogFilter(true);
+        });
+
+        // Mobile Filter Toggle Button
+        $('#ak23MobileFilterToggle').on('click', function(e) {
+            e.preventDefault();
+            $('#ak23Sidebar').toggleClass('show-mobile');
+        });
+
+        // Level Filter Dropdown (compatibility fallback)
         $('#ak23LevelFilter').on('change', function() {
             currentLevel = $(this).val();
+            $('#ak23LevelFilterPills .ak23-level-btn').removeClass('active');
+            $('#ak23LevelFilterPills .ak23-level-btn[data-level="' + currentLevel + '"]').addClass('active');
             runCatalogFilter(true);
         });
 
@@ -1383,7 +1705,7 @@
             } else if (action === 'clear-series') {
                 $('#ak23SeriesFilterPills .ak23-filter-btn[data-series="all"]').trigger('click');
             } else if (action === 'clear-level') {
-                $('#ak23LevelFilter').val('all').trigger('change');
+                $('#ak23LevelFilterPills .ak23-level-btn[data-level="all"]').trigger('click');
             } else if (action === 'clear-sort') {
                 $('#ak23SortFilter').val('default').trigger('change');
             }
@@ -1404,6 +1726,9 @@
 
             $('#ak23SeriesFilterPills .ak23-filter-btn').removeClass('active');
             $('#ak23SeriesFilterPills .ak23-filter-btn[data-series="all"]').addClass('active');
+
+            $('#ak23LevelFilterPills .ak23-level-btn').removeClass('active');
+            $('#ak23LevelFilterPills .ak23-level-btn[data-level="all"]').addClass('active');
 
             const url = new URL(window.location.href);
             url.searchParams.delete('series');
