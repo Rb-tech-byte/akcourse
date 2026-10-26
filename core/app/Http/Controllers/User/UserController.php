@@ -264,17 +264,58 @@ class UserController extends Controller
             return to_route('user.home');
         }
 
-        $pageTitle  = 'User Data';
-        $info       = json_decode(json_encode(getIpInfo()), true);
-        $mobileCode = is_array(@$info['code']) ? implode(',', $info['code']) : (string)(@$info['code'] ?? '');
+        $pageTitle  = 'Complete Your Profile';
         $countries  = json_decode(file_get_contents(resource_path('views/partials/country.json')));
+        $info       = json_decode(json_encode(getIpInfo()), true);
+        $ipCode     = is_array(@$info['code']) ? implode(',', $info['code']) : (string)(@$info['code'] ?? '');
 
-        return view('Template::user.user_data', compact('pageTitle', 'user', 'countries', 'mobileCode'));
+        // Default is Tanzania (TZ, +255) as explicitly requested
+        $defaultCountryCode = 'TZ';
+        $defaultCountry     = 'Tanzania';
+        $defaultDialCode    = '255';
+
+        // Select country: user saved code -> Tanzania (default) -> detected IP if valid
+        $mobileCode = $user->country_code ?: ($defaultCountryCode);
+
+        // Smart username suggestion based on user name/email if currently empty
+        $suggestedUsername = $user->username;
+        if (!$suggestedUsername) {
+            $baseName = trim(($user->firstname ?? '') . ($user->lastname ? '_' . $user->lastname : ''));
+            if (empty($baseName)) {
+                $baseName = explode('@', $user->email ?? 'student')[0];
+            }
+            $cleanBase = strtolower(preg_replace('/[^a-z0-9_]/', '', str_replace([' ', '-', '.'], '_', $baseName)));
+            if (strlen($cleanBase) < 6) {
+                $cleanBase = str_pad($cleanBase, 6, '0', STR_PAD_RIGHT);
+            }
+            $candidate = $cleanBase;
+            $counter = 1;
+            while (\App\Models\User::where('username', $candidate)->where('id', '!=', $user->id)->exists()) {
+                $suffix = (string)$counter;
+                $stem = substr($cleanBase, 0, max(6 - strlen($suffix), 3));
+                $candidate = $stem . $suffix;
+                if (strlen($candidate) < 6) {
+                    $candidate = str_pad($candidate, 6, (string)$counter, STR_PAD_RIGHT);
+                }
+                $counter++;
+            }
+            $suggestedUsername = $candidate;
+        }
+
+        return view('Template::user.user_data', compact(
+            'pageTitle',
+            'user',
+            'countries',
+            'mobileCode',
+            'suggestedUsername',
+            'defaultCountry',
+            'defaultCountryCode',
+            'defaultDialCode'
+        ));
     }
 
     public function userDataSubmit(Request $request)
     {
-
         $user = auth()->user();
 
         if ($user->profile_complete == Status::YES) {
@@ -286,14 +327,25 @@ class UserController extends Controller
         $mobileCodes  = implode(',', array_column($countryData, 'dial_code'));
         $countries    = implode(',', array_column($countryData, 'country'));
 
+        // Sanitize phone number: strip non-digits, and if country is Tanzania (+255), remove redundant leading '0' or '255'
+        $mobile = preg_replace('/\D/', '', (string)$request->mobile);
+        if ($request->mobile_code == '255') {
+            if (str_starts_with($mobile, '255') && strlen($mobile) > 9) {
+                $mobile = substr($mobile, 3);
+            }
+            if (str_starts_with($mobile, '0')) {
+                $mobile = substr($mobile, 1);
+            }
+        }
+        $request->merge(['mobile' => $mobile]);
+
         $request->validate([
             'country_code' => 'required|in:' . $countryCodes,
             'country'      => 'required|in:' . $countries,
             'mobile_code'  => 'required|in:' . $mobileCodes,
-            'username'     => 'required|unique:users|min:6',
-            'mobile'       => ['required','regex:/^([0-9]*)$/',Rule::unique('users')->where('dial_code',$request->mobile_code)],
+            'username'     => ['required', 'min:6', Rule::unique('users')->ignore($user->id)],
+            'mobile'       => ['required', 'regex:/^([0-9]*)$/', Rule::unique('users')->where('dial_code', $request->mobile_code)->ignore($user->id)],
         ]);
-
 
         if (preg_match("/[^a-z0-9_]/", trim($request->username))) {
             $notify[] = ['info', 'Username can contain only small letters, numbers and underscore.'];
@@ -303,20 +355,20 @@ class UserController extends Controller
 
         $user->country_code = $request->country_code;
         $user->mobile       = $request->mobile;
-        $user->username     = $request->username;
+        $user->username     = strtolower(trim($request->username));
 
-
-        $user->address = $request->address;
-        $user->city = $request->city;
-        $user->state = $request->state;
-        $user->zip = $request->zip;
+        $user->address      = $request->address;
+        $user->city         = $request->city;
+        $user->state        = $request->state;
+        $user->zip          = $request->zip;
         $user->country_name = @$request->country;
-        $user->dial_code = $request->mobile_code;
+        $user->dial_code    = $request->mobile_code;
 
         $user->profile_complete = Status::YES;
         $user->save();
 
-        return to_route('user.home');
+        $notify[] = ['success', 'Profile completed successfully! Welcome to your dashboard.'];
+        return to_route('user.home')->withNotify($notify);
     }
 
 
