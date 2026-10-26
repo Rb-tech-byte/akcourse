@@ -789,43 +789,62 @@ function getAds($size) {
 
 /**
  * Retrieve dynamic backend-driven header navigation items
+ * Synchronized directly with Admin Panel categories in real-time
  */
 function getHeaderNavItems(): array {
     $items = [];
-    $isProductsRoute = request()->routeIs('products') || request()->routeIs('courses');
-    $currentSeries = request('series');
+    $isHomeOrProducts = request()->routeIs('home') || request()->routeIs('products') || request()->routeIs('courses');
+    $currentSeries    = request('series');
+    $currentCat       = request('category');
+    $currentSubCat    = request('sub_category');
+    $hasFilter        = !empty($currentCat) || !empty($currentSubCat) || (!empty($currentSeries) && $currentSeries !== 'all') || !empty(request('search'));
 
     // 1. All Courses / Products catalog (Top priority in menu)
     $items[] = [
         'title'  => __('All Courses'),
-        'url'    => route('products'),
-        'active' => $isProductsRoute && (!$currentSeries || $currentSeries === 'all'),
+        'url'    => route('home'),
+        'active' => $isHomeOrProducts && !$hasFilter,
         'type'   => 'catalog',
         'series' => 'all',
     ];
 
-    // 2. Dynamic Series from Categories (Vocal Mixing, Audio Editing Software, Beat Making)
+    // 2. Dynamic Categories & Subcategories directly from DB (Instantly synced with Admin - NO CACHE DELAY)
     try {
-        $categories = Cache::remember('header_categories', 3600, function() {
-            return \App\Models\Category::active()->orderBy('id', 'asc')->get(['id', 'name']);
-        });
+        $categories = \App\Models\Category::active()
+            ->with(['subCategories' => function ($q) {
+                $q->where('status', 1);
+            }])
+            ->orderBy('id', 'asc')
+            ->get();
+
         foreach ($categories as $cat) {
-            $slug = match((int)$cat->id) {
-                1 => 'vocal-mixing',
-                2 => 'audio-editing-software',
-                3 => 'beat-making',
-                default => \Illuminate\Support\Str::slug($cat->name)
-            };
+            $catId      = (int)$cat->id;
+            $slug       = \Illuminate\Support\Str::slug($cat->name);
             $cleanTitle = preg_replace('/\s+Series$/i', '', $cat->name);
-            $url = route('products') . '?series=' . $slug;
-            $isActive = $isProductsRoute && ($currentSeries === $slug);
+            $url        = route('home') . '?category=' . $catId;
+            $isActive   = $isHomeOrProducts && ((string)$currentCat === (string)$catId || $currentSeries === $slug);
+
+            $subItems = [];
+            if ($cat->subCategories && $cat->subCategories->isNotEmpty()) {
+                foreach ($cat->subCategories as $sub) {
+                    $subItems[] = [
+                        'id'     => $sub->id,
+                        'title'  => __($sub->name),
+                        'url'    => route('home') . '?category=' . $catId . '&sub_category=' . $sub->id,
+                        'active' => (string)$currentSubCat === (string)$sub->id,
+                    ];
+                }
+            }
 
             $items[] = [
-                'title'  => __($cleanTitle),
-                'url'    => $url,
-                'active' => $isActive,
-                'type'   => 'category',
-                'series' => $slug,
+                'id'        => $catId,
+                'title'     => __($cleanTitle),
+                'full_name' => $cat->name,
+                'url'       => $url,
+                'active'    => $isActive,
+                'type'      => 'category',
+                'series'    => $slug,
+                'sub_items' => $subItems,
             ];
         }
     } catch (\Throwable $e) {}

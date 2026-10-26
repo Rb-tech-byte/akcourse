@@ -3,39 +3,6 @@
 @section('content')
 
 <!-- =========================================================================
-     AKDOWNLOADS SUB-NAVIGATION BAR (CATEGORIES)
-     ========================================================================= -->
-<nav class="ak-subnav-bar">
-    <div class="container-fluid px-lg-5">
-        <ul class="ak-subnav-list">
-            <li>
-                <a href="{{ route('home') }}" class="ak-subnav-link {{ !request('category') && !request('sub_category') ? 'active' : '' }}">
-                    @lang('All Categories')
-                </a>
-            </li>
-            @foreach($categories as $category)
-                <li>
-                    <a href="{{ route('home', ['category' => $category->id]) }}" 
-                       class="ak-subnav-link {{ request('category') == $category->id ? 'active' : '' }}">
-                        {{ __($category->name) }}
-                    </a>
-                </li>
-                @if($category->subCategories && $category->subCategories->isNotEmpty())
-                    @foreach($category->subCategories as $subCat)
-                        <li>
-                            <a href="{{ route('home', ['sub_category' => $subCat->id]) }}" 
-                               class="ak-subnav-link {{ request('sub_category') == $subCat->id ? 'active' : '' }}">
-                                {{ __($subCat->name) }}
-                            </a>
-                        </li>
-                    @endforeach
-                @endif
-            @endforeach
-        </ul>
-    </div>
-</nav>
-
-<!-- =========================================================================
      MAIN BODY CONTAINER (SEARCH, NOTICE & PRODUCT CATALOG)
      ========================================================================= -->
 <main class="ak-home-main py-4">
@@ -43,7 +10,7 @@
         
         <!-- Centered Search Bar -->
         <div class="ak-search-wrapper mb-4">
-            <form action="{{ route('products') }}" method="GET" class="ak-search-form">
+            <form action="{{ route('home') }}" method="GET" class="ak-search-form">
                 <i class="las la-search ak-search-icon"></i>
                 <input type="text" 
                        name="search" 
@@ -53,19 +20,33 @@
             </form>
         </div>
 
-        <!-- Main Title Heading -->
+        <!-- Maarifa23 Main Title Heading -->
         <div class="text-center mb-3">
-            <h1 class="ak-main-heading">DOWNLOAD YOUR FAVOURITE MUSIC TOOLS</h1>
+            <div class="ak23-studio-badge mb-2">
+                <i class="las la-graduation-cap text-warning me-1"></i>
+                <span>MAARIFA23 STUDIO ACADEMY &amp; SOFTWARE</span>
+            </div>
+            <h1 class="ak-main-heading">
+                JIFUNZE PRODUCTION NA PAKUA <span class="ak23-gold-gradient">STUDIO MUSIC TOOLS</span> ZAKO
+            </h1>
         </div>
 
-        <!-- Warning / Information Notice Banner -->
-        <div class="ak-notice-banner mb-4">
+        <!-- Maarifa23 Studio Guidance Banner (Dismissible & Aligned) -->
+        <div class="ak-notice-banner mb-4" id="ak23NoticeBanner">
             <div class="ak-notice-content">
-                <i class="las la-exclamation-circle ak-notice-icon"></i>
+                <i class="las la-shield-alt ak-notice-icon"></i>
                 <span>
-                    <strong>Muhimu!</strong> Katika kila Software na Plugin nimekuwekea video ya maelekezo ya jinsi ya ku-install na kuanza kutumia. Kwa files zote password ni, <a href="https://www.akdownloads.com" target="_blank" class="ak-notice-link">www.akdownloads.com</a>
+                    <strong>Mwongozo wa Maarifa23:</strong> Katika kila Software na Plugin nimekuwekea video ya maelekezo ya jinsi ya ku-install na kuanza kutumia. Password ya files zote ni 
+                    <span class="ak-pwd-badge" id="akNoticePwd" title="@lang('Bofya ku-copy password')">
+                        <code class="ak-pwd-text">maarifa23.com</code>
+                        <i class="las la-copy ak-pwd-icon"></i>
+                        <span class="ak-pwd-toast" id="akPwdToast">Copied!</span>
+                    </span>
                 </span>
             </div>
+            <button type="button" class="ak-notice-close" id="akNoticeClose" aria-label="@lang('Funga')" title="@lang('Funga mwongozo')">
+                <i class="las la-times"></i>
+            </button>
         </div>
 
         <!-- Primary Products Catalog Grid (4 Columns per Row) -->
@@ -260,40 +241,6 @@
    AKDOWNLOADS SIMPLIFIED THEME & LAYOUT
    ========================================================================== */
 
-/* Sub-Navigation Bar */
-.ak-subnav-bar {
-    background: #000000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-}
-.ak-subnav-bar::-webkit-scrollbar {
-    display: none;
-}
-.ak-subnav-list {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 10px 0;
-    margin: 0;
-    list-style: none;
-}
-.ak-subnav-link {
-    color: #CBD5E1;
-    font-size: 12.5px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: color 0.15s ease;
-    display: inline-block;
-}
-.ak-subnav-link:hover,
-.ak-subnav-link.active {
-    color: #FBAF43;
-    font-weight: 700;
-}
-
 /* Main Body Background */
 .ak-home-main {
     background-color: #0E0F13;
@@ -339,50 +286,136 @@
 }
 
 /* Main Heading */
+.ak23-studio-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(251, 175, 67, 0.08);
+    border: 1px solid rgba(251, 175, 67, 0.25);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #FBAF43;
+    text-transform: uppercase;
+}
+.ak23-gold-gradient {
+    background: linear-gradient(135deg, #FBAF43 0%, #F59E0B 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 .ak-main-heading {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
     color: #F1F5F9;
     letter-spacing: -0.01em;
-    margin: 10px 0;
+    margin: 8px 0;
 }
 @media (min-width: 768px) {
     .ak-main-heading {
-        font-size: 28px;
+        font-size: 26px;
     }
 }
 
 /* Notice Banner */
 .ak-notice-banner {
-    max-width: 820px;
+    max-width: 860px;
     margin: 0 auto;
-    background: rgba(251, 175, 67, 0.08);
-    border: 1px solid rgba(251, 175, 67, 0.3);
-    border-radius: 8px;
-    padding: 12px 18px;
-    text-align: center;
+    background: rgba(20, 22, 30, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(251, 175, 67, 0.25);
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transition: all 0.25s ease;
 }
 .ak-notice-content {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     font-size: 13px;
-    color: #E2E8F0;
+    color: #CBD5E1;
     line-height: 1.5;
+    text-align: left;
+    flex: 1;
 }
 .ak-notice-icon {
-    font-size: 18px;
+    font-size: 22px;
     color: #FBAF43;
     flex-shrink: 0;
 }
-.ak-notice-link {
-    color: #FBAF43;
-    text-decoration: underline;
-    font-weight: 700;
+.ak-pwd-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(251, 175, 67, 0.12);
+    border: 1px solid rgba(251, 175, 67, 0.35);
+    border-radius: 6px;
+    padding: 2px 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    margin-left: 4px;
+    user-select: none;
 }
-.ak-notice-link:hover {
-    color: #FFC978;
+.ak-pwd-badge:hover {
+    background: rgba(251, 175, 67, 0.22);
+    border-color: #FBAF43;
+    transform: translateY(-1px);
+}
+.ak-pwd-text {
+    color: #FBAF43;
+    font-weight: 700;
+    font-family: monospace;
+    font-size: 12.5px;
+    background: transparent;
+    padding: 0;
+}
+.ak-pwd-icon {
+    font-size: 13px;
+    color: #FBAF43;
+}
+.ak-pwd-toast {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #10B981;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+}
+.ak-pwd-toast.show {
+    opacity: 1;
+}
+.ak-notice-close {
+    background: transparent;
+    border: none;
+    color: #94A3B8;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 6px;
+    line-height: 1;
+    border-radius: 6px;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+.ak-notice-close:hover {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 /* Product Cards Grid (Matching akdownloads layout) */
@@ -567,3 +600,56 @@
 }
 </style>
 @endpush
+
+@push('script')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const noticeBanner = document.getElementById('ak23NoticeBanner');
+    const closeBtn     = document.getElementById('akNoticeClose');
+    const pwdBadge     = document.getElementById('akNoticePwd');
+    const pwdToast     = document.getElementById('akPwdToast');
+
+    if (noticeBanner && localStorage.getItem('ak23_notice_dismissed') === '1') {
+        noticeBanner.style.display = 'none';
+    }
+
+    if (closeBtn && noticeBanner) {
+        closeBtn.addEventListener('click', function() {
+            noticeBanner.style.opacity = '0';
+            noticeBanner.style.transform = 'translateY(-6px)';
+            setTimeout(function() {
+                noticeBanner.style.display = 'none';
+                localStorage.setItem('ak23_notice_dismissed', '1');
+            }, 200);
+        });
+    }
+
+    if (pwdBadge) {
+        pwdBadge.addEventListener('click', function() {
+            const pwdToCopy = 'maarifa23.com';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(pwdToCopy).then(showToast);
+            } else {
+                const tempInput = document.createElement('input');
+                tempInput.value = pwdToCopy;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                showToast();
+            }
+
+            function showToast() {
+                if (pwdToast) {
+                    pwdToast.classList.add('show');
+                    setTimeout(function() {
+                        pwdToast.classList.remove('show');
+                    }, 1800);
+                }
+            }
+        });
+    }
+});
+</script>
+@endpush
+

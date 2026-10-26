@@ -20,6 +20,86 @@
 @media (max-width: 575.98px) {
   .ak23-brand img, .ak23-brand-img { height: 26px !important; max-width: 140px !important; }
 }
+
+/* Navigation Dropdowns */
+.ak23-nav-item { position: relative; list-style: none; }
+.ak23-has-dropdown { position: relative; }
+.ak23-dropdown-arrow { font-size: 11px; margin-left: 4px; transition: transform 0.2s ease; opacity: 0.7; }
+.ak23-has-dropdown:hover .ak23-dropdown-arrow { transform: rotate(180deg); opacity: 1; }
+.ak23-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background: #121319;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 8px 0;
+  margin: 6px 0 0;
+  list-style: none;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1050;
+  pointer-events: none;
+}
+.ak23-dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+.ak23-has-dropdown:hover .ak23-dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.ak23-dropdown-link {
+  display: block;
+  padding: 8px 18px;
+  color: #CBD5E1;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+.ak23-dropdown-link:hover,
+.ak23-dropdown-link.active {
+  color: #FBAF43;
+  background: rgba(251, 175, 67, 0.1);
+  padding-left: 22px;
+}
+
+/* Mobile Drawer Sub-Links */
+.ak23-drawer-sub-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 4px 12px 10px 58px;
+}
+.ak23-drawer-sub-link {
+  color: #94A3B8;
+  font-size: 12px;
+  font-weight: 500;
+  text-decoration: none !important;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+}
+.ak23-drawer-sub-link:hover,
+.ak23-drawer-sub-link.active {
+  color: #FBAF43;
+  background: rgba(251, 175, 67, 0.1);
+}
 </style>
 
 <!-- =========================================================================
@@ -36,11 +116,34 @@
             <!-- Desktop Navigation Links (>= 992px) -->
             <ul class="ak23-nav-links d-none d-lg-flex mb-0">
                 @foreach($navItems as $item)
-                    <li>
-                        <a href="{{ $item['url'] }}" class="ak23-nav-link {{ $item['active'] ? 'active' : '' }}" @if(isset($item['series'])) data-series="{{ $item['series'] }}" @endif>
-                            {{ __($item['title']) }}
-                        </a>
-                    </li>
+                    @if(!empty($item['sub_items']))
+                        <li class="ak23-nav-item ak23-has-dropdown">
+                            <a href="{{ $item['url'] }}" class="ak23-nav-link {{ $item['active'] ? 'active' : '' }}" @if(isset($item['series'])) data-series="{{ $item['series'] }}" @endif>
+                                <span>{{ __($item['title']) }}</span>
+                                <i class="las la-angle-down ak23-dropdown-arrow"></i>
+                            </a>
+                            <ul class="ak23-dropdown-menu">
+                                <li>
+                                    <a href="{{ $item['url'] }}" class="ak23-dropdown-link fw-bold">
+                                        @lang('All') {{ __($item['title']) }}
+                                    </a>
+                                </li>
+                                @foreach($item['sub_items'] as $subItem)
+                                    <li>
+                                        <a href="{{ $subItem['url'] }}" class="ak23-dropdown-link {{ $subItem['active'] ? 'active' : '' }}">
+                                            {{ __($subItem['title']) }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    @else
+                        <li class="ak23-nav-item">
+                            <a href="{{ $item['url'] }}" class="ak23-nav-link {{ $item['active'] ? 'active' : '' }}" @if(isset($item['series'])) data-series="{{ $item['series'] }}" @endif>
+                                {{ __($item['title']) }}
+                            </a>
+                        </li>
+                    @endif
                 @endforeach
             </ul>
 
@@ -146,7 +249,7 @@
 
         <!-- 2. Course Categories & Series Navigation -->
         <div class="ak23-drawer-section-label">
-            <i class="las la-graduation-cap me-1"></i> @lang('STUDIO COURSES & SERIES')
+            <i class="las la-graduation-cap me-1"></i> @lang('STUDIO COURSES & CATEGORIES')
         </div>
         <div class="ak23-drawer-nav-list">
             @foreach($navItems as $item)
@@ -158,23 +261,32 @@
                         'beat-making' => 'la-drum',
                         default => 'la-compact-disc'
                     };
-                    $badgeText = match($seriesKey) {
-                        'vocal-mixing' => '5 Courses + Plugins',
-                        'audio-editing-software' => '6 DAWs Bundled',
-                        'beat-making' => '6 Courses + Kits',
-                        default => 'Full Catalog'
-                    };
+                    $hasSubItems = !empty($item['sub_items']);
+                    $badgeText = $hasSubItems 
+                        ? count($item['sub_items']) . ' ' . __('Subcategories')
+                        : ($item['type'] === 'catalog' ? __('Full Catalog') : __('Category'));
                 @endphp
-                <a href="{{ $item['url'] }}" class="ak23-drawer-nav-item {{ $item['active'] ? 'active' : '' }}">
-                    <div class="ak23-drawer-nav-icon">
-                        <i class="las {{ $iconClass }}"></i>
-                    </div>
-                    <div class="ak23-drawer-nav-text">
-                        <span class="ak23-drawer-nav-title">{{ __($item['title']) }}</span>
-                        <span class="ak23-drawer-nav-sub">{{ $badgeText }}</span>
-                    </div>
-                    <i class="las la-angle-right ak23-drawer-nav-chevron"></i>
-                </a>
+                <div class="ak23-drawer-nav-group mb-1">
+                    <a href="{{ $item['url'] }}" class="ak23-drawer-nav-item {{ $item['active'] ? 'active' : '' }}">
+                        <div class="ak23-drawer-nav-icon">
+                            <i class="las {{ $iconClass }}"></i>
+                        </div>
+                        <div class="ak23-drawer-nav-text">
+                            <span class="ak23-drawer-nav-title">{{ __($item['title']) }}</span>
+                            <span class="ak23-drawer-nav-sub">{{ $badgeText }}</span>
+                        </div>
+                        <i class="las {{ $hasSubItems ? 'la-angle-down' : 'la-angle-right' }} ak23-drawer-nav-chevron"></i>
+                    </a>
+                    @if($hasSubItems)
+                        <div class="ak23-drawer-sub-pills">
+                            @foreach($item['sub_items'] as $subItem)
+                                <a href="{{ $subItem['url'] }}" class="ak23-drawer-sub-link {{ $subItem['active'] ? 'active' : '' }}">
+                                    <i class="las la-angle-right me-1 opacity-50"></i>{{ __($subItem['title']) }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
             @endforeach
         </div>
 

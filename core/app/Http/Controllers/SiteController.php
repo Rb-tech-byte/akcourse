@@ -37,7 +37,7 @@ class SiteController extends Controller
             session()->put('reference', $reference);
         }
 
-        $pageTitle   = 'AKDOWNLOADS - Download Your Favourite Music Tools';
+        $pageTitle   = 'Maarifa23 - Jifunze Music Production & Studio Tools';
         $sections    = Page::where('tempname', activeTemplate())->where('slug', '/')->first();
         $seoContents = @$sections->seo_content;
         $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
