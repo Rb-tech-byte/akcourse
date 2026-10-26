@@ -793,22 +793,32 @@ function getAds($size) {
  */
 function getHeaderNavItems(): array {
     $items = [];
-    $isHomeOrProducts = request()->routeIs('home') || request()->routeIs('products') || request()->routeIs('courses');
+    $isHome           = request()->routeIs('home');
+    $isProducts       = request()->routeIs('products') || request()->routeIs('courses');
     $currentSeries    = request('series');
     $currentCat       = request('category');
     $currentSubCat    = request('sub_category');
     $hasFilter        = !empty($currentCat) || !empty($currentSubCat) || (!empty($currentSeries) && $currentSeries !== 'all') || !empty(request('search'));
 
-    // 1. All Courses / Products catalog (Top priority in menu)
+    // 1. Home Link (leads to Home page)
+    $items[] = [
+        'title'  => __('Home'),
+        'url'    => route('home'),
+        'active' => $isHome && !$hasFilter,
+        'type'   => 'home',
+        'series' => 'home',
+    ];
+
+    // 2. All Courses (leads directly to /products catalog)
     $items[] = [
         'title'  => __('All Courses'),
-        'url'    => route('home'),
-        'active' => $isHomeOrProducts && !$hasFilter,
+        'url'    => route('products'),
+        'active' => $isProducts && !$hasFilter,
         'type'   => 'catalog',
         'series' => 'all',
     ];
 
-    // 2. Dynamic Categories & Subcategories directly from DB (Instantly synced with Admin - NO CACHE DELAY)
+    // 3. Dynamic Categories & Subcategories directly from DB (Instantly synced with Admin - NO CACHE DELAY)
     try {
         $categories = \App\Models\Category::active()
             ->with(['subCategories' => function ($q) {
@@ -821,8 +831,8 @@ function getHeaderNavItems(): array {
             $catId      = (int)$cat->id;
             $slug       = \Illuminate\Support\Str::slug($cat->name);
             $cleanTitle = preg_replace('/\s+Series$/i', '', $cat->name);
-            $url        = route('home') . '?category=' . $catId;
-            $isActive   = $isHomeOrProducts && ((string)$currentCat === (string)$catId || $currentSeries === $slug);
+            $url        = route('products') . '?series=' . $slug;
+            $isActive   = ($isProducts || $isHome) && ((string)$currentCat === (string)$catId || $currentSeries === $slug);
 
             $subItems = [];
             if ($cat->subCategories && $cat->subCategories->isNotEmpty()) {
@@ -830,7 +840,7 @@ function getHeaderNavItems(): array {
                     $subItems[] = [
                         'id'     => $sub->id,
                         'title'  => __($sub->name),
-                        'url'    => route('home') . '?category=' . $catId . '&sub_category=' . $sub->id,
+                        'url'    => route('products') . '?series=' . $slug . '&sub_category=' . $sub->id,
                         'active' => (string)$currentSubCat === (string)$sub->id,
                     ];
                 }

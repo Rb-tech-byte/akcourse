@@ -256,6 +256,8 @@
                 @php
                     $seriesKey = $item['series'] ?? '';
                     $iconClass = match($seriesKey) {
+                        'home' => 'la-home',
+                        'all' => 'la-graduation-cap',
                         'vocal-mixing' => 'la-microphone-alt',
                         'audio-editing-software' => 'la-sliders-h',
                         'beat-making' => 'la-drum',
@@ -264,7 +266,7 @@
                     $hasSubItems = !empty($item['sub_items']);
                     $badgeText = $hasSubItems 
                         ? count($item['sub_items']) . ' ' . __('Subcategories')
-                        : ($item['type'] === 'catalog' ? __('Full Catalog') : __('Category'));
+                        : ($item['type'] === 'catalog' ? __('Full Catalog') : ($item['type'] === 'home' ? __('Home Page') : __('Category')));
                 @endphp
                 <div class="ak23-drawer-nav-group mb-1">
                     <a href="{{ $item['url'] }}" class="ak23-drawer-nav-item {{ $item['active'] ? 'active' : '' }}">
