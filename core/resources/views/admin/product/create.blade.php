@@ -244,19 +244,52 @@
                                     </div>
                                 </div>
 
-                                <!-- Master Asset / Download Package (.zip) -->
-                                <div class="card mb-3 border rounded-3 bg-light">
+                                <!-- Course Download Distribution Package (ZIP Upload & Cloud URL) -->
+                                <div class="card mb-3 border rounded-3 bg-light shadow-sm">
                                     <div class="card-header bg-white py-2 px-3 border-bottom d-flex align-items-center justify-content-between">
                                         <span class="fs-12 fw-bold text-dark">
-                                            <i class="las la-file-archive text-warning me-1"></i>@lang('Download Package (.zip)')
+                                            <i class="las la-cloud-download-alt text-primary me-1"></i>@lang('Course Download & Files')
                                         </span>
-                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle fs-10">Archive</span>
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle fs-10">
+                                            @lang('Upload or Link')
+                                        </span>
                                     </div>
                                     <div class="card-body p-2">
-                                        <input type="file" name="main_file" class="form-control form-control-sm bg-white" accept=".zip,.rar,.tar.gz">
-                                        <small class="text-muted fs-11 d-block mt-1">
-                                            <i class="las la-info-circle me-1"></i>@lang('Complete bundled package (.zip archive with project files, stems & presets)')
-                                        </small>
+                                        <!-- Option 1: Direct File Archive (.zip, .rar, etc.) -->
+                                        <div class="p-2 rounded bg-white border mb-2">
+                                            <label class="fs-11 fw-bold text-dark mb-1 d-flex align-items-center">
+                                                <i class="las la-file-archive text-warning me-1 fs-14"></i>
+                                                @lang('Option 1: Upload Archive (.zip, .rar)')
+                                            </label>
+                                            <input type="file" name="main_file" class="form-control form-control-sm bg-light" accept=".zip,.rar,.tar.gz,.7z">
+                                            <small class="text-muted fs-10 d-block mt-1">
+                                                <i class="las la-info-circle me-1"></i>@lang('Upload local archive (.zip/.rar) for direct student download')
+                                            </small>
+                                        </div>
+
+                                        <!-- Option 2: External Cloud URL (Google Drive, Dropbox, Mega, etc.) -->
+                                        <div class="p-2 rounded bg-white border">
+                                            <label class="fs-11 fw-bold text-dark mb-1 d-flex align-items-center" for="createDownloadUrlInput">
+                                                <i class="lab la-google-drive text-success me-1 fs-14"></i>
+                                                @lang('Option 2: Cloud / External Link (Google Drive)')
+                                            </label>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-light text-muted"><i class="las la-link"></i></span>
+                                                <input type="text" name="download_url" id="createDownloadUrlInput" 
+                                                       class="form-control form-control-sm bg-light" 
+                                                       placeholder="https://drive.google.com/file/d/... or Dropbox/Mega link" 
+                                                       value="{{ old('download_url') }}">
+                                            </div>
+                                            <small class="text-muted fs-10 d-block mt-1">
+                                                <i class="las la-info-circle me-1"></i>@lang('Paste Google Drive, Dropbox, Mega, or OneDrive shareable link')
+                                            </small>
+                                        </div>
+
+                                        <!-- Note: Both work simultaneously -->
+                                        <div class="mt-2 text-muted fs-10 d-flex align-items-center gap-1">
+                                            <i class="las la-shield-alt text-primary"></i>
+                                            <span>@lang('Both options can be provided together for direct ZIP and mirror Cloud link.')</span>
+                                        </div>
                                     </div>
                                 </div>
 

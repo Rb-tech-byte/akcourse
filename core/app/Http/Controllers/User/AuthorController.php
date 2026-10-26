@@ -826,12 +826,39 @@ class AuthorController extends Controller {
         $product   = @$orderItem->product;
 
         $user = auth()->user();
-        abort_if(($user->id != @$orderItem->user_id || @$orderItem->is_refunded), 404);
+        abort_if(($user->id != @$orderItem->user_id || @$orderItem->is_refunded || !$product), 404);
 
-        $fileUploader       = new FileUploader();
-        $fileUploader->path = getFilePath('productFile') . '/' . $product->slug;
-        $fileUploader->file = $product->file;
-        return $fileUploader->downloadFile($product, $orderItem);
+        $source = request()->query('source'); // 'file' or 'url'
+
+        // 1. Explicit request for external cloud link (e.g. Google Drive) or product has no local file
+        if (($source === 'url' || empty($product->file)) && !empty($product->download_url)) {
+            $orderItem->increment('downloads');
+            return redirect()->away($product->download_url);
+        }
+
+        // 2. Local archive file
+        if (!empty($product->file)) {
+            $filePath = getFilePath('productFile') . '/' . $product->slug . '/' . $product->file;
+            // If local file is missing on disk but external URL is available, fallback gracefully
+            if (!file_exists($filePath) && !empty($product->download_url)) {
+                $orderItem->increment('downloads');
+                return redirect()->away($product->download_url);
+            }
+
+            $fileUploader       = new FileUploader();
+            $fileUploader->path = getFilePath('productFile') . '/' . $product->slug;
+            $fileUploader->file = $product->file;
+            return $fileUploader->downloadFile($product, $orderItem);
+        }
+
+        // 3. Fallback to external URL if available
+        if (!empty($product->download_url)) {
+            $orderItem->increment('downloads');
+            return redirect()->away($product->download_url);
+        }
+
+        $notify[] = ['error', 'No download package is currently assigned to this course. Please contact support.'];
+        return back()->withNotify($notify);
     }
 
     public function downloadFreeProduct($slug) {
@@ -845,7 +872,6 @@ class AuthorController extends Controller {
         if ($download) {
             $download->increment('download_count');
         } else {
-
             $download                 = new Download();
             $download->user_id        = $user->id;
             $download->product_id     = $product->id;
@@ -853,10 +879,33 @@ class AuthorController extends Controller {
             $download->save();
         }
 
-        $fileUploader       = new FileUploader();
-        $fileUploader->path = getFilePath('productFile') . '/' . $product->slug;
-        $fileUploader->file = $product->file;
-        return $fileUploader->downloadFile($product);
+        $source = request()->query('source');
+
+        // 1. Explicit URL request or no local file
+        if (($source === 'url' || empty($product->file)) && !empty($product->download_url)) {
+            return redirect()->away($product->download_url);
+        }
+
+        // 2. Local archive file
+        if (!empty($product->file)) {
+            $filePath = getFilePath('productFile') . '/' . $product->slug . '/' . $product->file;
+            if (!file_exists($filePath) && !empty($product->download_url)) {
+                return redirect()->away($product->download_url);
+            }
+
+            $fileUploader       = new FileUploader();
+            $fileUploader->path = getFilePath('productFile') . '/' . $product->slug;
+            $fileUploader->file = $product->file;
+            return $fileUploader->downloadFile($product);
+        }
+
+        // 3. Fallback to external URL
+        if (!empty($product->download_url)) {
+            return redirect()->away($product->download_url);
+        }
+
+        $notify[] = ['error', 'No download package is currently assigned to this free course. Please contact support.'];
+        return back()->withNotify($notify);
     }
 
     public function refundRequest(Request $request, $purchaseCode) {

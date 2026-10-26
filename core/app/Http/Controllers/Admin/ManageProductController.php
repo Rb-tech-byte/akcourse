@@ -49,6 +49,7 @@ class ManageProductController extends Controller
             'thumbnail'       => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'preview_image'   => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:10240'],
             'main_file'       => ['nullable', 'file', 'mimes:zip,rar,tar,gz,7z,pdf,mp4,mp3,wav', 'max:1048576'],
+            'download_url'    => ['nullable', 'string', 'max:2048'],
         ]);
 
         if ($id) {
@@ -114,7 +115,26 @@ class ManageProductController extends Controller
             }
         }
 
-        // Upload Main Download File
+        // Download package: supports local uploaded archive, external Cloud URL (e.g. Google Drive), or BOTH!
+        // 1. External Download URL (Google Drive, Dropbox, Mega, etc.)
+        if ($request->has('download_url')) {
+            $rawUrl = trim((string)$request->download_url);
+            if (!empty($rawUrl)) {
+                if (!preg_match('~^(?:f|ht)tps?://~i', $rawUrl)) {
+                    $rawUrl = 'https://' . $rawUrl;
+                }
+                $product->download_url = $rawUrl;
+            } else {
+                $product->download_url = null;
+            }
+        }
+
+        // 2. Remove existing archive file if explicitly requested
+        if ($request->boolean('remove_main_file')) {
+            $product->file = null;
+        }
+
+        // 3. New archive file upload (.zip, .rar, .tar.gz, etc.)
         if ($request->hasFile('main_file')) {
             try {
                 $product->file = fileUploader(

@@ -144,9 +144,28 @@
 
                     <!-- Action Buttons -->
                     <div class="pt-2 d-flex flex-wrap gap-2">
-                        <a href="{{ route('user.author.product.download', $item->purchase_code) }}" class="btn btn-sm btn--base flex-grow-1 text-center rounded-pill py-1-5 fw-semibold fs-12">
-                            <i class="las la-download me-1"></i> Download .ZIP
-                        </a>
+                        @php
+                            $hasFile = !empty(@$item->product->file);
+                            $hasUrl  = !empty(@$item->product->download_url);
+                        @endphp
+
+                        @if($hasFile && $hasUrl)
+                            <a href="{{ route('user.author.product.download', $item->purchase_code) }}?source=file" class="btn btn-sm btn--base flex-grow-1 text-center rounded-pill py-1-5 fw-semibold fs-12">
+                                <i class="las la-download me-1"></i> .ZIP Download
+                            </a>
+                            <a href="{{ route('user.author.product.download', $item->purchase_code) }}?source=url" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-2 py-1-5 fs-12" title="Google Drive Cloud Mirror">
+                                <i class="lab la-google-drive me-1"></i> Drive Link
+                            </a>
+                        @elseif($hasUrl)
+                            <a href="{{ route('user.author.product.download', $item->purchase_code) }}?source=url" target="_blank" class="btn btn-sm btn--base flex-grow-1 text-center rounded-pill py-1-5 fw-semibold fs-12">
+                                <i class="lab la-google-drive me-1"></i> Download Files
+                            </a>
+                        @else
+                            <a href="{{ route('user.author.product.download', $item->purchase_code) }}" class="btn btn-sm btn--base flex-grow-1 text-center rounded-pill py-1-5 fw-semibold fs-12">
+                                <i class="las la-download me-1"></i> Download .ZIP
+                            </a>
+                        @endif
+
                         <a href="{{ route('user.certificate', $item->certificate_number ?: $item->purchase_code) }}" target="_blank" class="btn btn-sm btn-outline-warning rounded-pill px-2 py-1-5 fs-12 text-dark fw-bold" title="Official Certificate & License">
                             <i class="las la-award me-1"></i> Certificate
                         </a>

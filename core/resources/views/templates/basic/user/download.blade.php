@@ -77,12 +77,39 @@
                                                 <span class="dropdown-action-btn"><i class="las la-angle-down"></i><span
                                                         class="mx-1">@lang('More')</span></span>
                                                 <ul class="action-list">
-                                                    <li class="action-list__item">
-                                                        <a href="{{ route('user.author.product.download', $purchasedItem->purchase_code) }}?time={{ time() }}"
-                                                            class="btn btn-outline--primary btn--sm w-100">
-                                                            <i class="la la-download"></i> @lang('Download')
-                                                        </a>
-                                                    </li>
+                                                    @php
+                                                        $hasFile = !empty(@$purchasedItem->product->file);
+                                                        $hasUrl  = !empty(@$purchasedItem->product->download_url);
+                                                    @endphp
+
+                                                    @if($hasFile && $hasUrl)
+                                                        <li class="action-list__item">
+                                                            <a href="{{ route('user.author.product.download', $purchasedItem->purchase_code) }}?source=file&time={{ time() }}"
+                                                                class="btn btn-outline--primary btn--sm w-100">
+                                                                <i class="la la-download"></i> @lang('Download .ZIP')
+                                                            </a>
+                                                        </li>
+                                                        <li class="action-list__item">
+                                                            <a href="{{ route('user.author.product.download', $purchasedItem->purchase_code) }}?source=url" target="_blank"
+                                                                class="btn btn-outline--info btn--sm w-100">
+                                                                <i class="lab la-google-drive"></i> @lang('Drive Mirror Link')
+                                                            </a>
+                                                        </li>
+                                                    @elseif($hasUrl)
+                                                        <li class="action-list__item">
+                                                            <a href="{{ route('user.author.product.download', $purchasedItem->purchase_code) }}?source=url" target="_blank"
+                                                                class="btn btn-outline--primary btn--sm w-100">
+                                                                <i class="lab la-google-drive"></i> @lang('Download Files')
+                                                            </a>
+                                                        </li>
+                                                    @else
+                                                        <li class="action-list__item">
+                                                            <a href="{{ route('user.author.product.download', $purchasedItem->purchase_code) }}?time={{ time() }}"
+                                                                class="btn btn-outline--primary btn--sm w-100">
+                                                                <i class="la la-download"></i> @lang('Download')
+                                                            </a>
+                                                        </li>
+                                                    @endif
                                                     <li class="action-list__item">
                                                         <a href="{{ route('user.certificate', $purchasedItem->certificate_number ?: $purchasedItem->purchase_code) }}" target="_blank"
                                                             class="btn btn-outline--warning btn--sm w-100">

@@ -273,28 +273,104 @@
                                     </div>
                                 </div>
 
-                                <!-- Master Asset / Download Package (.zip) -->
-                                <div class="card mb-3 border rounded-3 bg-light">
+                                <!-- Course Download Distribution Package (ZIP Upload & Cloud URL) -->
+                                <div class="card mb-3 border rounded-3 bg-light shadow-sm">
                                     <div class="card-header bg-white py-2 px-3 border-bottom d-flex align-items-center justify-content-between">
                                         <span class="fs-12 fw-bold text-dark">
-                                            <i class="las la-file-archive text-warning me-1"></i>@lang('Download Package (.zip)')
+                                            <i class="las la-cloud-download-alt text-primary me-1"></i>@lang('Course Download & Files')
                                         </span>
-                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle fs-10">Archive</span>
+                                        <div class="d-flex align-items-center gap-1">
+                                            @if($product->file && $product->download_url)
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle fs-10">
+                                                    <i class="las la-check-double me-1"></i>ZIP + Cloud Link
+                                                </span>
+                                            @elseif($product->file)
+                                                <span class="badge bg-info-subtle text-info border border-info-subtle fs-10">
+                                                    <i class="las la-file-archive me-1"></i>Local ZIP
+                                                </span>
+                                            @elseif($product->download_url)
+                                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-10">
+                                                    <i class="las la-link me-1"></i>Cloud Link
+                                                </span>
+                                            @else
+                                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle fs-10">
+                                                    @lang('No File Set')
+                                                </span>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="card-body p-2">
-                                        @if($product->file)
-                                            <div class="alert alert-light border py-1 px-2 mb-2 d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center gap-1 text-truncate">
-                                                    <i class="las la-check-circle text-success fs-14"></i>
-                                                    <span class="text-muted fs-11 font-monospace text-truncate">{{ $product->file }}</span>
-                                                </div>
-                                                <span class="badge bg-success-subtle text-success fs-10">Ready</span>
+                                        <!-- Option 1: Direct File Archive (.zip, .rar, etc.) -->
+                                        <div class="p-2 rounded bg-white border mb-2">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <label class="fs-11 fw-bold text-dark mb-0 d-flex align-items-center">
+                                                    <i class="las la-file-archive text-warning me-1 fs-14"></i>
+                                                    @lang('Option 1: Upload Archive (.zip, .rar)')
+                                                </label>
+                                                @if($product->file)
+                                                    <span class="badge bg-success-subtle text-success fs-10">
+                                                        <i class="las la-check-circle"></i> Ready
+                                                    </span>
+                                                @endif
                                             </div>
-                                        @endif
-                                        <input type="file" name="main_file" class="form-control form-control-sm bg-white" accept=".zip,.rar,.tar.gz">
-                                        <small class="text-muted fs-11 d-block mt-1">
-                                            <i class="las la-info-circle me-1"></i>@lang('Upload new .zip archive to replace master stems & practice files')
-                                        </small>
+
+                                            @if($product->file)
+                                                <div class="alert alert-light border py-1 px-2 mb-2 d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center gap-1 text-truncate">
+                                                        <i class="las la-file-alt text-success fs-14"></i>
+                                                        <span class="text-dark fs-11 font-monospace text-truncate">{{ $product->file }}</span>
+                                                    </div>
+                                                    <div class="form-check form-check-inline m-0">
+                                                        <input class="form-check-input" type="checkbox" name="remove_main_file" value="1" id="removeFileCheck">
+                                                        <label class="form-check-label fs-10 text-danger fw-semibold" for="removeFileCheck">
+                                                            @lang('Remove')
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            @endif
+
+                                            <input type="file" name="main_file" class="form-control form-control-sm bg-light" accept=".zip,.rar,.tar.gz,.7z">
+                                            <small class="text-muted fs-10 d-block mt-1">
+                                                <i class="las la-info-circle me-1"></i>@lang('Upload local archive (.zip/.rar) for direct student download')
+                                            </small>
+                                        </div>
+
+                                        <!-- Option 2: External Cloud URL (Google Drive, Dropbox, Mega, etc.) -->
+                                        <div class="p-2 rounded bg-white border">
+                                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                                <label class="fs-11 fw-bold text-dark mb-0 d-flex align-items-center" for="downloadUrlInput">
+                                                    <i class="lab la-google-drive text-success me-1 fs-14"></i>
+                                                    @lang('Option 2: Cloud / External Link (Google Drive)')
+                                                </label>
+                                                @if($product->download_url)
+                                                    <a href="{{ $product->download_url }}" target="_blank" class="badge bg-primary text-white text-decoration-none fs-10" title="Test Link">
+                                                        <i class="las la-external-link-alt me-1"></i>Test URL
+                                                    </a>
+                                                @endif
+                                            </div>
+
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-light text-muted"><i class="las la-link"></i></span>
+                                                <input type="text" name="download_url" id="downloadUrlInput" 
+                                                       class="form-control form-control-sm bg-light" 
+                                                       placeholder="https://drive.google.com/file/d/... or Dropbox/Mega link" 
+                                                       value="{{ old('download_url', $product->download_url) }}">
+                                                @if($product->download_url)
+                                                    <a href="{{ $product->download_url }}" target="_blank" class="btn btn-outline-secondary" title="Open share link">
+                                                        <i class="las la-external-link-alt"></i>
+                                                    </a>
+                                                @endif
+                                            </div>
+                                            <small class="text-muted fs-10 d-block mt-1">
+                                                <i class="las la-info-circle me-1"></i>@lang('Paste Google Drive, Dropbox, Mega, or OneDrive shareable link')
+                                            </small>
+                                        </div>
+
+                                        <!-- Note: Both work simultaneously -->
+                                        <div class="mt-2 text-muted fs-10 d-flex align-items-center gap-1">
+                                            <i class="las la-shield-alt text-primary"></i>
+                                            <span>@lang('Both options can be used together. Students can download either the direct .zip or via Google Drive mirror.')</span>
+                                        </div>
                                     </div>
                                 </div>
 
