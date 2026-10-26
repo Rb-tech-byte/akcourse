@@ -37,14 +37,48 @@ class SiteController extends Controller
             session()->put('reference', $reference);
         }
 
-        $pageTitle   = 'AK23 Studio Kits - Learn Vocal Mixing & Audio Production';
+        $pageTitle   = 'AKDOWNLOADS - Download Your Favourite Music Tools';
         $sections    = Page::where('tempname', activeTemplate())->where('slug', '/')->first();
         $seoContents = @$sections->seo_content;
         $seoImage    = @$seoContents->image ? getImage(getFilePath('seo') . '/' . @$seoContents->image, getFileSize('seo')) : null;
 
-        $categories = Category::active()->with(['products' => function ($q) {
+        $categories = Category::active()->with(['subCategories' => function ($q) {
+            $q->where('status', 1);
+        }, 'products' => function ($q) {
             $q->approved()->orderBy('sequence_no', 'asc')->orderBy('id', 'asc');
         }])->orderBy('id', 'asc')->get();
+
+        // 1. Primary Products Grid (8 items per page with search & category filtering)
+        $productsQuery = Product::approved()->with(['category', 'author']);
+        if ($search = request('search')) {
+            $productsQuery->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+        if ($catId = request('category')) {
+            $productsQuery->where('category_id', $catId);
+        }
+        if ($subCatId = request('sub_category')) {
+            $productsQuery->where('sub_category_id', $subCatId);
+        }
+        $products = $productsQuery->orderBy('id', 'desc')->paginate(8)->withQueryString();
+
+        // 2. Trending This Week (4 products)
+        $trendingProducts = Product::approved()->with(['category', 'author'])
+            ->orderBy('total_sold', 'desc')
+            ->orderBy('id', 'desc')
+            ->take(4)
+            ->get();
+
+        // 3. Top Creators (matching akdownloads)
+        $creators = User::where('status', 1)
+            ->where(function($q) {
+                $q->where('is_author', 1)->orWhereNotNull('username');
+            })
+            ->take(4)
+            ->get();
 
         $catalog = [];
         $allCourses = collect();
@@ -69,75 +103,14 @@ class SiteController extends Controller
             ];
         }
 
-        // Primary series for hero & bundle spotlight (Vocal Mixing or first active)
-        $primarySeriesItem = collect($catalog)->first(function ($item) {
-            return $item['series']->slug === 'vocal-mixing';
-        }) ?: ($catalog[0] ?? null);
-
-        $akSeries = $primarySeriesItem ? (object)[
-            'id'          => $primarySeriesItem['series']->id,
-            'slug'        => $primarySeriesItem['series']->slug,
-            'title'       => $primarySeriesItem['series']->name,
-            'description' => $primarySeriesItem['series']->name . ' - Hands-on studio workflows with genuine software licenses included.',
-        ] : null;
-
-        $akCourses = $primarySeriesItem ? $primarySeriesItem['courses'] : $allCourses;
-        $akBundle = $primarySeriesItem ? $primarySeriesItem['bundle'] : $allBundles->first();
-
-        // FAQs fallback
-        $akFaqs = collect();
-        try {
-            if (\Illuminate\Support\Facades\Schema::connection('ak23')->hasTable('faqs')) {
-                $akFaqs = \Illuminate\Support\Facades\DB::connection('ak23')
-                    ->table('faqs')
-                    ->orderBy('sequence_no', 'asc')
-                    ->get(['sequence_no', 'question', 'answer']);
-            }
-        } catch (\Throwable $e) {
-            // ignore
-        }
-
-        if ($akFaqs->isEmpty()) {
-            $akFaqs = collect([
-                (object)[
-                    'question' => 'How do I access my course and software license?',
-                    'answer'   => 'Immediately after checkout, you receive instant access to your high-definition downloadable video lessons, stems, practice sessions, and unique genuine software license key.'
-                ],
-                (object)[
-                    'question' => 'Are plugin and software licenses permanent (lifetime)?',
-                    'answer'   => 'Yes. All course packages include 100% lifetime licenses with zero recurring subscriptions. You own the software and training permanently.'
-                ],
-                (object)[
-                    'question' => 'Which DAWs and operating systems are supported?',
-                    'answer'   => 'All major DAWs are supported (FL Studio, Logic Pro, Ableton Live, Cubase, Pro Tools, Studio One). Plugins are compatible with both macOS (Apple Silicon M1/M2/M3 and Intel) and Windows 10/11.'
-                ],
-                (object)[
-                    'question' => 'What payment methods can I use?',
-                    'answer'   => 'We accept instant local mobile money (M-Pesa, Airtel Money, Tigo Pesa, Halopesa) via Selcom as well as Visa, Mastercard, and international bank cards.'
-                ],
-                (object)[
-                    'question' => 'Can I buy individual courses or the complete series bundle?',
-                    'answer'   => 'You can purchase any single course or grab the Complete Series Bundle to get all 5 courses and all 5 matching software suites at a heavily discounted bundle price.'
-                ],
-                (object)[
-                    'question' => 'What if I need help installing or activating?',
-                    'answer'   => 'Each course comes with clear step-by-step video installation guides, and our dedicated WhatsApp technical support team is available 24/7 to assist you.'
-                ]
-            ]);
-        }
-
-        $akSiteContent = [];
-
         return view('Template::home', compact(
             'pageTitle', 
             'sections', 
             'seoContents', 
             'seoImage', 
-            'akSeries', 
-            'akCourses', 
-            'akBundle', 
-            'akSiteContent', 
-            'akFaqs',
+            'products',
+            'trendingProducts',
+            'creators',
             'catalog',
             'categories',
             'allCourses',

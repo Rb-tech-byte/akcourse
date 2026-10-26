@@ -2,324 +2,231 @@
 
 @section('content')
     @php
-        $credentials = gs('socialite_credentials');
         $policyPages = getContent('policy_pages.element', false, null, true);
     @endphp
 
-    @include($activeTemplate . 'user.auth.auth_style')
-
-    <section class="ak23-auth-section">
-        <!-- Ambient Studio Glows -->
-        <div class="ak23-auth-glow ak23-auth-glow-gold"></div>
-
-        <div class="ak23-auth-container">
-            <div class="ak23-auth-grid">
-                <!-- Studio Showcase (Desktop: Left | Mobile: Bottom) -->
-                <div class="ak23-auth-showcase">
-                    <div class="ak23-auth-badge">
-                        <span class="ak23-auth-badge-dot"></span>
-                        <span>{{ gs('site_name') }} Academy &middot; Student Registration</span>
-                    </div>
-
-                    <h1 class="ak23-auth-hero-title">
-                        Master Vocal Mixing <span>Like a Pro</span>.
-                    </h1>
-
-                    <p class="ak23-auth-hero-sub">
-                        Create your student account to unlock full HD video archives, uncompressed multitrack stems, and production-ready DAW templates.
-                    </p>
-
-                    <div class="ak23-auth-features">
-                        <!-- Feature 1 -->
-                        <div class="ak23-auth-feature-item">
-                            <div class="ak23-auth-feature-icon">
-                                <i class="las la-sliders-h"></i>
-                            </div>
-                            <div class="ak23-auth-feature-content">
-                                <h6>3 Major DAWs Supported</h6>
-                                <p>Pre-configured mixing templates for Steinberg Cubase, FL Studio, and Avid Pro Tools.</p>
-                            </div>
+    <section class="ak-auth-wrapper py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10 col-12">
+                    <div class="ak-simple-auth-card text-center">
+                        <!-- Top Icon Badge -->
+                        <div class="ak-auth-icon-circle mx-auto mb-3">
+                            <i class="las la-user-plus"></i>
                         </div>
 
-                        <!-- Feature 2 -->
-                        <div class="ak23-auth-feature-item">
-                            <div class="ak23-auth-feature-icon gold">
-                                <i class="las la-download"></i>
-                            </div>
-                            <div class="ak23-auth-feature-content">
-                                <h6>Offline Studio Learning</h6>
-                                <p>Download complete course modules and project files directly to your studio workstation without buffering.</p>
-                            </div>
+                        <!-- Title & Description (Matching akdownloads.com/register.php) -->
+                        <h2 class="ak-auth-title mb-2">Join the {{ gs('site_name') }} community</h2>
+                        <p class="ak-auth-subtext mb-4">
+                            Create your account instantly with your Google profile. No long forms, no phone verification required upfront.
+                        </p>
+
+                        <!-- Primary Big Google Sign-Up Button -->
+                        <a href="{{ route('user.social.login', 'google') }}" class="ak-google-btn mb-2">
+                            <svg class="ak-google-icon" viewBox="0 0 48 48">
+                                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                            </svg>
+                            <span>Create account with Google</span>
+                        </a>
+
+                        <p class="ak-google-caption text-muted mb-4">
+                            Fast, secure, and one-click account creation.
+                        </p>
+
+                        <!-- Switch to Login Link -->
+                        <div class="ak-auth-switch-box pt-3 border-top mb-3">
+                            <span class="text-muted">Already have an account?</span>
+                            <a href="{{ route('user.login') }}" class="ak-auth-link ms-1 fw-bold">Sign In</a>
                         </div>
 
-                        <!-- Feature 3 -->
-                        <div class="ak23-auth-feature-item">
-                            <div class="ak23-auth-feature-icon blue">
-                                <i class="las la-certificate"></i>
-                            </div>
-                            <div class="ak23-auth-feature-content">
-                                <h6>Official Software Licenses</h6>
-                                <p>Get genuine software licenses and installers delivered straight to your dedicated student portal.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ak23-auth-eq-strip">
-                        <div class="ak23-eq-bars">
-                            <span class="ak23-eq-bar"></span>
-                            <span class="ak23-eq-bar"></span>
-                            <span class="ak23-eq-bar"></span>
-                            <span class="ak23-eq-bar"></span>
-                            <span class="ak23-eq-bar"></span>
-                        </div>
-                        <div class="ak23-auth-proof-text">
-                            <strong>1,200+ music producers</strong> enrolled in {{ gs('site_name') }} audio engineering programs.
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Clean Responsive Registration Card (Desktop: Right | Mobile: Top) -->
-                <div class="ak23-auth-card-col">
-                    <div class="ak23-auth-card">
-                        <div class="ak23-auth-card-header">
-                            <div class="ak23-auth-card-badge">
-                                <i class="las la-user-plus"></i>
-                                <span>@lang('Student Registration')</span>
-                            </div>
-                            <h2 class="ak23-auth-card-title">@lang('Create Student Account')</h2>
-                            <p class="ak23-auth-card-sub">@lang('Fill in your information below to get instant access to studio kits.')</p>
-                        </div>
-
-                        {{-- Referral Banner if present --}}
-                        @if (session()->get('reference'))
-                            @php
-                                $referUser = App\Models\User::where('username', session()->get('reference'))->first();
-                            @endphp
-                            @if ($referUser)
-                                <div class="ak23-referral-banner">
-                                    <i class="las la-user-friends ak23-referral-icon"></i>
-                                    <div class="ak23-referral-text">
-                                        @lang('You were invited by') <strong>{{ $referUser->fullname }}</strong>
-                                    </div>
-                                </div>
-                            @endif
-                        @endif
-
-                        {{-- Social Login (if enabled) --}}
-                        @if ($credentials && ($credentials->google->status == Status::ENABLE || $credentials->facebook->status == Status::ENABLE || $credentials->linkedin->status == Status::ENABLE))
-                            <div class="ak23-social-grid">
-                                @if ($credentials->google->status == Status::ENABLE)
-                                    <a href="{{ route('user.social.login', 'google') }}" class="ak23-social-btn">
-                                        <i class="lab la-google" style="color: #EA4335;"></i>
-                                        <span>Google</span>
-                                    </a>
-                                @endif
-                                @if ($credentials->facebook->status == Status::ENABLE)
-                                    <a href="{{ route('user.social.login', 'facebook') }}" class="ak23-social-btn">
-                                        <i class="lab la-facebook-f" style="color: #1877F2;"></i>
-                                        <span>Facebook</span>
-                                    </a>
-                                @endif
-                                @if ($credentials->linkedin->status == Status::ENABLE)
-                                    <a href="{{ route('user.social.login', 'linkedin') }}" class="ak23-social-btn">
-                                        <i class="lab la-linkedin-in" style="color: #0A66C2;"></i>
-                                        <span>LinkedIn</span>
-                                    </a>
-                                @endif
-                            </div>
-                            <div class="ak23-auth-divider">
-                                <span>@lang('or register with email')</span>
-                            </div>
-                        @endif
-
-                        <form action="{{ route('user.register') }}" method="POST" class="ak23-auth-form verify-gcaptcha">
-                            @csrf
-
-                            <!-- Name Grid (First & Last) -->
-                            <div class="ak23-form-grid-2">
-                                <div class="ak23-form-group">
-                                    <label for="firstname" class="ak23-form-label">
-                                        <span>@lang('First Name')</span>
-                                        <span class="ak23-req-star">*</span>
-                                    </label>
-                                    <div class="ak23-input-wrapper">
-                                        <i class="las la-user ak23-input-icon"></i>
-                                        <input type="text" id="firstname" name="firstname" 
-                                               value="{{ old('firstname', @$user->firstname) }}" 
-                                               class="ak23-input" placeholder="e.g. Amina" required autocomplete="given-name">
-                                    </div>
-                                </div>
-
-                                <div class="ak23-form-group">
-                                    <label for="lastname" class="ak23-form-label">
-                                        <span>@lang('Last Name')</span>
-                                        <span class="ak23-req-star">*</span>
-                                    </label>
-                                    <div class="ak23-input-wrapper">
-                                        <i class="las la-user ak23-input-icon"></i>
-                                        <input type="text" id="lastname" name="lastname" 
-                                               value="{{ old('lastname', @$user->lastname) }}" 
-                                               class="ak23-input" placeholder="e.g. Mushi" required autocomplete="family-name">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Email Address -->
-                            <div class="ak23-form-group">
-                                <label for="email" class="ak23-form-label">
-                                    <span>@lang('E-Mail Address')</span>
-                                    <span class="ak23-req-star">*</span>
-                                </label>
-                                <div class="ak23-input-wrapper">
-                                    <i class="las la-envelope ak23-input-icon"></i>
-                                    <input type="email" id="email" name="email" value="{{ old('email') }}" 
-                                           class="ak23-input checkUser" placeholder="e.g. amina@example.com" required autocomplete="email">
-                                </div>
-                            </div>
-
-                            <!-- Password Grid -->
-                            <div class="ak23-form-grid-2">
-                                <div class="ak23-form-group">
-                                    <label for="password" class="ak23-form-label">
-                                        <span>@lang('Password')</span>
-                                        <span class="ak23-req-star">*</span>
-                                    </label>
-                                    <div class="ak23-input-wrapper">
-                                        <i class="las la-lock ak23-input-icon"></i>
-                                        <input type="password" id="password" name="password" 
-                                               class="ak23-input ak23-input-pw" placeholder="••••••••" required autocomplete="new-password">
-                                        <button type="button" class="ak23-pw-toggle" aria-label="Toggle password visibility">
-                                            <i class="las la-eye"></i>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div class="ak23-form-group">
-                                    <label for="password_confirmation" class="ak23-form-label">
-                                        <span>@lang('Confirm Password')</span>
-                                        <span class="ak23-req-star">*</span>
-                                    </label>
-                                    <div class="ak23-input-wrapper">
-                                        <i class="las la-shield-alt ak23-input-icon"></i>
-                                        <input type="password" id="password_confirmation" name="password_confirmation" 
-                                               class="ak23-input ak23-input-pw" placeholder="••••••••" required autocomplete="new-password">
-                                        <button type="button" class="ak23-pw-toggle" aria-label="Toggle password visibility">
-                                            <i class="las la-eye"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Captcha -->
-                            <x-captcha />
-
-                            <!-- Agreement to Policies -->
-                            @if (gs('agree'))
-                                <div class="ak23-auth-meta-row">
-                                    <label class="ak23-checkbox-label" for="agree">
-                                        <input type="checkbox" id="agree" name="agree" class="ak23-checkbox" 
-                                               @checked(old('agree')) required>
-                                        <span class="ak23-policy-text">
-                                            @lang('I agree with')
-                                            @foreach ($policyPages as $policy)
-                                                <a href="{{ route('policy.pages', $policy->slug) }}" target="_blank">
-                                                    {{ __($policy->data_values->title) }}
-                                                </a>@if (!$loop->last), @endif
-                                            @endforeach
-                                        </span>
-                                    </label>
-                                </div>
-                            @endif
-
-                            <!-- Submit Button -->
-                            <button type="submit" class="ak23-auth-submit-btn" id="recaptcha">
-                                <span>@lang('Create Student Account')</span>
-                                <i class="las la-arrow-right"></i>
+                        <!-- Fallback / Expandable Email Registration Toggle -->
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-link ak-toggle-email-btn" id="toggleEmailRegisterBtn">
+                                <i class="las la-envelope me-1"></i> Or register with email
                             </button>
+                        </div>
 
-                            <!-- Switch to Login -->
-                            <div class="ak23-auth-footer">
-                                <div class="ak23-auth-switch-text">
-                                    <span>@lang('Already have a student account?')</span>
-                                    <a href="{{ route('user.login') }}" class="ak23-auth-switch-link">
-                                        @lang('Sign In here')
-                                    </a>
+                        <!-- Expandable Manual Form (hidden by default) -->
+                        <div id="manualEmailRegisterForm" class="d-none text-start pt-2">
+                            <form method="POST" action="{{ route('user.register') }}" class="verify-gcaptcha">
+                                @csrf
+                                <div class="row g-2 mb-3">
+                                    <div class="col-6">
+                                        <label for="firstname" class="form-label fs-13 text-muted">First Name</label>
+                                        <input type="text" id="firstname" name="firstname" value="{{ old('firstname') }}" class="form-control ak-custom-input" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="lastname" class="form-label fs-13 text-muted">Last Name</label>
+                                        <input type="text" id="lastname" name="lastname" value="{{ old('lastname') }}" class="form-control ak-custom-input" required>
+                                    </div>
                                 </div>
-                                <a href="{{ route('products') }}" class="ak23-auth-back-link">
-                                    <i class="las la-arrow-left"></i>
-                                    <span>@lang('Browse Studio Catalog')</span>
-                                </a>
-                            </div>
-                        </form>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label fs-13 text-muted">Email Address</label>
+                                    <input type="email" id="email" name="email" value="{{ old('email') }}" class="form-control ak-custom-input" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label fs-13 text-muted">Password</label>
+                                    <input type="password" id="password" name="password" class="form-control ak-custom-input" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password_confirmation" class="form-label fs-13 text-muted">Confirm Password</label>
+                                    <input type="password" id="password_confirmation" name="password_confirmation" class="form-control ak-custom-input" required>
+                                </div>
+
+                                <x-captcha />
+
+                                <button type="submit" class="btn btn-warning w-100 fw-bold py-2 mt-2">
+                                    Create Account
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- WhatsApp Support Link (Matching akdownloads) -->
+                        <div class="mt-4 pt-3 border-top text-center">
+                            <a href="https://wa.me/255763312251?text=Hello!%20I%20need%20assistance%20on%20AK23DOWNLOADS." target="_blank" class="ak-whatsapp-help-btn">
+                                <i class="lab la-whatsapp"></i> WhatsApp Help
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Modal for Existing Account -->
-    <div class="modal fade" id="existModalCenter" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fs-18 fw-bold text-white mb-0">
-                        <i class="las la-user-check text-success me-2"></i>@lang('Account Already Exists')
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body py-4">
-                    <p class="text-center mb-0 fs-15 text-white-50">
-                        @lang('An account with this email address already exists in Maarifa23 Academy.')
-                    </p>
-                </div>
-                <div class="modal-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-dark btn-sm px-3" data-bs-dismiss="modal">@lang('Close')</button>
-                    <a href="{{ route('user.login') }}" class="btn btn-success btn-sm px-4 fw-bold">@lang('Sign In Now')</a>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
+@push('style')
+<style>
+/* ==========================================================================
+   AKDOWNLOADS SIMPLIFIED AUTHENTICATION CARD
+   ========================================================================== */
+.ak-auth-wrapper {
+    background-color: #0E0F13;
+    min-height: calc(100vh - 160px);
+    display: flex;
+    align-items: center;
+}
+.ak-simple-auth-card {
+    background: #14161E;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 38px 30px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+}
+.ak-auth-icon-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(251, 175, 67, 0.12);
+    border: 1.5px solid rgba(251, 175, 67, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: #FBAF43;
+}
+.ak-auth-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: #FFFFFF;
+    letter-spacing: -0.01em;
+}
+.ak-auth-subtext {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #94A3B8;
+}
+.ak-google-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 13px 20px;
+    color: #1E293B !important;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+    width: 100%;
+}
+.ak-google-btn:hover {
+    background: #F8FAFC;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    color: #0F172A !important;
+}
+.ak-google-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+}
+.ak-google-caption {
+    font-size: 12px;
+}
+.ak-auth-link {
+    color: #FBAF43;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.ak-auth-link:hover {
+    color: #FFC978;
+    text-decoration: underline;
+}
+.ak-toggle-email-btn {
+    font-size: 12px;
+    color: #64748B;
+    text-decoration: none;
+    padding: 0;
+}
+.ak-toggle-email-btn:hover {
+    color: #94A3B8;
+}
+.ak-custom-input {
+    background: #0A0B0E !important;
+    border: 1px solid #23252E !important;
+    border-radius: 9px !important;
+    color: #FFFFFF !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+}
+.ak-custom-input:focus {
+    border-color: #FBAF43 !important;
+    box-shadow: 0 0 0 2px rgba(251, 175, 67, 0.2) !important;
+}
+.ak-whatsapp-help-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #10B981;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.ak-whatsapp-help-btn:hover {
+    color: #34D399;
+}
+.ak-whatsapp-help-btn i {
+    font-size: 18px;
+}
+</style>
+@endpush
+
 @push('script')
-    <script>
-        (function($) {
-            "use strict";
-
-            // Check if user already exists via AJAX
-            $('.checkUser').on('focusout', function(e) {
-                var url = '{{ route('user.checkUser') }}';
-                var value = $(this).val();
-                var token = '{{ csrf_token() }}';
-
-                if (!value) return;
-
-                var data = {
-                    email: value,
-                    _token: token
-                };
-
-                $.post(url, data, function(response) {
-                    if (response.data != false) {
-                        $('#existModalCenter').modal('show');
-                    }
-                });
-            });
-
-            // Password show/hide toggle
-            $('.ak23-pw-toggle').on('click', function(e) {
-                e.preventDefault();
-                const $btn = $(this);
-                const $input = $btn.siblings('.ak23-input');
-                const $icon = $btn.find('i');
-                if ($input.attr('type') === 'password') {
-                    $input.attr('type', 'text');
-                    $icon.removeClass('la-eye').addClass('la-eye-slash');
-                } else {
-                    $input.attr('type', 'password');
-                    $icon.removeClass('la-eye-slash').addClass('la-eye');
-                }
-            });
-        })(jQuery);
-    </script>
+<script>
+    (function($) {
+        "use strict";
+        $('#toggleEmailRegisterBtn').on('click', function(e) {
+            e.preventDefault();
+            $('#manualEmailRegisterForm').toggleClass('d-none');
+        });
+    })(jQuery);
+</script>
 @endpush
