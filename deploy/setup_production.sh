@@ -4,12 +4,15 @@
 # ==============================================================================
 
 set -e
+export COMPOSER_ALLOW_SUPERUSER=1
 
-# 1. Determine Application Root Directory
-if [ -d "/home/m23.ak23studiokits.com/core" ]; then
-    APP_DIR="/home/m23.ak23studiokits.com"
-elif [ -d "/home/m23.ak23studiokits.com/public_html/core" ]; then
+# 1. Determine Application Root Directory (CyberPanel uses public_html as web document root)
+if [ -d "/home/m23.ak23studiokits.com/public_html/core" ]; then
     APP_DIR="/home/m23.ak23studiokits.com/public_html"
+elif [ -d "/home/m23.ak23studiokits.com/public_html" ]; then
+    APP_DIR="/home/m23.ak23studiokits.com/public_html"
+elif [ -d "/home/m23.ak23studiokits.com/core" ]; then
+    APP_DIR="/home/m23.ak23studiokits.com"
 elif [ -d "core" ] && [ -d "assets" ]; then
     APP_DIR="$(pwd)"
 elif [ -d "../core" ] && [ -d "../assets" ]; then
