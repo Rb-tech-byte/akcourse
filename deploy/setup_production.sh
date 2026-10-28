@@ -6,12 +6,14 @@
 set -e
 
 # 1. Determine Application Root Directory
-if [ -d "core" ] && [ -d "assets" ]; then
+if [ -d "/home/m23.ak23studiokits.com/core" ]; then
+    APP_DIR="/home/m23.ak23studiokits.com"
+elif [ -d "/home/m23.ak23studiokits.com/public_html/core" ]; then
+    APP_DIR="/home/m23.ak23studiokits.com/public_html"
+elif [ -d "core" ] && [ -d "assets" ]; then
     APP_DIR="$(pwd)"
 elif [ -d "../core" ] && [ -d "../assets" ]; then
     APP_DIR="$(cd .. && pwd)"
-elif [ -d "/home/m23.ak23studiokits.com/public_html/core" ]; then
-    APP_DIR="/home/m23.ak23studiokits.com/public_html"
 else
     APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 fi
