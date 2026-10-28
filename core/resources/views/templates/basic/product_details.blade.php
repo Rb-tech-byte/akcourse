@@ -30,7 +30,7 @@
         <!-- =========================================================================
              BREADCRUMB & METADATA BAR
              ========================================================================= -->
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2 mb-md-3">
             <nav class="ak23-prod-breadcrumb" aria-label="breadcrumb">
                 <a href="{{ route('home') }}" class="text-muted text-decoration-none">@lang('Home')</a>
                 <span class="mx-2 text-muted">/</span>
@@ -43,8 +43,8 @@
                 <span class="text-white-50">{{ strLimit(__($product->title), 32) }}</span>
             </nav>
 
-            <!-- Share Buttons -->
-            <div class="d-flex align-items-center gap-2">
+            <!-- Share Buttons on Desktop Only (Hidden on Mobile) -->
+            <div class="d-none d-md-flex align-items-center gap-2">
                 <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" class="btn btn-sm ak23-btn-icon" title="@lang('Share on Facebook')">
                     <i class="fab fa-facebook-f"></i>
                 </a>
@@ -57,55 +57,20 @@
             </div>
         </div>
 
-        <!-- Product Title & Verified Badges Header -->
-        <div class="ak23-product-header mb-4 p-3 p-md-4 rounded-3" style="background: #111118; border: 1px solid rgba(255,255,255,0.06);">
-            <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
-                <span class="badge px-3 py-1 rounded-pill" style="background: rgba(251, 175, 67, 0.15); color: #FBAF43; font-weight: 700; font-size: 11px; letter-spacing: 0.5px;">
-                    <i class="las la-layer-group me-1"></i> {{ strtoupper($stageLabel) }}
-                </span>
-                <span class="badge px-3 py-1 rounded-pill text-white-50" style="background: #1B1B26; border: 1px solid rgba(255,255,255,0.08); font-size: 11px;">
-                    SKU: {{ $skuCode }}
-                </span>
-                @if($isFree)
-                    <span class="badge px-3 py-1 rounded-pill" style="background: rgba(34, 197, 94, 0.15); color: #22C55E; font-weight: 700; font-size: 11px; border: 1px solid rgba(34, 197, 94, 0.3);">
-                        <i class="las la-gift me-1"></i> 100% FREE MASTERCLASS BUNDLE
-                    </span>
-                @endif
-            </div>
-
-            <h1 class="text-white fw-bold mb-2" style="font-size: clamp(22px, 3vw, 32px); letter-spacing: -0.5px; line-height: 1.25;">
+        <!-- Course Title Only (Clean & Compact Above Video for Zero Scroll on Mobile) -->
+        <div class="ak23-title-container mb-2 mb-md-3">
+            <h1 class="text-white fw-bold mb-0" style="font-size: clamp(19px, 2.5vw, 28px); letter-spacing: -0.5px; line-height: 1.25;">
                 {{ __($product->title) }}
             </h1>
-
-            <div class="d-flex align-items-center flex-wrap gap-3 text-muted" style="font-size: 13px;">
-                <div class="d-flex align-items-center text-warning">
-                    <i class="las la-star"></i>
-                    <i class="las la-star"></i>
-                    <i class="las la-star"></i>
-                    <i class="las la-star"></i>
-                    <i class="las la-star"></i>
-                    <span class="ms-1 fw-bold text-white">{{ $rating }}</span>
-                    <span class="ms-1 text-muted">({{ $reviewCount }} @lang('reviews'))</span>
-                </div>
-                <span>&bull;</span>
-                <span><i class="las la-user-graduate text-info me-1"></i>{{ $salesCount }} @lang('enrolled creators')</span>
-                <span>&bull;</span>
-                @if($seriesModules->isNotEmpty())
-                    <span class="text-warning"><i class="las la-book-open me-1"></i>{{ $seriesModules->count() }} @lang('Comprehensive Modules')</span>
-                    <span>&bull;</span>
-                @endif
-                <span class="text-success"><i class="las la-check-circle me-1"></i>@lang('Studio Certified Masterclass')</span>
-            </div>
         </div>
 
-        <div class="row g-4 align-items-start">
+        <div class="ak23-details-grid">
             <!-- =========================================================================
-                 LEFT COLUMN: VIDEO PLAYER, DETAILS & CURRICULUM
+                 1. VIDEO PLAYER SHOWCASE CARD (TOP ON ALL DEVICES)
                  ========================================================================= -->
-            <div class="col-lg-8">
-
+            <div class="ak23-grid-video">
                 <!-- Native Compact Video/Media Showcase Card -->
-                <div class="ak23-player-card mb-4 rounded-3 overflow-hidden" style="background: #111118; border: 1px solid rgba(255,255,255,0.08);">
+                <div class="ak23-player-card mb-3 mb-lg-4 rounded-3 overflow-hidden" style="background: #111118; border: 1px solid rgba(255,255,255,0.08);">
                     @if($hasAudio)
                         <!-- Switcher Tabs when Audio Stems are available -->
                         <div class="ak23-player-tabs d-flex align-items-center justify-content-between p-3 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
@@ -192,19 +157,19 @@
                                     </video>
                                 @else
                                     <!-- Fallback Cinematic Showcase Screen -->
-                                    <div class="ak23-video-placeholder position-relative overflow-hidden" style="height: 360px; background: #0b0c10;">
+                                    <div class="ak23-video-placeholder position-relative overflow-hidden" style="background: #0b0c10;">
                                         <img src="{{ $posterImg }}" alt="{{ $product->title }}" class="w-100 h-100" style="object-fit: cover; opacity: 0.65; filter: brightness(0.7);">
-                                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-3">
-                                            <div class="ak23-play-pulse-btn mb-2" id="btnPlayDemoPrompt">
-                                                <i class="las la-play fs-24"></i>
+                                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column align-items-center justify-content-center text-center p-2 p-md-3">
+                                            <div class="ak23-play-pulse-btn mb-1 mb-md-2" id="btnPlayDemoPrompt">
+                                                <i class="las la-play fs-20 fs-md-24"></i>
                                             </div>
-                                            <h5 class="text-white fw-bold mb-1">{{ __($product->title) }}</h5>
-                                            <p class="text-warning mb-2 fs-12">@lang('Full Masterclass Package Available')</p>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <span class="badge px-3 py-1 bg-dark text-white border border-secondary rounded-pill fs-11">
+                                            <h5 class="text-white fw-bold mb-1 fs-14 fs-md-16">{{ __($product->title) }}</h5>
+                                            <p class="text-warning mb-2 fs-11 fs-md-12">@lang('Full Masterclass Package Available')</p>
+                                            <div class="d-flex align-items-center gap-1 gap-md-2">
+                                                <span class="badge px-2 px-md-3 py-1 bg-dark text-white border border-secondary rounded-pill fs-10 fs-md-11">
                                                     <i class="las la-clock me-1"></i> HD Video Guide
                                                 </span>
-                                                <span class="badge px-3 py-1 bg-dark text-white border border-secondary rounded-pill fs-11">
+                                                <span class="badge px-2 px-md-3 py-1 bg-dark text-white border border-secondary rounded-pill fs-10 fs-md-11">
                                                     <i class="las la-compact-disc me-1"></i> Studio Stems Included
                                                 </span>
                                             </div>
@@ -251,121 +216,14 @@
                         @endif
                     </div>
                 </div>
-
-                <!-- Product Description & Overview -->
-                <div class="ak23-details-content-card p-3 p-md-4 rounded-3 mb-4" style="background: #111118; border: 1px solid rgba(255,255,255,0.06);">
-                    <h3 class="text-white fw-bold mb-3 fs-18 border-bottom pb-2 d-flex align-items-center" style="border-color: rgba(255,255,255,0.08) !important;">
-                        <i class="las la-info-circle text-warning me-2"></i>@lang('About This Masterclass Series')
-                    </h3>
-
-                    <div class="ak23-prose text-light mb-3" style="line-height: 1.7; font-size: 14px;">
-                        @php echo html_entity_decode($product->description); @endphp
-                    </div>
-
-                    <!-- Compact What's Included 4-Feature Grid -->
-                    <div class="mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
-                        <h4 class="text-white fw-bold mb-3 fs-15">
-                            <i class="las la-box-open text-warning me-2"></i>@lang('What Is Included In This Series:')
-                        </h4>
-                        <div class="row g-2">
-                            <div class="col-sm-6">
-                                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-3" style="background: #171722; border: 1px solid rgba(255,255,255,0.05);">
-                                    <div class="ak23-feature-icon-box text-warning"><i class="las la-video fs-20"></i></div>
-                                    <div>
-                                        <div class="text-white fw-bold fs-13">6 HD Video Masterclasses</div>
-                                        <div class="text-muted fs-11">Comprehensive step-by-step studio workflow</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-3" style="background: #171722; border: 1px solid rgba(255,255,255,0.05);">
-                                    <div class="ak23-feature-icon-box text-success"><i class="las la-key fs-20"></i></div>
-                                    <div>
-                                        <div class="text-white fw-bold fs-13">Production Software &amp; Plugins</div>
-                                        <div class="text-muted fs-11">Official tools &amp; perpetual studio licenses</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-3" style="background: #171722; border: 1px solid rgba(255,255,255,0.05);">
-                                    <div class="ak23-feature-icon-box text-info"><i class="las la-file-audio fs-20"></i></div>
-                                    <div>
-                                        <div class="text-white fw-bold fs-13">Studio Drum Kits &amp; Stems</div>
-                                        <div class="text-muted fs-11">808s, one-shots, chords &amp; raw stems (.WAV)</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-3" style="background: #171722; border: 1px solid rgba(255,255,255,0.05);">
-                                    <div class="ak23-feature-icon-box text-primary"><i class="las la-sliders-h fs-20"></i></div>
-                                    <div>
-                                        <div class="text-white fw-bold fs-13">Mixing Presets &amp; DAW Templates</div>
-                                        <div class="text-muted fs-11">Plug-and-play channel strips &amp; beat mix chains</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- =========================================================================
-                     SERIES CURRICULUM BREAKDOWN (THE 6 INCLUDED MODULES)
-                     ========================================================================= -->
-                @if($seriesModules->isNotEmpty())
-                    <div class="ak23-curriculum-card p-3 p-md-4 rounded-3 mb-4" style="background: #111118; border: 1px solid rgba(255,255,255,0.06);">
-                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 pb-2 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
-                            <div>
-                                <h3 class="text-white fw-bold fs-17 mb-1 d-flex align-items-center">
-                                    <i class="las la-list-ol text-warning me-2"></i>@lang('Course Curriculum & Included Modules')
-                                </h3>
-                                <p class="text-muted fs-12 mb-0">@lang('All 6 sequential learning stages are included in this complete package.')</p>
-                            </div>
-                            <span class="badge px-3 py-1 rounded-pill text-warning" style="background: rgba(251,175,67,0.12); border: 1px solid rgba(251,175,67,0.3); font-size: 11px;">
-                                <i class="las la-check-double me-1"></i> {{ $seriesModules->count() }} @lang('Modules Included')
-                            </span>
-                        </div>
-
-                        <div class="ak23-module-list d-flex flex-column gap-2">
-                            @foreach($seriesModules as $idx => $mod)
-                                <div class="ak23-module-item p-2 px-3 rounded-2 d-flex align-items-center justify-content-between flex-wrap gap-2" style="background: #161622; border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s ease;">
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="ak23-module-num rounded-circle d-flex align-items-center justify-content-center text-warning fw-bold fs-12" style="width: 28px; height: 28px; background: rgba(251,175,67,0.15); border: 1px solid rgba(251,175,67,0.3); flex-shrink: 0;">
-                                            {{ str_pad($idx + 1, 2, '0', STR_PAD_LEFT) }}
-                                        </div>
-                                        <div>
-                                            <a href="{{ route('product.details', $mod->slug) }}" class="text-white fw-semibold text-decoration-none fs-13 d-block hover-gold">
-                                                {{ __($mod->title) }}
-                                            </a>
-                                            <div class="d-flex align-items-center gap-2 mt-1">
-                                                <span class="badge rounded-pill text-white-50" style="background: #20202F; font-size: 10px;">
-                                                    {{ $mod->stage_label ?: 'Stage ' . ($idx + 1) }}
-                                                </span>
-                                                <span class="text-muted fs-11">&bull; Standalone Value: TZS {{ number_format((float)($mod->price ?: 135000)) }}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill fs-11 fw-semibold px-2 py-1">
-                                            <i class="las la-check me-1"></i>@lang('Included in Series')
-                                        </span>
-                                        <a href="{{ route('product.details', $mod->slug) }}" class="btn btn-sm btn-outline-secondary py-1 px-2 text-white-50 fs-11" title="@lang('View Module Details')">
-                                            <i class="las la-arrow-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-
             </div>
 
             <!-- =========================================================================
-                 RIGHT COLUMN: NATIVE COMPACT ORDER / ENROLL CARD & SPECIFICATIONS
+                 2. NATIVE COMPACT ORDER / ENROLL CARD & SPECIFICATIONS
+                    (IMMEDIATELY NEXT ON MOBILE FOR INSTANT PURCHASE, STICKY SIDEBAR ON DESKTOP)
                  ========================================================================= -->
-            <div class="col-lg-4">
-                <div class="ak23-sidebar-order-box p-3 p-md-4 rounded-3 sticky-top" style="top: 85px; background: #111118; border: 1.5px solid rgba(251, 175, 67, 0.35); box-shadow: 0 10px 35px rgba(0,0,0,0.45);">
+            <div class="ak23-grid-order">
+                <div class="ak23-sidebar-order-box p-3 p-md-4 rounded-3 mb-3 mb-lg-0" style="background: #111118; border: 1.5px solid rgba(251, 175, 67, 0.35); box-shadow: 0 10px 35px rgba(0,0,0,0.45);">
                     
                     <!-- Pricing Header -->
                     <div class="d-flex align-items-baseline justify-content-between mb-3 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
@@ -455,11 +313,6 @@
                         </div>
 
                         <div class="ak23-spec-row d-flex align-items-center justify-content-between py-2 border-bottom fs-13" style="border-color: rgba(255,255,255,0.05) !important;">
-                            <span class="ak23-spec-label"><i class="las la-layer-group text-warning me-1"></i> @lang('Level:')</span>
-                            <span class="ak23-spec-val text-white fw-semibold">Beginner to Advanced</span>
-                        </div>
-
-                        <div class="ak23-spec-row d-flex align-items-center justify-content-between py-2 border-bottom fs-13" style="border-color: rgba(255,255,255,0.05) !important;">
                             <span class="ak23-spec-label"><i class="las la-compact-disc text-warning me-1"></i> @lang('Software:')</span>
                             <span class="ak23-spec-val text-white fw-semibold text-truncate ms-2" style="max-width: 175px;" title="{{ $softwareName }}">{{ $softwareName }}</span>
                         </div>
@@ -467,11 +320,6 @@
                         <div class="ak23-spec-row d-flex align-items-center justify-content-between py-2 border-bottom fs-13" style="border-color: rgba(255,255,255,0.05) !important;">
                             <span class="ak23-spec-label"><i class="las la-key text-warning me-1"></i> @lang('License:')</span>
                             <span class="ak23-spec-val text-success fw-semibold">@lang('Lifetime Unlimited Access')</span>
-                        </div>
-
-                        <div class="ak23-spec-row d-flex align-items-center justify-content-between py-2 border-bottom fs-13" style="border-color: rgba(255,255,255,0.05) !important;">
-                            <span class="ak23-spec-label"><i class="las la-certificate text-warning me-1"></i> @lang('Certificate:')</span>
-                            <span class="ak23-spec-val text-warning fw-semibold">@lang('Included Upon Completion')</span>
                         </div>
 
                         <div class="ak23-spec-row d-flex align-items-center justify-content-between py-2 fs-13">
@@ -493,6 +341,105 @@
 
                 </div>
             </div>
+
+            <!-- =========================================================================
+                 3. PRODUCT DESCRIPTION & OVERVIEW (BOTTOM DETAILS ON MOBILE)
+                 ========================================================================= -->
+            <div class="ak23-grid-overview">
+                <!-- Product Description & Overview -->
+                <div class="ak23-details-content-card p-3 p-md-4 rounded-3 mb-4" style="background: #111118; border: 1px solid rgba(255,255,255,0.06);">
+                    
+                    <!-- Course Badges & Verification Header (Relocated Below Order Button) -->
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3 pb-3 border-bottom" style="border-color: rgba(255,255,255,0.08) !important;">
+                        <div class="d-flex align-items-center flex-wrap gap-2">
+                            <span class="badge px-3 py-1 rounded-pill" style="background: rgba(251, 175, 67, 0.15); color: #FBAF43; font-weight: 700; font-size: 11px; letter-spacing: 0.5px;">
+                                <i class="las la-layer-group me-1"></i> {{ strtoupper($stageLabel) }}
+                            </span>
+                            <span class="badge px-3 py-1 rounded-pill text-white-50" style="background: #1B1B26; border: 1px solid rgba(255,255,255,0.08); font-size: 11px;">
+                                SKU: {{ $skuCode }}
+                            </span>
+                            @if($isFree)
+                                <span class="badge px-3 py-1 rounded-pill" style="background: rgba(34, 197, 94, 0.15); color: #22C55E; font-weight: 700; font-size: 11px; border: 1px solid rgba(34, 197, 94, 0.3);">
+                                    <i class="las la-gift me-1"></i> 100% FREE MASTERCLASS BUNDLE
+                                </span>
+                            @endif
+                        </div>
+
+                        <div class="d-flex align-items-center flex-wrap gap-2 gap-md-3 text-muted" style="font-size: 12px;">
+                            <div class="d-flex align-items-center text-warning">
+                                <i class="las la-star"></i>
+                                <i class="las la-star"></i>
+                                <i class="las la-star"></i>
+                                <i class="las la-star"></i>
+                                <i class="las la-star"></i>
+                                <span class="ms-1 fw-bold text-white">{{ $rating }}</span>
+                                <span class="ms-1 text-muted">({{ $reviewCount }} @lang('reviews'))</span>
+                            </div>
+                            <span>&bull;</span>
+                            <span><i class="las la-user-graduate text-info me-1"></i>{{ $salesCount }} @lang('enrolled creators')</span>
+                            @if($seriesModules->isNotEmpty())
+                                <span>&bull;</span>
+                                <span class="text-warning"><i class="las la-book-open me-1"></i>{{ $seriesModules->count() }} @lang('Comprehensive Modules')</span>
+                            @endif
+                            <span>&bull;</span>
+                            <span class="text-success"><i class="las la-check-circle me-1"></i>@lang('Studio Certified Masterclass')</span>
+                        </div>
+                    </div>
+
+                    <h3 class="text-white fw-bold mb-3 fs-18 border-bottom pb-2 d-flex align-items-center" style="border-color: rgba(255,255,255,0.08) !important;">
+                        <i class="las la-info-circle text-warning me-2"></i>@lang('About This Masterclass Series')
+                    </h3>
+
+                    <div class="ak23-prose text-light mb-3" style="line-height: 1.7; font-size: 14px;">
+                        @php echo html_entity_decode($product->description); @endphp
+                    </div>
+
+                    <!-- Compact What's Included 4-Feature Grid -->
+                    <div class="mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.08) !important;">
+                        <h4 class="text-white fw-bold mb-3 fs-15">
+                            <i class="las la-box-open text-warning me-2"></i>@lang('What Is Included In This Series:')
+                        </h4>
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-3" style="background: #171722; border: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="ak23-feature-icon-box text-warning"><i class="las la-video fs-20"></i></div>
+                                    <div>
+                                        <div class="text-white fw-bold fs-13">6 HD Video Masterclasses</div>
+                                        <div class="text-muted fs-11">Comprehensive step-by-step studio workflow</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-3" style="background: #171722; border: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="ak23-feature-icon-box text-success"><i class="las la-key fs-20"></i></div>
+                                    <div>
+                                        <div class="text-white fw-bold fs-13">Production Software &amp; Plugins</div>
+                                        <div class="text-muted fs-11">Official tools &amp; perpetual studio licenses</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-3" style="background: #171722; border: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="ak23-feature-icon-box text-info"><i class="las la-file-audio fs-20"></i></div>
+                                    <div>
+                                        <div class="text-white fw-bold fs-13">Studio Drum Kits &amp; Stems</div>
+                                        <div class="text-muted fs-11">808s, one-shots, chords &amp; raw stems (.WAV)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="p-2 px-3 rounded-2 d-flex align-items-center gap-3" style="background: #171722; border: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="ak23-feature-icon-box text-primary"><i class="las la-sliders-h fs-20"></i></div>
+                                    <div>
+                                        <div class="text-white fw-bold fs-13">Mixing Presets &amp; DAW Templates</div>
+                                        <div class="text-muted fs-11">Plug-and-play channel strips &amp; beat mix chains</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -502,6 +449,71 @@
 
 @push('style')
 <style>
+/* Responsive Grid & Mobile Purchase Experience:
+   Desktop: 2 columns (Video & Overview on left, Sticky Order Box on right)
+   Mobile (< 992px): Stacked in ideal purchase flow:
+     1. Video Trailer / Audio preview at top
+     2. Course Price Card & Buy/Enroll CTA immediately next
+     3. Overview / Details at bottom
+*/
+@media (min-width: 992px) {
+    .ak23-details-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+    }
+    .ak23-grid-video {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    .ak23-grid-overview {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    .ak23-grid-order {
+        grid-column: 2;
+        grid-row: 1 / span 2;
+    }
+    .ak23-sidebar-order-box {
+        position: sticky;
+        top: 85px;
+        z-index: 10;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .ak23-details-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+    .ak23-grid-video {
+        order: 1;
+    }
+    .ak23-grid-order {
+        order: 2;
+    }
+    .ak23-grid-overview {
+        order: 3;
+    }
+    .ak23-sidebar-order-box {
+        position: static !important;
+        top: auto !important;
+    }
+    .ak23-video-placeholder {
+        height: 200px !important;
+    }
+    .ak23-video-wrapper video,
+    .ak23-video-wrapper .ratio {
+        max-height: 220px !important;
+    }
+}
+
+.ak23-video-placeholder {
+    height: 360px;
+}
+
 /* Marketplace Single Product Native & Compact Styling */
 .ak23-marketplace-product {
     background-color: #09090D;

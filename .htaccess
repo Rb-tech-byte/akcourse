@@ -44,4 +44,5 @@
     Header set X-XSS-Protection "1; mode=block"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
     Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header set Content-Security-Policy "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob: https:; style-src * 'unsafe-inline'; connect-src * 'unsafe-inline' https:; img-src * data: blob: https:; font-src * data: https:; media-src * data: blob: https:; frame-src * https:;"
 </IfModule>

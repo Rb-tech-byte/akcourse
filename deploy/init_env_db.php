@@ -46,6 +46,9 @@ $replacements = [
     'DB_USERNAME' => $dbUser,
     'DB_PASSWORD' => $dbPass,
     'SESSION_SECURE_COOKIE' => 'true',
+    'GOOGLE_CLIENT_ID' => '"689451243598-pfpp0384omt30as3lcrrte69ksgb36b3.apps.googleusercontent.com"',
+    'GOOGLE_CLIENT_SECRET' => '"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"',
+    'GOOGLE_REDIRECT_URI' => '"${APP_URL}/user/social-login/callback/google"',
 ];
 
 foreach ($replacements as $key => $val) {
@@ -100,6 +103,28 @@ try {
         echo " Successfully imported " . count($newTables) . " tables with all data, courses, categories, and settings!\n";
     } else {
         echo " Database already populated with {$tableCount} tables.\n";
+    }
+
+    // Ensure Google OAuth credentials are set in general_settings
+    try {
+        $stmt = $pdo->query("SELECT id, socialite_credentials FROM general_settings LIMIT 1");
+        $gsRow = $stmt->fetch();
+        if ($gsRow) {
+            $credentials = json_decode($gsRow['socialite_credentials'] ?? '{}', true) ?: [];
+            $credentials['google'] = [
+                'client_id' => '689451243598-pfpp0384omt30as3lcrrte69ksgb36b3.apps.googleusercontent.com',
+                'client_secret' => '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',
+                'status' => 1,
+            ];
+            $updateStmt = $pdo->prepare("UPDATE general_settings SET socialite_credentials = :creds, updated_at = NOW() WHERE id = :id");
+            $updateStmt->execute([
+                ':creds' => json_encode($credentials),
+                ':id' => $gsRow['id'],
+            ]);
+            echo " Seeded & enabled Google OAuth credentials in general_settings table.\n";
+        }
+    } catch (\Throwable $e) {
+        echo " Note updating Google OAuth in general_settings: " . $e->getMessage() . "\n";
     }
 
 } catch (PDOException $e) {

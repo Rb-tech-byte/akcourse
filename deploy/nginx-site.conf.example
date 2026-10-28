@@ -23,6 +23,7 @@ server {
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+    add_header Content-Security-Policy "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; script-src * 'unsafe-inline' 'unsafe-eval' data: blob: https:; style-src * 'unsafe-inline'; connect-src * 'unsafe-inline' https:; img-src * data: blob: https:; font-src * data: https:; media-src * data: blob: https:; frame-src * https:;" always;
 
     charset utf-8;
     client_max_body_size 100M;
